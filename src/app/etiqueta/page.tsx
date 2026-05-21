@@ -2,14 +2,35 @@
 
 import { useState } from "react";
 
+type Modo = "caixa" | "produto";
+
+const labelHeights: Record<number, number> = { 1: 280, 2: 140, 3: 93, 4: 70 };
+const fontSizes = (qtd: number) => {
+  if (qtd === 1) return { line1: 220, line2: 130 };
+  if (qtd === 2) return { line1: 140, line2: 80 };
+  if (qtd === 3) return { line1: 100, line2: 60 };
+  return { line1: 76, line2: 46 };
+};
+
 export default function EtiquetaPage() {
+  const [modo, setModo] = useState<Modo>("produto");
   const [nf, setNf] = useState("");
   const [cliente, setCliente] = useState("");
+  const [produto, setProduto] = useState("");
+  const [preco, setPreco] = useState("");
   const [quantidade, setQuantidade] = useState(1);
 
-  const labelHeight = quantidade === 1 ? 280 : quantidade === 2 ? 140 : quantidade === 3 ? 93 : 70;
-  const fontSizeNf = quantidade === 1 ? 220 : quantidade === 2 ? 140 : quantidade === 3 ? 100 : 76;
-  const fontSizeCl = quantidade === 1 ? 130 : quantidade === 2 ? 80 : quantidade === 3 ? 60 : 46;
+  const line1 = modo === "caixa" ? nf : produto;
+  const line2 = modo === "caixa" ? cliente : preco;
+  const setLine1 = modo === "caixa" ? setNf : setProduto;
+  const setLine2 = modo === "caixa" ? setCliente : setPreco;
+  const label1 = modo === "caixa" ? "Número da NF" : "Nome do Produto";
+  const label2 = modo === "caixa" ? "Nome do Cliente" : "Preço";
+  const placeholder1 = modo === "caixa" ? "Ex: 123456" : "Ex: CUBO 250ML";
+  const placeholder2 = modo === "caixa" ? "Nome completo" : "Ex: R$ 19,80";
+
+  const h = labelHeights[quantidade];
+  const f = fontSizes(quantidade);
 
   return (
     <div>
@@ -18,8 +39,8 @@ export default function EtiquetaPage() {
           <a href="/" className="back-btn">← Voltar</a>
           <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
           <div className="header-text">
-            <h1>🏷️ Etiqueta para Caixa</h1>
-            <p>Etiqueta A4 retrato com NF e nome do cliente</p>
+            <h1>🏷️ Etiqueta</h1>
+            <p>Imprima etiquetas em A4 retrato</p>
           </div>
         </div>
       </div>
@@ -28,14 +49,22 @@ export default function EtiquetaPage() {
         <div className="layout">
           <div className="sidebar no-print">
             <div className="card">
-              <h2>Dados</h2>
+              <div className="modo-selector">
+                <button className={`modo-btn ${modo === "produto" ? "active" : ""}`} onClick={() => setModo("produto")}>
+                  🏷️ Produto
+                </button>
+                <button className={`modo-btn ${modo === "caixa" ? "active" : ""}`} onClick={() => setModo("caixa")}>
+                  📦 Caixa
+                </button>
+              </div>
+
               <div className="form-group">
-                <label>Número da NF</label>
-                <input value={nf} onChange={e => setNf(e.target.value)} placeholder="Ex: 123456" autoFocus />
+                <label>{label1}</label>
+                <input value={line1} onChange={e => setLine1(e.target.value)} placeholder={placeholder1} autoFocus />
               </div>
               <div className="form-group">
-                <label>Nome do Cliente</label>
-                <input value={cliente} onChange={e => setCliente(e.target.value)} placeholder="Nome completo" />
+                <label>{label2}</label>
+                <input value={line2} onChange={e => setLine2(e.target.value)} placeholder={placeholder2} />
               </div>
               <div className="form-group">
                 <label>Quantidade por folha</label>
@@ -45,7 +74,7 @@ export default function EtiquetaPage() {
                   ))}
                 </div>
               </div>
-              {nf && cliente && (
+              {line1 && line2 && (
                 <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={() => window.print()}>
                   🖨️ Imprimir / Salvar PDF
                 </button>
@@ -54,7 +83,7 @@ export default function EtiquetaPage() {
           </div>
 
           <div className="preview-area">
-            {!nf || !cliente ? (
+            {!line1 || !line2 ? (
               <div className="empty-state">
                 <span style={{ fontSize: 56, opacity: 0.2 }}>🏷️</span>
                 <p>Preencha os campos</p>
@@ -64,11 +93,11 @@ export default function EtiquetaPage() {
                 <div className="sheet-label">A4 Retrato · {quantidade}x</div>
                 {Array.from({ length: quantidade }).map((_, i) => (
                   <div key={i} className="label-box" style={{
-                    height: `${labelHeight}mm`,
+                    height: `${h}mm`,
                     borderBottom: i < quantidade - 1 ? "2px dashed #d4d4d4" : "none",
                   }}>
-                    <div className="label-nf" style={{ fontSize: `${fontSizeNf}px` }}>{nf}</div>
-                    <div className="label-cl" style={{ fontSize: `${fontSizeCl}px` }}>{cliente}</div>
+                    <div className="label-line1" style={{ fontSize: `${f.line1}px` }}>{line1}</div>
+                    <div className="label-line2" style={{ fontSize: `${f.line2}px` }}>{line2}</div>
                   </div>
                 ))}
               </div>
@@ -95,15 +124,28 @@ export default function EtiquetaPage() {
           padding: 28px;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
-        .card h2 {
-          font-size: 1.2rem;
-          color: #1a202c;
-          margin-bottom: 20px;
+        .modo-selector {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 24px;
         }
-        .preview-area {
+        .modo-btn {
           flex: 1;
-          min-width: 0;
+          padding: 12px;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          background: #fff;
+          font-size: 0.95rem;
+          font-weight: 600;
+          font-family: Barlow, sans-serif;
+          color: #64748b;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          text-align: center;
         }
+        .modo-btn:hover { border-color: #15814a; color: #15814a; }
+        .modo-btn.active { border-color: #15814a; background: #15814a; color: #fff; }
+        .preview-area { flex: 1; min-width: 0; }
         .empty-state {
           background: #fff;
           border-radius: 20px;
@@ -112,10 +154,7 @@ export default function EtiquetaPage() {
           color: #94a3b8;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
-        .empty-state p {
-          margin-top: 12px;
-          font-size: 1rem;
-        }
+        .empty-state p { margin-top: 12px; font-size: 1rem; }
         .sheet {
           background: #fff;
           border-radius: 20px;
@@ -141,7 +180,7 @@ export default function EtiquetaPage() {
           padding: 4mm 8mm;
           box-sizing: border-box;
         }
-        .label-nf {
+        .label-line1 {
           font-weight: 900;
           letter-spacing: 4px;
           color: #000;
@@ -151,19 +190,16 @@ export default function EtiquetaPage() {
           text-transform: uppercase;
           font-family: "Courier New", monospace;
         }
-        .label-cl {
+        .label-line2 {
           font-weight: 800;
           color: #000;
-          margin-top: 6px;
+          margin-top: 8px;
           line-height: 1.1;
           word-break: break-word;
           max-width: 100%;
           font-family: "Courier New", monospace;
         }
-        .qtd-opts {
-          display: flex;
-          gap: 8px;
-        }
+        .qtd-opts { display: flex; gap: 8px; }
         .qtd-btn {
           flex: 1;
           padding: 12px;

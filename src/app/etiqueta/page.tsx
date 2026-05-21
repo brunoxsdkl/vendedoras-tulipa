@@ -20,118 +20,68 @@ export default function EtiquetaPage() {
           </div>
         </div>
       </div>
-      <main
-        className="container no-print"
-        style={{ minHeight: "calc(100vh - 60px)" }}
-      >
-        <div
-          style={{
-            maxWidth: 500,
-            margin: "0 auto",
-            background: "#fff",
-            borderRadius: 20,
-            padding: 32,
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-          }}
-        >
-          <div className="form-group">
-            <label>Número da NF</label>
-            <input
-              value={nf}
-              onChange={(e) => setNf(e.target.value)}
-              placeholder="Ex: 123456"
-            />
-          </div>
-          <div className="form-group">
-            <label>Nome do Cliente</label>
-            <input
-              value={cliente}
-              onChange={(e) => setCliente(e.target.value)}
-              placeholder="Nome completo"
-            />
-          </div>
-          <button
-            className="btn btn-primary"
-            style={{ width: "100%" }}
-            onClick={() => window.print()}
-          >
-            🖨️ Imprimir Etiqueta
-          </button>
-        </div>
-      </main>
 
-      {nf && cliente && (
-        <div
-          className="print-area"
-          style={{
-            width: "210mm",
-            minHeight: "297mm",
-            background: "#fff",
-            margin: "0 auto",
-            fontFamily: "Courier New, monospace",
-            padding: 0,
-            display: "none",
-          }}
-          id="printArea"
+      {!nf || !cliente ? (
+        <main
+          className="container no-print"
+          style={{ minHeight: "calc(100vh - 60px)" }}
         >
           <div
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              width: "210mm",
-              height: "99mm",
-              border: "1px dashed #d4d4d4",
-              boxSizing: "border-box",
-              padding: "10mm",
-              background: "#fcfcfc",
+              maxWidth: 500,
+              margin: "0 auto",
+              background: "#fff",
+              borderRadius: 20,
+              padding: 32,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
             }}
           >
-            <div
-              style={{
-                fontSize: 64,
-                fontWeight: 900,
-                letterSpacing: 4,
-                color: "#000",
-                lineHeight: 1.1,
-                wordBreak: "break-all",
-                maxWidth: "100%",
-              }}
-            >
-              {nf}
+            <div className="form-group">
+              <label>Número da NF</label>
+              <input
+                value={nf}
+                onChange={(e) => setNf(e.target.value)}
+                placeholder="Ex: 123456"
+              />
             </div>
-            <div
-              style={{
-                fontSize: 38,
-                fontWeight: 800,
-                color: "#000",
-                marginTop: 6,
-                lineHeight: 1.1,
-                wordBreak: "break-word",
-                maxWidth: "100%",
-              }}
-            >
-              {cliente}
+            <div className="form-group">
+              <label>Nome do Cliente</label>
+              <input
+                value={cliente}
+                onChange={(e) => setCliente(e.target.value)}
+                placeholder="Nome completo"
+              />
             </div>
+          </div>
+        </main>
+      ) : (
+        <div className="container etiqueta-box">
+          <div style={{ textAlign: "center", marginBottom: 20 }} className="no-print">
+            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+              <button
+                className="btn btn-primary"
+                onClick={() => window.print()}
+              >
+                🖨️ Imprimir
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => {
+                  setNf("");
+                  setCliente("");
+                }}
+              >
+                🔄 Nova Etiqueta
+              </button>
+            </div>
+          </div>
+
+          <div className="etiqueta-label">
+            <div className="nf-number">{nf}</div>
+            <div className="cliente-name">{cliente}</div>
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        @media print {
-          .no-print {
-            display: none !important;
-          }
-          body {
-            background: #fff !important;
-          }
-          .print-area {
-            display: block !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

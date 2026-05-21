@@ -1,175 +1,15 @@
 "use client";
 
-import { useState, useRef } from "react";
-
-const labelHeights: Record<number, number> = { 1: 270, 2: 135, 3: 90, 4: 67 };
-const nfSizes: Record<number, number> = { 1: 220, 2: 160, 3: 120, 4: 96 };
-const clSizes: Record<number, number> = { 1: 130, 2: 90, 3: 70, 4: 56 };
+import { useState } from "react";
 
 export default function EtiquetaPage() {
   const [nf, setNf] = useState("");
   const [cliente, setCliente] = useState("");
   const [quantidade, setQuantidade] = useState(1);
-  const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-
-    const h = labelHeights[quantidade];
-    const nfSize = nfSizes[quantidade];
-    const clSize = clSizes[quantidade];
-
-    let labels = "";
-    for (let i = 0; i < quantidade; i++) {
-      labels += `
-        <div style="
-          width: 100%;
-          height: ${h}mm;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          border-bottom: ${i < quantidade - 1 ? "2px dashed #ccc" : "none"};
-          page-break-inside: avoid;
-          box-sizing: border-box;
-          padding: 5mm 10mm;
-        ">
-          <div style="
-            font-size: ${nfSize}px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            color: #000;
-            line-height: 1;
-            word-break: break-all;
-            max-width: 100%;
-            text-transform: uppercase;
-            font-family: 'Courier New', monospace;
-          ">${nf}</div>
-          <div style="
-            font-size: ${clSize}px;
-            font-weight: 800;
-            color: #000;
-            margin-top: 12px;
-            line-height: 1.1;
-            word-break: break-word;
-            max-width: 100%;
-            font-family: 'Courier New', monospace;
-          ">${cliente}</div>
-        </div>
-      `;
-    }
-
-    printWindow.document.write(`
-      <html>
-      <head>
-        <style>
-          @page { size: A4 portrait; margin: 3mm; }
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { width: 210mm; margin: 0 auto; background: #fff; font-family: 'Courier New', monospace; }
-          @media print { body { margin: 0; } }
-        </style>
-      </head>
-      <body>
-        ${labels}
-        <script>
-          window.onload = function() {
-            setTimeout(function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            }, 300);
-          };
-        <\/script>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
-  };
-
-  const handleDownloadPDF = async () => {
-    const h = labelHeights[quantidade];
-    const nfSize = nfSizes[quantidade];
-    const clSize = clSizes[quantidade];
-
-    const pdfWindow = window.open("", "_blank");
-    if (!pdfWindow) return;
-
-    let labels = "";
-    for (let i = 0; i < quantidade; i++) {
-      labels += `
-        <div style="
-          width: 100%;
-          height: ${h}mm;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          border-bottom: ${i < quantidade - 1 ? "2px dashed #ccc" : "none"};
-          page-break-inside: avoid;
-          box-sizing: border-box;
-          padding: 5mm 10mm;
-        ">
-          <div style="
-            font-size: ${nfSize}px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            color: #000;
-            line-height: 1;
-            word-break: break-all;
-            max-width: 100%;
-            text-transform: uppercase;
-            font-family: 'Courier New', monospace;
-          ">${nf}</div>
-          <div style="
-            font-size: ${clSize}px;
-            font-weight: 800;
-            color: #000;
-            margin-top: 12px;
-            line-height: 1.1;
-            word-break: break-word;
-            max-width: 100%;
-            font-family: 'Courier New', monospace;
-          ">${cliente}</div>
-        </div>
-      `;
-    }
-
-    const styles = `
-      @page { size: A4 portrait; margin: 3mm; }
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { width: 210mm; margin: 0 auto; background: #fff; font-family: 'Courier New', monospace; }
-    `;
-
-    pdfWindow.document.write(`
-      <html>
-      <head>
-        <style>${styles}</style>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
-      </head>
-      <body>
-        <div id="pdf-content">
-          ${labels}
-        </div>
-        <script>
-          var opt = {
-            margin:       3,
-            filename:     'etiqueta-${nf}.pdf',
-            image:        { type: 'jpeg', quality: 1 },
-            html2canvas:  { scale: 3, useCORS: true, letterRendering: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: 'avoid-all' }
-          };
-          html2pdf().set(opt).from(document.getElementById('pdf-content')).save().then(function() {
-            window.close();
-          });
-        <\/script>
-      </body>
-      </html>
-    `);
-    pdfWindow.document.close();
-  };
+  const labelHeight = quantidade === 1 ? 280 : quantidade === 2 ? 140 : quantidade === 3 ? 93 : 70;
+  const fontSizeNf = quantidade === 1 ? 220 : quantidade === 2 ? 140 : quantidade === 3 ? 100 : 76;
+  const fontSizeCl = quantidade === 1 ? 130 : quantidade === 2 ? 80 : quantidade === 3 ? 60 : 46;
 
   return (
     <div>
@@ -179,89 +19,56 @@ export default function EtiquetaPage() {
           <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
           <div className="header-text">
             <h1>🏷️ Etiqueta para Caixa</h1>
-            <p>Imprima etiquetas com NF e nome do cliente em A4 retrato</p>
+            <p>Etiqueta A4 retrato com NF e nome do cliente</p>
           </div>
         </div>
       </div>
 
-      <main className="container no-print">
-        <div className="etiqueta-layout">
-          <div className="form-panel">
-            <h2 style={{ fontSize: "1.3rem", marginBottom: 20, color: "#1a202c" }}>Dados da Etiqueta</h2>
-            <div className="form-group">
-              <label>Número da NF</label>
-              <input
-                value={nf}
-                onChange={(e) => setNf(e.target.value)}
-                placeholder="Ex: 123456"
-                autoFocus
-              />
-            </div>
-            <div className="form-group">
-              <label>Nome do Cliente</label>
-              <input
-                value={cliente}
-                onChange={(e) => setCliente(e.target.value)}
-                placeholder="Nome completo"
-              />
-            </div>
-            <div className="form-group">
-              <label>Quantidade</label>
-              <div className="qtd-selector">
-                {[1, 2, 3, 4].map((n) => (
-                  <button
-                    key={n}
-                    className={`qtd-btn ${quantidade === n ? "active" : ""}`}
-                    onClick={() => setQuantidade(n)}
-                  >
-                    {n}x
-                  </button>
-                ))}
+      <main className="container">
+        <div className="layout">
+          <div className="sidebar no-print">
+            <div className="card">
+              <h2>Dados</h2>
+              <div className="form-group">
+                <label>Número da NF</label>
+                <input value={nf} onChange={e => setNf(e.target.value)} placeholder="Ex: 123456" autoFocus />
               </div>
+              <div className="form-group">
+                <label>Nome do Cliente</label>
+                <input value={cliente} onChange={e => setCliente(e.target.value)} placeholder="Nome completo" />
+              </div>
+              <div className="form-group">
+                <label>Quantidade por folha</label>
+                <div className="qtd-opts">
+                  {[1, 2, 3, 4].map(n => (
+                    <button key={n} className={`qtd-btn ${quantidade === n ? "active" : ""}`} onClick={() => setQuantidade(n)}>{n}x</button>
+                  ))}
+                </div>
+              </div>
+              {nf && cliente && (
+                <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={() => window.print()}>
+                  🖨️ Imprimir / Salvar PDF
+                </button>
+              )}
             </div>
-            <button
-              className="btn btn-primary"
-              style={{ width: "100%", marginTop: 8 }}
-              onClick={handleDownloadPDF}
-              disabled={!nf || !cliente}
-            >
-              📄 Baixar PDF
-            </button>
-            <button
-              className="btn btn-secondary"
-              style={{ width: "100%", marginTop: 8 }}
-              onClick={handlePrint}
-              disabled={!nf || !cliente}
-            >
-              🖨️ Imprimir
-            </button>
           </div>
 
-          <div className="preview-panel">
-            <h2 style={{ fontSize: "1.3rem", marginBottom: 20, color: "#1a202c" }}>
-              Pré-visualização
-              {nf && cliente && <span style={{ fontSize: "0.9rem", color: "#94a3b8", fontWeight: 400 }}> ({quantidade}x)</span>}
-            </h2>
-
+          <div className="preview-area">
             {!nf || !cliente ? (
-              <div className="preview-empty">
-                <span style={{ fontSize: 48, opacity: 0.3 }}>🏷️</span>
-                <p>Preencha os campos ao lado</p>
+              <div className="empty-state">
+                <span style={{ fontSize: 56, opacity: 0.2 }}>🏷️</span>
+                <p>Preencha os campos</p>
               </div>
             ) : (
-              <div className="preview-sheet" ref={printRef}>
-                <div className="preview-header">A4 Retrato — {quantidade}x etiqueta{quantidade > 1 ? "s" : ""}</div>
+              <div className="sheet">
+                <div className="sheet-label">A4 Retrato · {quantidade}x</div>
                 {Array.from({ length: quantidade }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="preview-label"
-                    style={{
-                      borderBottom: i < quantidade - 1 ? "2px dashed #d4d4d4" : "none",
-                      background: i % 2 === 0 ? "#fff" : "#fafafa",
-                    }}
-                  >
-                    <div className="preview-nf">{nf}</div>
-                    <div className="preview-cliente">{cliente}</div>
+                  <div key={i} className="label-box" style={{
+                    height: `${labelHeight}mm`,
+                    borderBottom: i < quantidade - 1 ? "2px dashed #d4d4d4" : "none",
+                  }}>
+                    <div className="label-nf" style={{ fontSize: `${fontSizeNf}px` }}>{nf}</div>
+                    <div className="label-cl" style={{ fontSize: `${fontSizeCl}px` }}>{cliente}</div>
                   </div>
                 ))}
               </div>
@@ -271,95 +78,99 @@ export default function EtiquetaPage() {
       </main>
 
       <style jsx>{`
-        .etiqueta-layout {
+        .layout {
           display: flex;
           gap: 32px;
           align-items: flex-start;
-          min-height: calc(100vh - 120px);
-          padding: 24px 0;
+          padding: 16px 0;
         }
-        .form-panel {
-          flex: 0 0 380px;
+        .sidebar {
+          flex: 0 0 340px;
+          position: sticky;
+          top: 16px;
+        }
+        .card {
           background: #fff;
           border-radius: 20px;
-          padding: 32px;
+          padding: 28px;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-          position: sticky;
-          top: 24px;
         }
-        .preview-panel {
+        .card h2 {
+          font-size: 1.2rem;
+          color: #1a202c;
+          margin-bottom: 20px;
+        }
+        .preview-area {
           flex: 1;
           min-width: 0;
         }
-        .preview-empty {
+        .empty-state {
           background: #fff;
           border-radius: 20px;
-          padding: 60px 32px;
+          padding: 80px 32px;
           text-align: center;
           color: #94a3b8;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
-        .preview-empty p {
+        .empty-state p {
           margin-top: 12px;
-          font-size: 1.05rem;
+          font-size: 1rem;
         }
-        .preview-sheet {
+        .sheet {
           background: #fff;
           border-radius: 20px;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
           overflow: hidden;
           border: 1px solid #e2e8f0;
         }
-        .preview-header {
+        .sheet-label {
           background: #f1f5f9;
-          padding: 10px 16px;
-          font-size: 0.85rem;
+          padding: 8px 16px;
+          font-size: 0.82rem;
           color: #64748b;
           text-align: center;
           border-bottom: 1px solid #e2e8f0;
           font-weight: 600;
         }
-        .preview-label {
+        .label-box {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           text-align: center;
-          padding: 20px 24px;
-          min-height: 140px;
+          padding: 4mm 8mm;
+          box-sizing: border-box;
         }
-        .preview-nf {
-          font-size: 2.6rem;
+        .label-nf {
           font-weight: 900;
-          letter-spacing: 3px;
+          letter-spacing: 4px;
           color: #000;
-          line-height: 1.1;
+          line-height: 1;
           word-break: break-all;
           max-width: 100%;
           text-transform: uppercase;
           font-family: "Courier New", monospace;
         }
-        .preview-cliente {
-          font-size: 1.5rem;
+        .label-cl {
           font-weight: 800;
           color: #000;
           margin-top: 6px;
-          line-height: 1.2;
+          line-height: 1.1;
           word-break: break-word;
           max-width: 100%;
           font-family: "Courier New", monospace;
         }
-        .qtd-selector {
+        .qtd-opts {
           display: flex;
           gap: 8px;
         }
         .qtd-btn {
           flex: 1;
-          padding: 14px;
+          padding: 12px;
           border: 2px solid #e2e8f0;
-          border-radius: 14px;
+          border-radius: 12px;
           background: #fff;
-          font-size: 1.05rem;
+          font-size: 1rem;
           font-weight: 600;
           font-family: Barlow, sans-serif;
           color: #64748b;
@@ -367,24 +178,23 @@ export default function EtiquetaPage() {
           transition: all 0.15s ease;
           text-align: center;
         }
-        .qtd-btn:hover {
-          border-color: #15814a;
-          color: #15814a;
+        .qtd-btn:hover { border-color: #15814a; color: #15814a; }
+        .qtd-btn.active { border-color: #15814a; background: #15814a; color: #fff; }
+
+        @media print {
+          .no-print { display: none !important; }
+          body { background: #fff !important; }
+          .layout { display: block !important; padding: 0 !important; }
+          .preview-area { max-width: 100% !important; }
+          .sheet { box-shadow: none !important; border: none !important; border-radius: 0 !important; }
+          .sheet-label { display: none !important; }
+          .label-box { page-break-inside: avoid; }
+          @page { size: A4 portrait; margin: 3mm; }
         }
-        .qtd-btn.active {
-          border-color: #15814a;
-          background: #15814a;
-          color: #fff;
-        }
+
         @media (max-width: 800px) {
-          .etiqueta-layout {
-            flex-direction: column;
-          }
-          .form-panel {
-            flex: none;
-            width: 100%;
-            position: static;
-          }
+          .layout { flex-direction: column; }
+          .sidebar { flex: none; width: 100%; position: static; }
         }
       `}</style>
     </div>

@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 type Modo = "caixa" | "produto";
 
-const LABEL_W = 50; // mm
-const LABEL_H = 20; // mm
+const LABEL_W = 50;
+const LABEL_H = 20;
 const COLS = 4;
 const ROWS = 14;
 const PAGE_W = 210;
 const PAGE_H = 297;
-const MARGIN = 5;
 
 const startX = (PAGE_W - COLS * LABEL_W) / 2;
-const startY = MARGIN;
+const startY = 5;
 
 export default function EtiquetaPage() {
   const [modo, setModo] = useState<Modo>("produto");
@@ -21,6 +20,8 @@ export default function EtiquetaPage() {
   const [cliente, setCliente] = useState("");
   const [produto, setProduto] = useState("");
   const [preco, setPreco] = useState("");
+  const [baixando, setBaixando] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   const line1 = modo === "caixa" ? nf : produto;
   const line2 = modo === "caixa" ? cliente : preco;
@@ -32,7 +33,73 @@ export default function EtiquetaPage() {
   const placeholder2 = modo === "caixa" ? "Nome completo" : "Ex: R$ 19,80";
 
   const totalLabels = COLS * ROWS;
-  const scale = 0.55;
+
+  const gerarHTML = () => {
+    let labels = "";
+    for (let i = 0; i < totalLabels; i++) {
+      const col = i % COLS;
+      const row = Math.floor(i / COLS);
+      labels += `
+        <div style="
+          position: absolute;
+          left: ${startX + col * LABEL_W}mm;
+          top: ${startY + row * LABEL_H}mm;
+          width: ${LABEL_W}mm;
+          height: ${LABEL_H}mm;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          border: 0.5px dashed #ccc;
+          box-sizing: border-box;
+          padding: 1mm;
+          overflow: hidden;
+        ">
+          <div style="font-size: 7px; font-weight: 800; color: #000; line-height: 1.1; word-break: break-word; max-width: 100%; text-transform: uppercase; font-family: 'Courier New', monospace;">${line1}</div>
+          <div style="font-size: 9px; font-weight: 900; color: #000; margin-top: 1px; line-height: 1; word-break: break-word; max-width: 100%; font-family: 'Courier New', monospace;">${line2}</div>
+        </div>
+      `;
+    }
+    return `
+      <html>
+      <head>
+        <style>
+          @page { size: A4 portrait; margin: 0; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { width: 210mm; height: 297mm; margin: 0 auto; background: #fff; font-family: 'Courier New', monospace; position: relative; }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
+      </head>
+      <body>
+        <div id="content" style="width:210mm;height:297mm;position:relative;">${labels}</div>
+        <script>
+          (function() {
+            var opt = {
+              margin: 0,
+              filename: 'etiquetas-${line1.replace(/[^a-z0-9]/gi, "_").substring(0, 20)}.pdf',
+              image: { type: 'jpeg', quality: 1 },
+              html2canvas: { scale: 4, useCORS: true, letterRendering: true, width: 210 * 3.78, height: 297 * 3.78 },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(document.getElementById('content')).save().then(function() {
+              window.close();
+            });
+          })();
+        <\/script>
+      </body>
+      </html>
+    `;
+  };
+
+  const handleDownload = () => {
+    setBaixando(true);
+    const win = window.open("", "_blank");
+    if (!win) { setBaixando(false); return; }
+    win.document.write(gerarHTML());
+    win.document.close();
+    setTimeout(() => setBaixando(false), 1000);
+  };
 
   return (
     <div>
@@ -64,8 +131,13 @@ export default function EtiquetaPage() {
                 <input value={line2} onChange={e => setLine2(e.target.value)} placeholder={placeholder2} />
               </div>
               {line1 && line2 && (
-                <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={() => window.print()}>
-                  🖨️ Imprimir / Salvar PDF
+                <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={handleDownload} disabled={baixando}>
+                  {baixando ? "⏳ Gerando..." : "📄 Baixar PDF"}
+                </button>
+              )}
+              {line1 && line2 && (
+                <button className="btn btn-secondary" style={{ width: "100%", marginTop: 8 }} onClick={() => window.print()}>
+                  🖨️ Imprimir
                 </button>
               )}
             </div>
@@ -84,21 +156,12 @@ export default function EtiquetaPage() {
             ) : (
               <div className="sheet-wrapper">
                 <div className="sheet-label">A4 Retrato • {totalLabels}x etiquetas de 5×2cm</div>
-                <div className="sheet" style={{ width: `${PAGE_W}mm`, height: `${PAGE_H}mm` }}>
+                <div className="sheet" ref={sheetRef} style={{ width: `${PAGE_W}mm`, height: `${PAGE_H}mm` }}>
                   {Array.from({ length: totalLabels }).map((_, i) => {
                     const col = i % COLS;
                     const row = Math.floor(i / COLS);
                     return (
-                      <div
-                        key={i}
-                        className="label"
-                        style={{
-                          left: `${startX + col * LABEL_W}mm`,
-                          top: `${startY + row * LABEL_H}mm`,
-                          width: `${LABEL_W}mm`,
-                          height: `${LABEL_H}mm`,
-                        }}
-                      >
+                      <div key={i} className="label" style={{ left: `${startX + col * LABEL_W}mm`, top: `${startY + row * LABEL_H}mm`, width: `${LABEL_W}mm`, height: `${LABEL_H}mm` }}>
                         <div className="label-nome">{line1}</div>
                         <div className="label-preco">{line2}</div>
                       </div>
@@ -125,39 +188,10 @@ export default function EtiquetaPage() {
         .empty-state p { margin-top: 12px; font-size: 1rem; }
         .sheet-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid #e2e8f0; }
         .sheet-label { background: #f1f5f9; padding: 10px 16px; font-size: 0.85rem; color: #64748b; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
-        .sheet { position: relative; margin: 0 auto; background: #fff; transform: scale(${scale}); transform-origin: top left; }
-        .label {
-          position: absolute;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          border: 0.5px dashed #e2e8f0;
-          box-sizing: border-box;
-          padding: 1mm;
-          overflow: hidden;
-        }
-        .label-nome {
-          font-size: 7px;
-          font-weight: 800;
-          color: #000;
-          line-height: 1.1;
-          word-break: break-word;
-          max-width: 100%;
-          text-transform: uppercase;
-          font-family: "Courier New", monospace;
-        }
-        .label-preco {
-          font-size: 9px;
-          font-weight: 900;
-          color: #000;
-          margin-top: 1px;
-          line-height: 1;
-          word-break: break-word;
-          max-width: 100%;
-          font-family: "Courier New", monospace;
-        }
+        .sheet { position: relative; margin: 0 auto; background: #fff; transform: scale(0.55); transform-origin: top left; }
+        .label { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 0.5px dashed #e2e8f0; box-sizing: border-box; padding: 1mm; overflow: hidden; }
+        .label-nome { font-size: 7px; font-weight: 800; color: #000; line-height: 1.1; word-break: break-word; max-width: 100%; text-transform: uppercase; font-family: "Courier New", monospace; }
+        .label-preco { font-size: 9px; font-weight: 900; color: #000; margin-top: 1px; line-height: 1; word-break: break-word; max-width: 100%; font-family: "Courier New", monospace; }
 
         @media print {
           .no-print { display: none !important; }

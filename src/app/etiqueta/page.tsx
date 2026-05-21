@@ -71,9 +71,6 @@ export default function EtiquetaPage() {
     printWindow.document.close();
   };
 
-  const labelHeight = 99;
-  const previewScale = Math.min(1, 700 / (210 * (quantidade > 1 ? 1.5 : 1)));
-
   return (
     <div>
       <div className="header no-print">
@@ -123,7 +120,8 @@ export default function EtiquetaPage() {
               </div>
             </div>
             <button
-              className="btn btn-primary print-btn"
+              className="btn btn-primary"
+              style={{ width: "100%", marginTop: 8 }}
               onClick={handlePrint}
               disabled={!nf || !cliente}
             >
@@ -173,7 +171,7 @@ export default function EtiquetaPage() {
           padding: 24px 0;
         }
         .form-panel {
-          flex: 0 0 360px;
+          flex: 0 0 380px;
           background: #fff;
           border-radius: 20px;
           padding: 32px;
@@ -206,11 +204,12 @@ export default function EtiquetaPage() {
         }
         .preview-header {
           background: #f1f5f9;
-          padding: 8px 16px;
-          font-size: 0.8rem;
+          padding: 10px 16px;
+          font-size: 0.85rem;
           color: #64748b;
           text-align: center;
           border-bottom: 1px solid #e2e8f0;
+          font-weight: 600;
         }
         .preview-label {
           display: flex;
@@ -218,11 +217,11 @@ export default function EtiquetaPage() {
           align-items: center;
           justify-content: center;
           text-align: center;
-          padding: 16px 20px;
-          min-height: 120px;
+          padding: 20px 24px;
+          min-height: 140px;
         }
         .preview-nf {
-          font-size: 2.2rem;
+          font-size: 2.6rem;
           font-weight: 900;
           letter-spacing: 3px;
           color: #000;
@@ -233,10 +232,10 @@ export default function EtiquetaPage() {
           font-family: "Courier New", monospace;
         }
         .preview-cliente {
-          font-size: 1.3rem;
+          font-size: 1.5rem;
           font-weight: 800;
           color: #000;
-          margin-top: 4px;
+          margin-top: 6px;
           line-height: 1.2;
           word-break: break-word;
           max-width: 100%;
@@ -248,12 +247,13 @@ export default function EtiquetaPage() {
         }
         .qtd-btn {
           flex: 1;
-          padding: 10px;
+          padding: 14px;
           border: 2px solid #e2e8f0;
-          border-radius: 12px;
+          border-radius: 14px;
           background: #fff;
-          font-size: 1rem;
+          font-size: 1.05rem;
           font-weight: 600;
+          font-family: Barlow, sans-serif;
           color: #64748b;
           cursor: pointer;
           transition: all 0.15s ease;
@@ -267,16 +267,6 @@ export default function EtiquetaPage() {
           border-color: #15814a;
           background: #15814a;
           color: #fff;
-        }
-        .print-btn {
-          width: 100%;
-          font-size: 1.05rem;
-          padding: 14px 24px;
-          margin-top: 8px;
-        }
-        .print-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
         }
         @media (max-width: 800px) {
           .etiqueta-layout {

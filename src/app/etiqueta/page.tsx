@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 
+const labelHeights: Record<number, number> = { 1: 270, 2: 135, 3: 90, 4: 67 };
+const nfSizes: Record<number, number> = { 1: 220, 2: 160, 3: 120, 4: 96 };
+const clSizes: Record<number, number> = { 1: 130, 2: 90, 3: 70, 4: 56 };
+
 export default function EtiquetaPage() {
   const [nf, setNf] = useState("");
   const [cliente, setCliente] = useState("");
@@ -11,24 +15,28 @@ export default function EtiquetaPage() {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
+    const h = labelHeights[quantidade];
+    const nfSize = nfSizes[quantidade];
+    const clSize = clSizes[quantidade];
+
     let labels = "";
     for (let i = 0; i < quantidade; i++) {
       labels += `
         <div style="
           width: 100%;
-          height: 99mm;
+          height: ${h}mm;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           text-align: center;
-          border-bottom: 2px dashed #ccc;
+          border-bottom: ${i < quantidade - 1 ? "2px dashed #ccc" : "none"};
           page-break-inside: avoid;
           box-sizing: border-box;
           padding: 5mm 10mm;
         ">
           <div style="
-            font-size: 96px;
+            font-size: ${nfSize}px;
             font-weight: 900;
             letter-spacing: 6px;
             color: #000;
@@ -39,7 +47,7 @@ export default function EtiquetaPage() {
             font-family: 'Courier New', monospace;
           ">${nf}</div>
           <div style="
-            font-size: 56px;
+            font-size: ${clSize}px;
             font-weight: 800;
             color: #000;
             margin-top: 12px;
@@ -142,7 +150,7 @@ export default function EtiquetaPage() {
               </div>
             ) : (
               <div className="preview-sheet">
-                <div className="preview-header">A4 Retrato</div>
+                <div className="preview-header">A4 Retrato — {quantidade}x etiqueta{quantidade > 1 ? "s" : ""}</div>
                 {Array.from({ length: quantidade }).map((_, i) => (
                   <div
                     key={i}

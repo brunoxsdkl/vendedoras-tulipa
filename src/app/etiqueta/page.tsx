@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const labelHeights: Record<number, number> = { 1: 270, 2: 135, 3: 90, 4: 67 };
 const nfSizes: Record<number, number> = { 1: 220, 2: 160, 3: 120, 4: 96 };
@@ -10,6 +10,7 @@ export default function EtiquetaPage() {
   const [nf, setNf] = useState("");
   const [cliente, setCliente] = useState("");
   const [quantidade, setQuantidade] = useState(1);
+  const printRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
@@ -72,11 +73,102 @@ export default function EtiquetaPage() {
       </head>
       <body>
         ${labels}
-        <script>window.print();window.close();<\/script>
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            }, 300);
+          };
+        <\/script>
       </body>
       </html>
     `);
     printWindow.document.close();
+  };
+
+  const handleDownloadPDF = async () => {
+    const h = labelHeights[quantidade];
+    const nfSize = nfSizes[quantidade];
+    const clSize = clSizes[quantidade];
+
+    const pdfWindow = window.open("", "_blank");
+    if (!pdfWindow) return;
+
+    let labels = "";
+    for (let i = 0; i < quantidade; i++) {
+      labels += `
+        <div style="
+          width: 100%;
+          height: ${h}mm;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          border-bottom: ${i < quantidade - 1 ? "2px dashed #ccc" : "none"};
+          page-break-inside: avoid;
+          box-sizing: border-box;
+          padding: 5mm 10mm;
+        ">
+          <div style="
+            font-size: ${nfSize}px;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #000;
+            line-height: 1;
+            word-break: break-all;
+            max-width: 100%;
+            text-transform: uppercase;
+            font-family: 'Courier New', monospace;
+          ">${nf}</div>
+          <div style="
+            font-size: ${clSize}px;
+            font-weight: 800;
+            color: #000;
+            margin-top: 12px;
+            line-height: 1.1;
+            word-break: break-word;
+            max-width: 100%;
+            font-family: 'Courier New', monospace;
+          ">${cliente}</div>
+        </div>
+      `;
+    }
+
+    const styles = `
+      @page { size: A4 portrait; margin: 3mm; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { width: 210mm; margin: 0 auto; background: #fff; font-family: 'Courier New', monospace; }
+    `;
+
+    pdfWindow.document.write(`
+      <html>
+      <head>
+        <style>${styles}</style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
+      </head>
+      <body>
+        <div id="pdf-content">
+          ${labels}
+        </div>
+        <script>
+          var opt = {
+            margin:       3,
+            filename:     'etiqueta-${nf}.pdf',
+            image:        { type: 'jpeg', quality: 1 },
+            html2canvas:  { scale: 3, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: 'avoid-all' }
+          };
+          html2pdf().set(opt).from(document.getElementById('pdf-content')).save().then(function() {
+            window.close();
+          });
+        <\/script>
+      </body>
+      </html>
+    `);
+    pdfWindow.document.close();
   };
 
   return (
@@ -130,10 +222,18 @@ export default function EtiquetaPage() {
             <button
               className="btn btn-primary"
               style={{ width: "100%", marginTop: 8 }}
+              onClick={handleDownloadPDF}
+              disabled={!nf || !cliente}
+            >
+              📄 Baixar PDF
+            </button>
+            <button
+              className="btn btn-secondary"
+              style={{ width: "100%", marginTop: 8 }}
               onClick={handlePrint}
               disabled={!nf || !cliente}
             >
-              🖨️ Imprimir Etiqueta{!nf || !cliente ? " (preencha)" : ""}
+              🖨️ Imprimir
             </button>
           </div>
 
@@ -149,7 +249,7 @@ export default function EtiquetaPage() {
                 <p>Preencha os campos ao lado</p>
               </div>
             ) : (
-              <div className="preview-sheet">
+              <div className="preview-sheet" ref={printRef}>
                 <div className="preview-header">A4 Retrato — {quantidade}x etiqueta{quantidade > 1 ? "s" : ""}</div>
                 {Array.from({ length: quantidade }).map((_, i) => (
                   <div

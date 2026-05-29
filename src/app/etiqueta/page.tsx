@@ -27,10 +27,10 @@ export default function EtiquetaPage() {
           @page { size: A4 portrait; margin: 0; }
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { width: 210mm; height: 297mm; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; }
-          .etiqueta { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 2px dashed #ccc; padding: 10mm; text-align: center; }
+          .etiqueta { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 2px dashed #ccc; padding: 0; text-align: center; }
           .etiqueta:last-child { border-bottom: none; }
-          .etiqueta-nf { font-size: 28pt; font-weight: 900; color: #000; letter-spacing: 2px; margin-bottom: 8mm; }
-          .etiqueta-cliente { font-size: 24pt; font-weight: 700; color: #000; }
+          .etiqueta-nf { font-size: 54pt; font-weight: 900; color: #000; letter-spacing: 4px; }
+          .etiqueta-cliente { font-size: 40pt; font-weight: 700; color: #000; }
         </style>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
       </head>
@@ -131,10 +131,10 @@ export default function EtiquetaPage() {
         .sheet-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid #e2e8f0; }
         .sheet-label { background: #f1f5f9; padding: 10px 16px; font-size: 0.85rem; color: #64748b; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
         .sheet { display: flex; flex-direction: column; transform: scale(0.55); transform-origin: top left; width: 210mm; }
-        .etiqueta-preview { height: 99mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 2px dashed #cbd5e1; padding: 8mm; }
+        .etiqueta-preview { height: 99mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 2px dashed #cbd5e1; padding: 0; }
         .etiqueta-preview:last-child { border-bottom: none; }
-        .preview-nf { font-size: 28pt; font-weight: 900; color: #000; letter-spacing: 2px; margin-bottom: 6mm; font-family: Arial, Helvetica, sans-serif; }
-        .preview-cliente { font-size: 22pt; font-weight: 700; color: #000; font-family: Arial, Helvetica, sans-serif; word-break: break-word; max-width: 100%; }
+        .preview-nf { font-size: 54pt; font-weight: 900; color: #000; letter-spacing: 4px; font-family: Arial, Helvetica, sans-serif; }
+        .preview-cliente { font-size: 40pt; font-weight: 700; color: #000; font-family: Arial, Helvetica, sans-serif; word-break: break-word; max-width: 100%; }
 
         @media print {
           .no-print { display: none !important; }
@@ -146,8 +146,8 @@ export default function EtiquetaPage() {
           .sheet { transform: none !important; }
           .etiqueta-preview { border-bottom: 2px dashed #ccc; }
           .etiqueta-preview:last-child { border-bottom: none; }
-          .preview-nf { font-size: 28pt !important; }
-          .preview-cliente { font-size: 22pt !important; }
+          .preview-nf { font-size: 54pt !important; }
+          .preview-cliente { font-size: 40pt !important; }
           @page { size: A4 portrait; margin: 0; }
         }
 

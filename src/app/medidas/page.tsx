@@ -177,7 +177,7 @@ export default function MedidasPage() {
                 style={{ cursor: "default", padding: "28px 24px 24px" }}
               >
                 <h3 style={{ fontSize: "1.2rem" }}>{caixa.nome}</h3>
-                {caixa.nome === "ÁLCOOL ARAUCÁRIA" ? (
+                {caixa.nome === "ÁLCOOL ARAUCÁRIA" || caixa.nome === "SITE MÉDIA" || caixa.nome === "MINI SITE" ? (
                   <div
                     style={{
                       display: "flex",
@@ -187,8 +187,8 @@ export default function MedidasPage() {
                     }}
                   >
                     <img
-                      src="/araucaria.png"
-                      alt="Álcool Araucária"
+                      src={caixa.nome === "ÁLCOOL ARAUCÁRIA" ? "/araucaria.png" : caixa.nome === "SITE MÉDIA" ? "/media.png" : "/pequena.png"}
+                      alt={caixa.nome}
                       style={{
                         maxWidth: "100%",
                         maxHeight: "100%",

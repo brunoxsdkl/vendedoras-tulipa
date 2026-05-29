@@ -16,7 +16,6 @@ const catalogos: Catalogo[] = [
     nome: "Óleos Odorizantes",
     descricao: "Fragrâncias para odorizantes e perfumaria em geral",
     icone: "🌿",
-    tipo: "pdf",
     pdf: "/catalogos/oleos-odorizantes.pdf",
   },
 

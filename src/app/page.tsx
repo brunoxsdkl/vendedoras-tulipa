@@ -26,6 +26,12 @@ const menuItems = [
     desc: "Dimensione as receitas proporcionalmente para o volume que você precisa",
   },
   {
+    href: "/catalogos",
+    icon: "📖",
+    title: "Catálogos",
+    desc: "Catálogos digitais dos produtos Tulipa — navegue como slides",
+  },
+  {
     href: "/transportadoras",
     icon: "🚚",
     title: "Transportadoras",

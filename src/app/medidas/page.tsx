@@ -177,7 +177,29 @@ export default function MedidasPage() {
                 style={{ cursor: "default", padding: "28px 24px 24px" }}
               >
                 <h3 style={{ fontSize: "1.2rem" }}>{caixa.nome}</h3>
-                <Box3D dims={caixa.dimensoes} cor={caixa.cor} />
+                {caixa.nome === "ÁLCOOL ARAUCÁRIA" ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: 220,
+                    }}
+                  >
+                    <img
+                      src="/araucaria.png"
+                      alt="Álcool Araucária"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                        borderRadius: 12,
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <Box3D dims={caixa.dimensoes} cor={caixa.cor} />
+                )}
                 <div
                   style={{
                     marginTop: 8,

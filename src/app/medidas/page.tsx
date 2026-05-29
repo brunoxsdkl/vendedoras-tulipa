@@ -195,6 +195,46 @@ export default function MedidasPage() {
                 </div>
               </div>
             ))}
+            <div
+              className="menu-card"
+              style={{ cursor: "default", padding: "28px 24px 24px" }}
+            >
+              <h3 style={{ fontSize: "1.2rem" }}>BARRICA 50L</h3>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 220,
+                }}
+              >
+                <img
+                  src="/barrica.jpg"
+                  alt="Barrica 50L"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "contain",
+                    borderRadius: 12,
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  marginTop: 8,
+                  textAlign: "center",
+                  fontSize: "0.95rem",
+                  lineHeight: 1.6,
+                }}
+              >
+                <p>
+                  <strong>Capacidade:</strong> 50 litros
+                </p>
+                <p>
+                  <strong>Uso:</strong> Armazenamento e preparo de produtos
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </main>

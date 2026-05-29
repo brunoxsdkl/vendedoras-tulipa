@@ -2,17 +2,18 @@
 
 import { useState } from "react";
 
-const TOTAL = 3;
+const OPCOES = [1, 2, 3, 4, 6];
 
 export default function EtiquetaPage() {
   const [nf, setNf] = useState("");
   const [cliente, setCliente] = useState("");
+  const [quantidade, setQuantidade] = useState(3);
 
   const preenchido = nf.trim() && cliente.trim();
 
   const gerarHTML = () => {
     let labels = "";
-    for (let i = 0; i < TOTAL; i++) {
+    for (let i = 0; i < quantidade; i++) {
       labels += `
         <div class="etiqueta">
           <div class="etiqueta-nf">NF: ${nf}</div>
@@ -68,7 +69,7 @@ export default function EtiquetaPage() {
           <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
           <div className="header-text">
             <h1>🏷️ Etiqueta para Caixa</h1>
-            <p>Etiqueta A4 retrato — 3 por folha</p>
+            <p>Etiqueta A4 retrato — {quantidade} {quantidade === 1 ? "etiqueta" : "etiquetas"} por folha</p>
           </div>
         </div>
       </div>
@@ -84,6 +85,21 @@ export default function EtiquetaPage() {
               <div className="form-group">
                 <label>Nome do Cliente</label>
                 <input value={cliente} onChange={(e) => setCliente(e.target.value)} placeholder="Nome completo" />
+              </div>
+              <div className="form-group">
+                <label>Quantidade por folha</label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {OPCOES.map((n) => (
+                    <button key={n} type="button"
+                      onClick={() => setQuantidade(n)}
+                      style={{
+                        flex: 1, padding: "8px 0", borderRadius: 10, border: quantidade === n ? "2px solid #15814a" : "2px solid #e2e8f0",
+                        background: quantidade === n ? "#f0f7f3" : "#fff", color: "#2d3748", fontWeight: quantidade === n ? 700 : 500,
+                        cursor: "pointer", fontSize: "0.9rem", fontFamily: "Barlow, sans-serif", transition: "all 0.1s",
+                      }}
+                    >{n}</button>
+                  ))}
+                </div>
               </div>
               {preenchido && (
                 <>
@@ -106,9 +122,9 @@ export default function EtiquetaPage() {
               </div>
             ) : (
               <div className="sheet-wrapper">
-                <div className="sheet-label">A4 Retrato • 3 etiquetas</div>
+                <div className="sheet-label">A4 Retrato • {quantidade} {quantidade === 1 ? "etiqueta" : "etiquetas"}</div>
                 <div className="sheet">
-                  {Array.from({ length: TOTAL }).map((_, i) => (
+                  {Array.from({ length: quantidade }).map((_, i) => (
                     <div key={i} className="etiqueta-preview">
                       <div className="preview-nf">NF: {nf}</div>
                       <div className="preview-cliente">{cliente}</div>

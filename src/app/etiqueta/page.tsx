@@ -1,63 +1,22 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 
-type Modo = "caixa" | "produto";
-
-const LABEL_W = 50;
-const LABEL_H = 20;
-const COLS = 4;
-const ROWS = 14;
-const PAGE_W = 210;
-const PAGE_H = 297;
-
-const startX = (PAGE_W - COLS * LABEL_W) / 2;
-const startY = 5;
+const TOTAL = 3;
 
 export default function EtiquetaPage() {
-  const [modo, setModo] = useState<Modo>("produto");
   const [nf, setNf] = useState("");
   const [cliente, setCliente] = useState("");
-  const [produto, setProduto] = useState("");
-  const [preco, setPreco] = useState("");
-  const [baixando, setBaixando] = useState(false);
-  const sheetRef = useRef<HTMLDivElement>(null);
 
-  const line1 = modo === "caixa" ? nf : produto;
-  const line2 = modo === "caixa" ? cliente : preco;
-  const setLine1 = modo === "caixa" ? setNf : setProduto;
-  const setLine2 = modo === "caixa" ? setCliente : setPreco;
-  const label1 = modo === "caixa" ? "Número da NF" : "Nome do Produto";
-  const label2 = modo === "caixa" ? "Nome do Cliente" : "Preço";
-  const placeholder1 = modo === "caixa" ? "Ex: 123456" : "Ex: CUBO 250ML";
-  const placeholder2 = modo === "caixa" ? "Nome completo" : "Ex: R$ 19,80";
-
-  const totalLabels = COLS * ROWS;
+  const preenchido = nf.trim() && cliente.trim();
 
   const gerarHTML = () => {
     let labels = "";
-    for (let i = 0; i < totalLabels; i++) {
-      const col = i % COLS;
-      const row = Math.floor(i / COLS);
+    for (let i = 0; i < TOTAL; i++) {
       labels += `
-        <div style="
-          position: absolute;
-          left: ${startX + col * LABEL_W}mm;
-          top: ${startY + row * LABEL_H}mm;
-          width: ${LABEL_W}mm;
-          height: ${LABEL_H}mm;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          border: 0.5px dashed #ccc;
-          box-sizing: border-box;
-          padding: 1mm;
-          overflow: hidden;
-        ">
-          <div style="font-size: 7px; font-weight: 800; color: #000; line-height: 1.1; word-break: break-word; max-width: 100%; text-transform: uppercase; font-family: 'Courier New', monospace;">${line1}</div>
-          <div style="font-size: 9px; font-weight: 900; color: #000; margin-top: 1px; line-height: 1; word-break: break-word; max-width: 100%; font-family: 'Courier New', monospace;">${line2}</div>
+        <div class="etiqueta">
+          <div class="etiqueta-nf">NF: ${nf}</div>
+          <div class="etiqueta-cliente">${cliente}</div>
         </div>
       `;
     }
@@ -67,24 +26,26 @@ export default function EtiquetaPage() {
         <style>
           @page { size: A4 portrait; margin: 0; }
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { width: 210mm; height: 297mm; margin: 0 auto; background: #fff; font-family: 'Courier New', monospace; position: relative; }
+          body { width: 210mm; height: 297mm; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; }
+          .etiqueta { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 2px dashed #ccc; padding: 10mm; text-align: center; }
+          .etiqueta:last-child { border-bottom: none; }
+          .etiqueta-nf { font-size: 28pt; font-weight: 900; color: #000; letter-spacing: 2px; margin-bottom: 8mm; }
+          .etiqueta-cliente { font-size: 24pt; font-weight: 700; color: #000; }
         </style>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
       </head>
       <body>
-        <div id="content" style="width:210mm;height:297mm;position:relative;">${labels}</div>
+        <div id="content">${labels}</div>
         <script>
           (function() {
             var opt = {
               margin: 0,
-              filename: 'etiquetas-${line1.replace(/[^a-z0-9]/gi, "_").substring(0, 20)}.pdf',
+              filename: 'etiqueta-caixa-${nf.replace(/[^a-z0-9]/gi, "_").substring(0, 20)}.pdf',
               image: { type: 'jpeg', quality: 1 },
-              html2canvas: { scale: 4, useCORS: true, letterRendering: true, width: 210 * 3.78, height: 297 * 3.78 },
+              html2canvas: { scale: 3, useCORS: true, letterRendering: true },
               jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-            html2pdf().set(opt).from(document.getElementById('content')).save().then(function() {
-              window.close();
-            });
+            html2pdf().set(opt).from(document.getElementById('content')).save().then(function() { window.close(); });
           })();
         <\/script>
       </body>
@@ -93,12 +54,10 @@ export default function EtiquetaPage() {
   };
 
   const handleDownload = () => {
-    setBaixando(true);
     const win = window.open("", "_blank");
-    if (!win) { setBaixando(false); return; }
+    if (!win) return;
     win.document.write(gerarHTML());
     win.document.close();
-    setTimeout(() => setBaixando(false), 1000);
   };
 
   return (
@@ -108,8 +67,8 @@ export default function EtiquetaPage() {
           <a href="/" className="back-btn">← Voltar</a>
           <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
           <div className="header-text">
-            <h1>🏷️ Etiqueta Pequena</h1>
-            <p>Etiquetas de 5cm × 2cm — {totalLabels} por folha A4</p>
+            <h1>🏷️ Etiqueta para Caixa</h1>
+            <p>Etiqueta A4 retrato — 3 por folha</p>
           </div>
         </div>
       </div>
@@ -118,55 +77,43 @@ export default function EtiquetaPage() {
         <div className="layout">
           <div className="sidebar no-print">
             <div className="card">
-              <div className="modo-selector">
-                <button className={`modo-btn ${modo === "produto" ? "active" : ""}`} onClick={() => setModo("produto")}>🏷️ Produto</button>
-                <button className={`modo-btn ${modo === "caixa" ? "active" : ""}`} onClick={() => setModo("caixa")}>📦 Caixa</button>
+              <div className="form-group">
+                <label>Número da NF</label>
+                <input value={nf} onChange={(e) => setNf(e.target.value)} placeholder="Ex: 123456" autoFocus />
               </div>
               <div className="form-group">
-                <label>{label1}</label>
-                <input value={line1} onChange={e => setLine1(e.target.value)} placeholder={placeholder1} autoFocus />
+                <label>Nome do Cliente</label>
+                <input value={cliente} onChange={(e) => setCliente(e.target.value)} placeholder="Nome completo" />
               </div>
-              <div className="form-group">
-                <label>{label2}</label>
-                <input value={line2} onChange={e => setLine2(e.target.value)} placeholder={placeholder2} />
-              </div>
-              {line1 && line2 && (
-                <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={handleDownload} disabled={baixando}>
-                  {baixando ? "⏳ Gerando..." : "📄 Baixar PDF"}
-                </button>
+              {preenchido && (
+                <>
+                  <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={handleDownload}>
+                    📄 Baixar PDF
+                  </button>
+                  <button className="btn btn-secondary" style={{ width: "100%", marginTop: 8 }} onClick={() => window.print()}>
+                    🖨️ Imprimir
+                  </button>
+                </>
               )}
-              {line1 && line2 && (
-                <button className="btn btn-secondary" style={{ width: "100%", marginTop: 8 }} onClick={() => window.print()}>
-                  🖨️ Imprimir
-                </button>
-              )}
-            </div>
-            <div className="info-card">
-              <strong>{totalLabels} etiquetas</strong> por folha A4<br />
-              Cada etiqueta: <strong>5cm × 2cm</strong>
             </div>
           </div>
 
           <div className="preview-area">
-            {!line1 || !line2 ? (
+            {!preenchido ? (
               <div className="empty-state">
                 <span style={{ fontSize: 56, opacity: 0.2 }}>🏷️</span>
-                <p>Preencha os campos</p>
+                <p>Preencha a NF e o cliente</p>
               </div>
             ) : (
               <div className="sheet-wrapper">
-                <div className="sheet-label">A4 Retrato • {totalLabels}x etiquetas de 5×2cm</div>
-                <div className="sheet" ref={sheetRef} style={{ width: `${PAGE_W}mm`, height: `${PAGE_H}mm` }}>
-                  {Array.from({ length: totalLabels }).map((_, i) => {
-                    const col = i % COLS;
-                    const row = Math.floor(i / COLS);
-                    return (
-                      <div key={i} className="label" style={{ left: `${startX + col * LABEL_W}mm`, top: `${startY + row * LABEL_H}mm`, width: `${LABEL_W}mm`, height: `${LABEL_H}mm` }}>
-                        <div className="label-nome">{line1}</div>
-                        <div className="label-preco">{line2}</div>
-                      </div>
-                    );
-                  })}
+                <div className="sheet-label">A4 Retrato • 3 etiquetas</div>
+                <div className="sheet">
+                  {Array.from({ length: TOTAL }).map((_, i) => (
+                    <div key={i} className="etiqueta-preview">
+                      <div className="preview-nf">NF: {nf}</div>
+                      <div className="preview-cliente">{cliente}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -174,24 +121,20 @@ export default function EtiquetaPage() {
         </div>
       </main>
 
-      <style jsx>{`
+      <style>{`
         .layout { display: flex; gap: 32px; align-items: flex-start; padding: 16px 0; }
         .sidebar { flex: 0 0 340px; position: sticky; top: 16px; }
         .card { background: #fff; border-radius: 20px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-        .info-card { background: #f0f7f3; border-radius: 14px; padding: 16px 20px; margin-top: 12px; font-size: 0.9rem; color: #0d5e35; line-height: 1.5; }
-        .modo-selector { display: flex; gap: 8px; margin-bottom: 24px; }
-        .modo-btn { flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; background: #fff; font-size: 0.95rem; font-weight: 600; font-family: Barlow, sans-serif; color: #64748b; cursor: pointer; transition: all 0.15s ease; text-align: center; }
-        .modo-btn:hover { border-color: #15814a; color: #15814a; }
-        .modo-btn.active { border-color: #15814a; background: #15814a; color: #fff; }
         .preview-area { flex: 1; min-width: 0; }
         .empty-state { background: #fff; border-radius: 20px; padding: 80px 32px; text-align: center; color: #94a3b8; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .empty-state p { margin-top: 12px; font-size: 1rem; }
         .sheet-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid #e2e8f0; }
         .sheet-label { background: #f1f5f9; padding: 10px 16px; font-size: 0.85rem; color: #64748b; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
-        .sheet { position: relative; margin: 0 auto; background: #fff; transform: scale(0.55); transform-origin: top left; }
-        .label { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 0.5px dashed #e2e8f0; box-sizing: border-box; padding: 1mm; overflow: hidden; }
-        .label-nome { font-size: 7px; font-weight: 800; color: #000; line-height: 1.1; word-break: break-word; max-width: 100%; text-transform: uppercase; font-family: "Courier New", monospace; }
-        .label-preco { font-size: 9px; font-weight: 900; color: #000; margin-top: 1px; line-height: 1; word-break: break-word; max-width: 100%; font-family: "Courier New", monospace; }
+        .sheet { display: flex; flex-direction: column; transform: scale(0.55); transform-origin: top left; width: 210mm; }
+        .etiqueta-preview { height: 99mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 2px dashed #cbd5e1; padding: 8mm; }
+        .etiqueta-preview:last-child { border-bottom: none; }
+        .preview-nf { font-size: 28pt; font-weight: 900; color: #000; letter-spacing: 2px; margin-bottom: 6mm; font-family: Arial, Helvetica, sans-serif; }
+        .preview-cliente { font-size: 22pt; font-weight: 700; color: #000; font-family: Arial, Helvetica, sans-serif; word-break: break-word; max-width: 100%; }
 
         @media print {
           .no-print { display: none !important; }
@@ -201,7 +144,10 @@ export default function EtiquetaPage() {
           .sheet-wrapper { box-shadow: none !important; border: none !important; border-radius: 0 !important; }
           .sheet-label { display: none !important; }
           .sheet { transform: none !important; }
-          .label { border: 0.5px dashed #ccc; }
+          .etiqueta-preview { border-bottom: 2px dashed #ccc; }
+          .etiqueta-preview:last-child { border-bottom: none; }
+          .preview-nf { font-size: 28pt !important; }
+          .preview-cliente { font-size: 22pt !important; }
           @page { size: A4 portrait; margin: 0; }
         }
 

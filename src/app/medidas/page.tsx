@@ -228,6 +228,9 @@ export default function MedidasPage() {
                 }}
               >
                 <p>
+                  <strong>Dimensões:</strong> 76 cm (altura) x 36 cm (diâmetro)
+                </p>
+                <p>
                   <strong>Capacidade:</strong> 50 litros
                 </p>
                 <p>

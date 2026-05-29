@@ -26,11 +26,11 @@ export default function EtiquetaPage() {
         <style>
           @page { size: A4 portrait; margin: 0; }
           * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { width: 210mm; height: 297mm; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; }
-          .etiqueta { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 2px dashed #ccc; padding: 0; text-align: center; }
+          body { width: 210mm; height: 297mm; margin: 0; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; }
+          .etiqueta { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 2px dashed #ccc; padding: 0; text-align: center; }
           .etiqueta:last-child { border-bottom: none; }
-          .etiqueta-nf { font-size: 54pt; font-weight: 900; color: #000; letter-spacing: 4px; }
-          .etiqueta-cliente { font-size: 40pt; font-weight: 700; color: #000; }
+          .etiqueta-nf { font-size: 54pt; font-weight: 900; color: #000; letter-spacing: 4px; line-height: 1.2; }
+          .etiqueta-cliente { font-size: 40pt; font-weight: 700; color: #000; line-height: 1.2; }
         </style>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
       </head>
@@ -128,9 +128,9 @@ export default function EtiquetaPage() {
         .preview-area { flex: 1; min-width: 0; }
         .empty-state { background: #fff; border-radius: 20px; padding: 80px 32px; text-align: center; color: #94a3b8; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
         .empty-state p { margin-top: 12px; font-size: 1rem; }
-        .sheet-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid #e2e8f0; }
+        .sheet-wrapper { background: #fff; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid #e2e8f0; display: flex; justify-content: center; }
         .sheet-label { background: #f1f5f9; padding: 10px 16px; font-size: 0.85rem; color: #64748b; text-align: center; border-bottom: 1px solid #e2e8f0; font-weight: 600; }
-        .sheet { display: flex; flex-direction: column; transform: scale(0.55); transform-origin: top left; width: 210mm; }
+        .sheet { display: flex; flex-direction: column; transform: scale(0.55); width: 210mm; transform-origin: center center; }
         .etiqueta-preview { height: 99mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 2px dashed #cbd5e1; padding: 0; }
         .etiqueta-preview:last-child { border-bottom: none; }
         .preview-nf { font-size: 54pt; font-weight: 900; color: #000; letter-spacing: 4px; font-family: Arial, Helvetica, sans-serif; }

@@ -2,25 +2,21 @@ const caixas = [
   {
     nome: "TULIMIX",
     dimensoes: "46x26x40 cm",
-    volume: "47.840 cm³",
     cor: "#15814a",
   },
   {
     nome: "ÁLCOOL ARAUCÁRIA",
     dimensoes: "35x25x20 cm",
-    volume: "17.500 cm³",
     cor: "#0d5e35",
   },
   {
     nome: "SITE MÉDIA",
     dimensoes: "16x13x24 cm",
-    volume: "4.992 cm³",
     cor: "#1a9a5a",
   },
   {
     nome: "MINI SITE",
     dimensoes: "11x8x16 cm",
-    volume: "1.408 cm³",
     cor: "#bb8e3d",
   },
 ];
@@ -208,12 +204,9 @@ export default function MedidasPage() {
                     lineHeight: 1.6,
                   }}
                 >
-                  <p>
-                    <strong>Dimensões:</strong> {caixa.dimensoes}
-                  </p>
-                  <p>
-                    <strong>Volume:</strong> {caixa.volume}
-                  </p>
+                  <p>Altura: <strong>{parseDims(caixa.dimensoes).h} cm</strong></p>
+                  <p>Largura: <strong>{parseDims(caixa.dimensoes).w} cm</strong></p>
+                  <p>Comprimento: <strong>{parseDims(caixa.dimensoes).d} cm</strong></p>
                 </div>
               </div>
             ))}
@@ -250,13 +243,13 @@ export default function MedidasPage() {
                 }}
               >
                 <p>
-                  <strong>Dimensões:</strong> 76 cm (altura) x 36 cm (diâmetro)
+                  Altura: <strong>76 cm</strong>
                 </p>
                 <p>
-                  <strong>Capacidade:</strong> 50 litros
+                  Diâmetro: <strong>36 cm</strong>
                 </p>
                 <p>
-                  <strong>Uso:</strong> Armazenamento e preparo de produtos
+                  Capacidade: <strong>50 litros</strong>
                 </p>
               </div>
             </div>

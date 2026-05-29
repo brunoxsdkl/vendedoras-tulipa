@@ -20,6 +20,12 @@ const menuItems = [
     desc: "Receitas de produtos de limpeza · Compartilhe via WhatsApp ou imprima",
   },
   {
+    href: "/calculadora",
+    icon: "🧮",
+    title: "Calculadora de Diluição",
+    desc: "Dimensione as receitas proporcionalmente para o volume que você precisa",
+  },
+  {
     href: "/transportadoras",
     icon: "🚚",
     title: "Transportadoras",

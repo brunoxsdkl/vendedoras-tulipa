@@ -1,8 +1,8 @@
 const caixas = [
   {
     nome: "TULIMIX",
-    dimensoes: "40x30x30 cm",
-    volume: "36.000 cm³",
+    dimensoes: "46x26x40 cm",
+    volume: "47.840 cm³",
     cor: "#15814a",
   },
   {
@@ -13,14 +13,14 @@ const caixas = [
   },
   {
     nome: "SITE MÉDIA",
-    dimensoes: "30x20x15 cm",
-    volume: "9.000 cm³",
+    dimensoes: "16x13x24 cm",
+    volume: "4.992 cm³",
     cor: "#1a9a5a",
   },
   {
     nome: "MINI SITE",
-    dimensoes: "20x15x10 cm",
-    volume: "3.000 cm³",
+    dimensoes: "11x8x16 cm",
+    volume: "1.408 cm³",
     cor: "#bb8e3d",
   },
 ];
@@ -177,7 +177,7 @@ export default function MedidasPage() {
                 style={{ cursor: "default", padding: "28px 24px 24px" }}
               >
                 <h3 style={{ fontSize: "1.2rem" }}>{caixa.nome}</h3>
-                {caixa.nome === "ÁLCOOL ARAUCÁRIA" || caixa.nome === "SITE MÉDIA" || caixa.nome === "MINI SITE" ? (
+                {caixa.nome !== "BARRICA 50L" ? (
                   <div
                     style={{
                       display: "flex",
@@ -187,7 +187,7 @@ export default function MedidasPage() {
                     }}
                   >
                     <img
-                      src={caixa.nome === "ÁLCOOL ARAUCÁRIA" ? "/araucaria.png" : caixa.nome === "SITE MÉDIA" ? "/media.png" : "/pequena.png"}
+                      src={caixa.nome === "TULIMIX" ? "/tulimix.png" : caixa.nome === "ÁLCOOL ARAUCÁRIA" ? "/araucaria.png" : caixa.nome === "SITE MÉDIA" ? "/media.png" : "/pequena.png"}
                       alt={caixa.nome}
                       style={{
                         maxWidth: "100%",

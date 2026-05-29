@@ -6,7 +6,7 @@ const caixas = [
   },
   {
     nome: "ÁLCOOL ARAUCÁRIA",
-    dimensoes: "35x25x20 cm",
+    dimensoes: "28x28x35 cm",
     cor: "#0d5e35",
   },
   {

@@ -25,9 +25,130 @@ const caixas = [
   },
 ];
 
+function parseDims(s: string) {
+  const [w, h, d] = s.replace("cm", "").split("x").map((n) => parseInt(n.trim()));
+  return { w, h, d };
+}
+
+function Box3D({ dims, cor }: { dims: string; cor: string }) {
+  const { w, h, d } = parseDims(dims);
+  const s = 2.5;
+  const pw = w * s;
+  const ph = h * s;
+  const pd = d * s;
+  const ha = (n: number) => `${n}px`;
+
+  return (
+    <div
+      style={{
+        perspective: "1200px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: 220,
+      }}
+    >
+      <div
+        style={{
+          transformStyle: "preserve-3d",
+          animation: "spinBox 14s linear infinite",
+          width: 0,
+          height: 0,
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            left: -pw / 2,
+            top: -ph / 2,
+            width: pw,
+            height: ph,
+            transform: `translateZ(${ha(pd / 2)})`,
+            background: `linear-gradient(135deg, ${cor}, ${cor}dd)`,
+            border: "1px solid rgba(255,255,255,0.15)",
+            borderRadius: 2,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: -pw / 2,
+            top: -ph / 2,
+            width: pw,
+            height: ph,
+            transform: `translateZ(${ha(-pd / 2)}) rotateY(180deg)`,
+            background: `linear-gradient(135deg, ${cor}aa, ${cor}88)`,
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 2,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: -pw / 2,
+            top: -pd / 2,
+            width: pw,
+            height: pd,
+            transform: `rotateX(90deg) translateY(${ha(-ph / 2)})`,
+            background: `linear-gradient(135deg, ${cor}dd, ${cor}bb)`,
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 2,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: -pw / 2,
+            top: -pd / 2,
+            width: pw,
+            height: pd,
+            transform: `rotateX(-90deg) translateY(${ha(ph / 2)})`,
+            background: `linear-gradient(135deg, ${cor}88, ${cor}66)`,
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 2,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: -pd / 2,
+            top: -ph / 2,
+            width: pd,
+            height: ph,
+            transform: `rotateY(90deg) translateX(${ha(pw / 2)})`,
+            background: `linear-gradient(135deg, ${cor}cc, ${cor}99)`,
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: 2,
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            left: -pd / 2,
+            top: -ph / 2,
+            width: pd,
+            height: ph,
+            transform: `rotateY(-90deg) translateX(${ha(-pw / 2)})`,
+            background: `linear-gradient(135deg, ${cor}99, ${cor}77)`,
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 2,
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function MedidasPage() {
   return (
     <div>
+      <style>{`
+        @keyframes spinBox {
+          0% { transform: rotateX(-20deg) rotateY(0deg); }
+          100% { transform: rotateX(-20deg) rotateY(360deg); }
+        }
+      `}</style>
       <div className="header no-print">
         <div className="container header-inner">
           <a href="/" className="back-btn">
@@ -45,7 +166,7 @@ export default function MedidasPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
               gap: 24,
             }}
           >
@@ -53,34 +174,18 @@ export default function MedidasPage() {
               <div
                 key={caixa.nome}
                 className="menu-card"
-                style={{ cursor: "default" }}
+                style={{ cursor: "default", padding: "28px 24px 24px" }}
               >
-                <h3>{caixa.nome}</h3>
+                <h3 style={{ fontSize: "1.2rem" }}>{caixa.nome}</h3>
+                <Box3D dims={caixa.dimensoes} cor={caixa.cor} />
                 <div
                   style={{
-                    marginTop: 16,
-                    padding: 20,
-                    background: "linear-gradient(135deg, #f0f7f3, #e8f5ee)",
-                    borderRadius: 12,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    minHeight: 120,
+                    marginTop: 8,
+                    textAlign: "center",
+                    fontSize: "0.95rem",
+                    lineHeight: 1.6,
                   }}
                 >
-                  <div
-                    style={{
-                      width: 80,
-                      height: 80,
-                      background: `linear-gradient(135deg, ${caixa.cor}, #15814a)`,
-                      borderRadius: 8,
-                      opacity: 0.7,
-                      transform: "rotate(10deg) skewX(-5deg)",
-                      boxShadow: "4px 4px 12px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                </div>
-                <div style={{ marginTop: 16, fontSize: "0.9rem" }}>
                   <p>
                     <strong>Dimensões:</strong> {caixa.dimensoes}
                   </p>

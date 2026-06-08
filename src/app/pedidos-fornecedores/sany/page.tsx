@@ -63,17 +63,9 @@ export default function SanyPage() {
   const totalCaixas = Object.values(itens).reduce((s, i) => s + i.caixas, 0);
   const totalItens = Object.keys(itens).length;
 
-  const gerarRomaneio = async () => {
+  const gerarRomaneio = () => {
     const sel = Object.values(itens);
     if (sel.length === 0) return;
-
-    const paraImagem = async (url: string) => {
-      try {
-        const r = await fetch(`/api/image-proxy?url=${encodeURIComponent(url)}`);
-        const d = await r.json();
-        return d.dataUrl || url;
-      } catch { return url; }
-    };
 
     const grupos: Record<string, typeof sel> = {};
     for (const item of sel) {
@@ -83,100 +75,52 @@ export default function SanyPage() {
     }
 
     const rows: string[] = [];
-
     for (const [categoria, items] of Object.entries(grupos)) {
-      rows.push(`
-        <tr style="background:#f0f7f3;">
-          <td colspan="4" style="padding:10px 12px;font-weight:800;font-size:15px;color:#0d5e35;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #0d5e35;">${categoria}</td>
-        </tr>
-      `);
-      let subTotal = 0;
+      rows.push(`<tr style="background:#f0f7f3;"><td colspan="4" style="padding:8px 10px;font-weight:800;font-size:15px;color:#0d5e35;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #0d5e35;">${categoria}</td></tr>`);
       for (const item of items) {
-        const imgData = await paraImagem(item.produto.imagem);
-        const variacaoTexto = [item.fragrancia, item.variacao].filter(Boolean).join(" / ");
-        subTotal += item.caixas;
-        rows.push(`
-          <tr>
-            <td style="width:80px;padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;"><img src="${imgData}" style="width:60px;height:60px;object-fit:contain;border-radius:6px;border:1px solid #eee;" /></td>
-            <td style="padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;"><strong>${item.produto.nome}</strong></td>
-            <td style="padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;">${variacaoTexto || "-"}</td>
-            <td style="padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;text-align:center;font-weight:900;font-size:20px;color:#0d5e35;">${item.caixas}</td>
-          </tr>
-        `);
-      }
-      if (items.length > 1) {
-        rows.push(`
-          <tr style="background:#f8fcf9;">
-            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;"></td>
-            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;font-size:13px;color:#0d5e35;"><strong>Subtotal ${categoria}</strong></td>
-            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;"></td>
-            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;text-align:center;font-weight:900;font-size:16px;color:#0d5e35;">${subTotal}</td>
-          </tr>
-        `);
+        const vt = [item.fragrancia, item.variacao].filter(Boolean).join(" / ");
+        rows.push(`<tr><td style="width:70px;padding:8px;border-bottom:1px solid #ddd;vertical-align:middle;"><img src="${item.produto.imagem}" style="width:50px;height:50px;object-fit:contain;" /></td><td style="padding:8px;border-bottom:1px solid #ddd;vertical-align:middle;"><strong>${item.produto.nome}</strong></td><td style="padding:8px;border-bottom:1px solid #ddd;vertical-align:middle;">${vt || "-"}</td><td style="padding:8px;border-bottom:1px solid #ddd;vertical-align:middle;text-align:center;font-weight:900;font-size:18px;color:#0d5e35;">${item.caixas}</td></tr>`);
       }
     }
 
     const dataAtual = new Date().toLocaleDateString("pt-BR");
-    const html = `
-      <div id="romaneio-content" style="width:210mm;padding:20mm 15mm;font-family:Arial,sans-serif;color:#333;">
-        <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:3px solid #0d5e35;">
-          <h1 style="font-size:28px;color:#0d5e35;margin:0;">Romaneio - Sany do Brasil</h1>
-          <p style="color:#666;font-size:14px;margin-top:6px;">Pedido gerado em ${dataAtual}</p>
-        </div>
-        <div style="display:flex;justify-content:space-between;margin-bottom:20px;font-size:14px;">
-          <div><strong style="color:#0d5e35;">Vendedor(a):</strong> ${vendedor || "Não informado"}</div>
-          <div><strong style="color:#0d5e35;">Total caixas:</strong> ${totalCaixas}</div>
-        </div>
-        <table style="width:100%;border-collapse:collapse;margin-top:10px;">
-          <thead>
-            <tr style="background:#0d5e35;color:#fff;">
-              <th style="padding:10px 8px;text-align:left;font-size:14px;"></th>
-              <th style="padding:10px 8px;text-align:left;font-size:14px;">Produto</th>
-              <th style="padding:10px 8px;text-align:left;font-size:14px;">Variação</th>
-              <th style="padding:10px 8px;text-align:center;font-size:14px;">Caixas</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.join("")}
-            <tr style="background:#e8f5ee;font-weight:700;">
-              <td style="padding:12px 8px;border-top:2px solid #0d5e35;"></td>
-              <td style="padding:12px 8px;border-top:2px solid #0d5e35;"><strong>TOTAL GERAL</strong></td>
-              <td style="padding:12px 8px;border-top:2px solid #0d5e35;"></td>
-              <td style="padding:12px 8px;border-top:2px solid #0d5e35;text-align:center;font-weight:900;font-size:20px;color:#0d5e35;">${totalCaixas}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #ddd;color:#999;font-size:12px;">
-          VENDEDORAS - TULIPA &copy; ${new Date().getFullYear()}
-        </div>
-      </div>
-    `;
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+      @page { size: A4; margin: 15mm; }
+      * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+      body { width: 210mm; min-height: 297mm; padding: 20mm 15mm; color: #333; }
+      .h { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #0d5e35; }
+      .h h1 { font-size: 26px; color: #0d5e35; }
+      .h p { color: #666; font-size: 14px; margin-top: 6px; }
+      .info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; }
+      .info strong { color: #0d5e35; }
+      table { width: 100%; border-collapse: collapse; }
+      th { background: #0d5e35; color: #fff; padding: 8px 10px; text-align: left; font-size: 13px; }
+      .total { background: #e8f5ee; font-weight: 700; }
+      .total td { padding: 10px 8px; border-top: 2px solid #0d5e35; }
+      .foot { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 11px; }
+    </style></head><body>
+      <div class="h"><h1>Romaneio - Sany do Brasil</h1><p>Pedido gerado em ${dataAtual}</p></div>
+      <div class="info"><div><strong>Vendedor(a):</strong> ${vendedor || "Não informado"}</div><div><strong>Total caixas:</strong> ${totalCaixas}</div></div>
+      <table><thead><tr><th></th><th>Produto</th><th>Variação</th><th style="text-align:center;">Caixas</th></tr></thead><tbody>
+        ${rows.join("")}
+        <tr class="total"><td></td><td><strong>TOTAL GERAL</strong></td><td></td><td style="text-align:center;font-weight:900;font-size:20px;color:#0d5e35;">${totalCaixas}</td></tr>
+      </tbody></table>
+      <div class="foot">VENDEDORAS - TULIPA &copy; ${new Date().getFullYear()}</div>
+    </body></html>`;
 
-    const container = document.createElement("div");
-    container.style.cssText = "position:fixed;left:-9999px;top:0;z-index:-1;";
-    container.innerHTML = html;
-    document.body.appendChild(container);
-
-    if (!(window as any).html2pdf) {
-      const script = document.createElement("script");
-      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
-      document.head.appendChild(script);
-      await new Promise((resolve) => { script.onload = resolve; });
-    }
-
-    const el = container.querySelector("#romaneio-content") as HTMLElement;
-    const opt = {
-      margin: [15, 15, 15, 15],
-      filename: `romaneio-sany-${Date.now()}.pdf`,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true, allowTaint: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-
-    try {
-      await (window as any).html2pdf().set(opt).from(el).save();
-    } finally {
-      document.body.removeChild(container);
+    const iframe = document.createElement("iframe");
+    iframe.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;";
+    document.body.appendChild(iframe);
+    const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+    if (doc) {
+      doc.open();
+      doc.write(html);
+      doc.close();
+      iframe.contentWindow!.focus();
+      iframe.contentWindow!.print();
+      setTimeout(() => { try { document.body.removeChild(iframe); } catch {} }, 30000);
+    } else {
+      document.body.removeChild(iframe);
     }
   };
 

@@ -1,42 +1,72 @@
 import { NextResponse } from "next/server";
-
-type Produto = {
-  id: string;
-  nome: string;
-  imagem: string;
-  categoria: string;
-  fragrancias?: string[];
-};
-
-const produtos: Produto[] = [
-  // LIMPADORES MULTIUSO
-  { id: "multiusos", nome: "Multiusos", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Multiusos.png", categoria: "Limpadores Multiuso", fragrancias: ["Original", "Campestre", "Floral", "Máxima Limpeza"] },
-  { id: "limpa-vidros", nome: "Limpa Vidros", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Limpa-Vidros.png", categoria: "Limpadores Multiuso" },
-  { id: "saponaceo-cremoso", nome: "Saponáceo Cremoso", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Saponaceo-Cremoso-1.png", categoria: "Limpadores Multiuso" },
-  { id: "lava-roupas-liquido", nome: "Lava Roupas Líquido", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Lava-roupas-liquido.png", categoria: "Limpadores Multiuso" },
-
-  // COZINHA
-  { id: "limpa-aluminio", nome: "Limpa Alumínio", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Limpa-Aluminio.png", categoria: "Cozinha" },
-  { id: "desengordurantes", nome: "Desengordurantes", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Desengordurantes.png", categoria: "Cozinha" },
-  { id: "esponja-dupla-face", nome: "Esponja Dupla Face", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Esponja-Dupla-Face.png", categoria: "Cozinha" },
-  { id: "lava-loucas-liquido", nome: "Lava Louças Líquido", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Lava-Loucas-Liquido.png", categoria: "Cozinha" },
-
-  // LAVANDERIA
-  { id: "anti-mofo", nome: "Anti Mofo", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Lavanderia_Anti-Mofo.png", categoria: "Lavanderia" },
-  { id: "amaciante-2l", nome: "Amaciante Sany Baby 2L", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Amaciante-2l.png", categoria: "Lavanderia" },
-  { id: "amaciante-5l", nome: "Amaciante Sany Baby 5L", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Lavanderia_Amaciante-5l.png", categoria: "Lavanderia" },
-  { id: "agua-sanitaria", nome: "Água Sanitária", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Agua-Sanitaria.png", categoria: "Lavanderia" },
-
-  // DESINFETANTE
-  { id: "desinfetante-2l", nome: "Desinfetante Sany Mix 2L", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Desinfetante_Desinfetante-2l.png", categoria: "Desinfetante" },
-  { id: "desinfetante-5l", nome: "Desinfetante Sany Mix 5L", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Desinfetante_Desinfetante-5l.png", categoria: "Desinfetante" },
-
-  // OUTROS
-  { id: "gel-acendedor", nome: "Gel Acendedor", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Outros_Gel-Acendedor.png", categoria: "Outros" },
-  { id: "naftalina", nome: "Naftalina", imagem: "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Outros_Anti-Mofo-copia.png", categoria: "Outros" },
-];
+import * as cheerio from "cheerio";
 
 export async function GET() {
-  const categorias = [...new Set(produtos.map((p) => p.categoria))];
-  return NextResponse.json({ produtos, categorias });
+  try {
+    const res = await fetch("https://sanydobrasil.com.br/produtos/", { next: { revalidate: 3600 } });
+    const html = await res.text();
+    const $ = cheerio.load(html);
+
+    const produtos: { id: string; nome: string; imagem: string; categoria: string; fragrancias?: string[] }[] = [];
+
+    $(".elementor-top-section").each((_, section) => {
+      const $section = $(section);
+
+      const catEl = $section.find("> .elementor-container > .elementor-column > .elementor-widget-wrap > .elementor-widget-heading h2");
+      let categoria = catEl.text().trim();
+      if (!categoria) return;
+
+      categoria = categoria.charAt(0).toUpperCase() + categoria.slice(1).toLowerCase();
+
+      $section.find(".elementor-inner-section .elementor-column").each((_, col) => {
+        const $col = $(col);
+
+        const imgEl = $col.find(".elementor-widget-image img");
+        const imagem = imgEl.attr("src") || imgEl.attr("data-src") || "";
+
+        const nomeEl = $col.find(".elementor-toggle-title");
+        let nome = nomeEl.text().trim();
+        if (!nome || !imagem) return;
+
+        const conteudo = $col.find(".elementor-tab-content").text();
+        const fragrancias: string[] = [];
+        const fragMatch = conteudo.match(/fragrância[s]?:?\s*([^\.]+)/i);
+        if (fragMatch) {
+          fragMatch[1].split(/[–\-—,]/).forEach((f) => {
+            const fTrim = f.replace(/[–\-—]/g, "").trim();
+            if (fTrim) fragrancias.push(fTrim);
+          });
+        }
+        if (conteudo.includes("Original") && conteudo.includes("Campestre")) {
+          const found: string[] = [];
+          for (const f of ["Original", "Campestre", "Floral", "Máxima Limpeza"]) {
+            if (conteudo.includes(f)) found.push(f);
+          }
+          if (found.length > 0) {
+            produtos.push({
+              id: nome.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
+              nome,
+              imagem,
+              categoria,
+              fragrancias: found,
+            });
+            return;
+          }
+        }
+
+        produtos.push({
+          id: nome.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
+          nome,
+          imagem,
+          categoria,
+          fragrancias: fragrancias.length > 0 ? fragrancias : undefined,
+        });
+      });
+    });
+
+    const categorias = [...new Set(produtos.map((p) => p.categoria))];
+    return NextResponse.json({ produtos, categorias });
+  } catch (err) {
+    return NextResponse.json({ erro: "Falha ao buscar produtos", produtos: [], categorias: [] }, { status: 500 });
+  }
 }

@@ -21,14 +21,20 @@ export default function SanyPage() {
   const [categorias, setCategorias] = useState<string[]>([]);
   const [itens, setItens] = useState<Record<string, ItemPedido>>({});
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState("");
   const [vendedor, setVendedor] = useState("");
 
   useEffect(() => {
     fetch("/api/sany-produtos")
       .then((r) => r.json())
       .then((data) => {
-        setProdutos(data.produtos);
-        setCategorias(data.categorias);
+        if (data.erro) throw new Error(data.erro);
+        setProdutos(data.produtos || []);
+        setCategorias(data.categorias || []);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setErro(e.message);
         setLoading(false);
       });
   }, []);
@@ -163,8 +169,30 @@ export default function SanyPage() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#64748b" }}>
-        Carregando produtos...
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#64748b", flexDirection: "column" }}>
+        <div style={{ fontSize: 24, marginBottom: 8 }}>🔄</div>
+        <div>Carregando produtos do fornecedor...</div>
+      </div>
+    );
+  }
+
+  if (erro || produtos.length === 0) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <div className="header">
+          <div className="container header-inner">
+            <a href="/pedidos-fornecedores" className="back-btn">← Voltar</a>
+            <div className="header-text"><h1>🧹 Sany do Brasil</h1></div>
+          </div>
+        </div>
+        <main style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ textAlign: "center", color: "#64748b" }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>⚠️</div>
+            <h2 style={{ color: "#0d5e35", marginBottom: 8 }}>Produtos indisponíveis</h2>
+            <p>Não foi possível carregar os produtos do site do fornecedor.</p>
+            <p style={{ fontSize: "0.85rem", marginTop: 8 }}>{erro}</p>
+          </div>
+        </main>
       </div>
     );
   }

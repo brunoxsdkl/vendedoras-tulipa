@@ -75,18 +75,48 @@ export default function SanyPage() {
       } catch { return url; }
     };
 
-    const rows = await Promise.all(sel.map(async (item) => {
-      const imgData = await paraImagem(item.produto.imagem);
-      const variacaoTexto = [item.fragrancia, item.variacao].filter(Boolean).join(" / ");
-      return `
-        <tr>
-          <td class="img-cell"><img src="${imgData}" /></td>
-          <td><strong>${item.produto.nome}</strong></td>
-          <td>${variacaoTexto || "-"}</td>
-          <td class="qtd-cell">${item.caixas}</td>
-        </tr>
-      `;
-    }));
+    const grupos: Record<string, typeof sel> = {};
+    for (const item of sel) {
+      const cat = item.produto.categoria;
+      if (!grupos[cat]) grupos[cat] = [];
+      grupos[cat].push(item);
+    }
+
+    const rows: string[] = [];
+
+    for (const [categoria, items] of Object.entries(grupos)) {
+      let subTotal = 0;
+      const itemRows: string[] = [];
+
+      for (const item of items) {
+        const imgData = await paraImagem(item.produto.imagem);
+        const variacaoTexto = [item.fragrancia, item.variacao].filter(Boolean).join(" / ");
+        subTotal += item.caixas;
+        itemRows.push(`
+          <tr>
+            <td class="img-cell"><img src="${imgData}" /></td>
+            <td><strong>${item.produto.nome}</strong></td>
+            <td>${variacaoTexto || "-"}</td>
+            <td class="qtd-cell">${item.caixas}</td>
+          </tr>
+        `);
+      }
+
+      rows.push(`
+        <tr class="cat-header"><td colspan="4">${categoria}</td></tr>
+      `);
+      rows.push(...itemRows);
+      if (items.length > 1) {
+        rows.push(`
+          <tr class="subtotal-row">
+            <td></td>
+            <td><strong>Subtotal ${categoria}</strong></td>
+            <td></td>
+            <td class="qtd-cell">${subTotal}</td>
+          </tr>
+        `);
+      }
+    }
 
     const dataAtual = new Date().toLocaleDateString("pt-BR");
     const html = `
@@ -107,6 +137,9 @@ export default function SanyPage() {
           .img-cell { width: 80px; }
           .img-cell img { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; border: 1px solid #eee; }
           .qtd-cell { text-align: center; font-weight: 900; font-size: 20px; color: #0d5e35; }
+          .cat-header td { background: #f0f7f3; font-weight: 800; font-size: 15px; color: #0d5e35; padding: 10px 12px; border-bottom: 2px solid #0d5e35; text-transform: uppercase; letter-spacing: 0.5px; }
+          .subtotal-row { background: #f8fcf9; }
+          .subtotal-row td { padding: 8px 8px; border-bottom: 1px solid #c8e0d0; font-size: 13px; color: #0d5e35; }
           .total-row { background: #e8f5ee; font-weight: 700; }
           .total-row td { padding: 12px 8px; border-top: 2px solid #0d5e35; }
           .footer-rom { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px; }
@@ -137,7 +170,7 @@ export default function SanyPage() {
               ${rows.join("")}
               <tr class="total-row">
                 <td></td>
-                <td><strong>TOTAL</strong></td>
+                <td><strong>TOTAL GERAL</strong></td>
                 <td></td>
                 <td class="qtd-cell">${totalCaixas}</td>
               </tr>

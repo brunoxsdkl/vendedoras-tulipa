@@ -85,34 +85,32 @@ export default function SanyPage() {
     const rows: string[] = [];
 
     for (const [categoria, items] of Object.entries(grupos)) {
+      rows.push(`
+        <tr style="background:#f0f7f3;">
+          <td colspan="4" style="padding:10px 12px;font-weight:800;font-size:15px;color:#0d5e35;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #0d5e35;">${categoria}</td>
+        </tr>
+      `);
       let subTotal = 0;
-      const itemRows: string[] = [];
-
       for (const item of items) {
         const imgData = await paraImagem(item.produto.imagem);
         const variacaoTexto = [item.fragrancia, item.variacao].filter(Boolean).join(" / ");
         subTotal += item.caixas;
-        itemRows.push(`
+        rows.push(`
           <tr>
-            <td class="img-cell"><img src="${imgData}" /></td>
-            <td><strong>${item.produto.nome}</strong></td>
-            <td>${variacaoTexto || "-"}</td>
-            <td class="qtd-cell">${item.caixas}</td>
+            <td style="width:80px;padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;"><img src="${imgData}" style="width:60px;height:60px;object-fit:contain;border-radius:6px;border:1px solid #eee;" /></td>
+            <td style="padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;"><strong>${item.produto.nome}</strong></td>
+            <td style="padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;">${variacaoTexto || "-"}</td>
+            <td style="padding:10px 8px;border-bottom:1px solid #ddd;vertical-align:middle;text-align:center;font-weight:900;font-size:20px;color:#0d5e35;">${item.caixas}</td>
           </tr>
         `);
       }
-
-      rows.push(`
-        <tr class="cat-header"><td colspan="4">${categoria}</td></tr>
-      `);
-      rows.push(...itemRows);
       if (items.length > 1) {
         rows.push(`
-          <tr class="subtotal-row">
-            <td></td>
-            <td><strong>Subtotal ${categoria}</strong></td>
-            <td></td>
-            <td class="qtd-cell">${subTotal}</td>
+          <tr style="background:#f8fcf9;">
+            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;"></td>
+            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;font-size:13px;color:#0d5e35;"><strong>Subtotal ${categoria}</strong></td>
+            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;"></td>
+            <td style="padding:8px 8px;border-bottom:1px solid #c8e0d0;text-align:center;font-weight:900;font-size:16px;color:#0d5e35;">${subTotal}</td>
           </tr>
         `);
       }
@@ -120,86 +118,66 @@ export default function SanyPage() {
 
     const dataAtual = new Date().toLocaleDateString("pt-BR");
     const html = `
-      <html>
-      <head>
-        <style>
-          @page { size: A4; margin: 15mm; }
-          * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
-          body { width: 210mm; min-height: 297mm; padding: 20mm 15mm; }
-          .header-rom { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #0d5e35; }
-          .header-rom h1 { font-size: 28px; color: #0d5e35; }
-          .header-rom p { color: #666; font-size: 14px; margin-top: 6px; }
-          .info { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px; color: #333; }
-          .info strong { color: #0d5e35; }
-          table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-          th { text-align: left; padding: 10px 8px; background: #0d5e35; color: #fff; font-size: 14px; }
-          td { padding: 10px 8px; border-bottom: 1px solid #ddd; vertical-align: middle; }
-          .img-cell { width: 80px; }
-          .img-cell img { width: 60px; height: 60px; object-fit: contain; border-radius: 6px; border: 1px solid #eee; }
-          .qtd-cell { text-align: center; font-weight: 900; font-size: 20px; color: #0d5e35; }
-          .cat-header td { background: #f0f7f3; font-weight: 800; font-size: 15px; color: #0d5e35; padding: 10px 12px; border-bottom: 2px solid #0d5e35; text-transform: uppercase; letter-spacing: 0.5px; }
-          .subtotal-row { background: #f8fcf9; }
-          .subtotal-row td { padding: 8px 8px; border-bottom: 1px solid #c8e0d0; font-size: 13px; color: #0d5e35; }
-          .total-row { background: #e8f5ee; font-weight: 700; }
-          .total-row td { padding: 12px 8px; border-top: 2px solid #0d5e35; }
-          .footer-rom { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; color: #999; font-size: 12px; }
-        </style>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
-      </head>
-      <body>
-        <div id="content">
-          <div class="header-rom">
-            <h1>Romaneio - Sany do Brasil</h1>
-            <p>Pedido gerado em ${dataAtual}</p>
-          </div>
-          <div class="info">
-            <div><strong>Vendedor(a):</strong> ${vendedor || "Não informado"}</div>
-            <div><strong>Total de itens:</strong> ${totalItens}</div>
-            <div><strong>Total caixas:</strong> ${totalCaixas}</div>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Produto</th>
-                <th>Variação</th>
-                <th style="text-align:center;">Caixas</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rows.join("")}
-              <tr class="total-row">
-                <td></td>
-                <td><strong>TOTAL GERAL</strong></td>
-                <td></td>
-                <td class="qtd-cell">${totalCaixas}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="footer-rom">
-            <p>VENDEDORAS - TULIPA © ${new Date().getFullYear()} · Documento gerado automaticamente</p>
-          </div>
+      <div id="romaneio-content" style="width:210mm;padding:20mm 15mm;font-family:Arial,sans-serif;color:#333;">
+        <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:3px solid #0d5e35;">
+          <h1 style="font-size:28px;color:#0d5e35;margin:0;">Romaneio - Sany do Brasil</h1>
+          <p style="color:#666;font-size:14px;margin-top:6px;">Pedido gerado em ${dataAtual}</p>
         </div>
-        <script>
-          (function() {
-            var opt = {
-              margin:        [15, 15, 15, 15],
-              filename:      'romaneio-sany-${Date.now()}.pdf',
-              image:         { type: 'jpeg', quality: 0.98 },
-              html2canvas:   { scale: 2, useCORS: true, letterRendering: true, allowTaint: true },
-              jsPDF:         { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(document.getElementById('content')).save();
-          })();
-        <\/script>
-      </body>
-      </html>
+        <div style="display:flex;justify-content:space-between;margin-bottom:20px;font-size:14px;">
+          <div><strong style="color:#0d5e35;">Vendedor(a):</strong> ${vendedor || "Não informado"}</div>
+          <div><strong style="color:#0d5e35;">Total caixas:</strong> ${totalCaixas}</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;margin-top:10px;">
+          <thead>
+            <tr style="background:#0d5e35;color:#fff;">
+              <th style="padding:10px 8px;text-align:left;font-size:14px;"></th>
+              <th style="padding:10px 8px;text-align:left;font-size:14px;">Produto</th>
+              <th style="padding:10px 8px;text-align:left;font-size:14px;">Variação</th>
+              <th style="padding:10px 8px;text-align:center;font-size:14px;">Caixas</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.join("")}
+            <tr style="background:#e8f5ee;font-weight:700;">
+              <td style="padding:12px 8px;border-top:2px solid #0d5e35;"></td>
+              <td style="padding:12px 8px;border-top:2px solid #0d5e35;"><strong>TOTAL GERAL</strong></td>
+              <td style="padding:12px 8px;border-top:2px solid #0d5e35;"></td>
+              <td style="padding:12px 8px;border-top:2px solid #0d5e35;text-align:center;font-weight:900;font-size:20px;color:#0d5e35;">${totalCaixas}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #ddd;color:#999;font-size:12px;">
+          VENDEDORAS - TULIPA &copy; ${new Date().getFullYear()}
+        </div>
+      </div>
     `;
 
-    const win = window.open("", "_blank");
-    if (!win) return;
-    win.document.write(html);
-    win.document.close();
+    const container = document.createElement("div");
+    container.style.cssText = "position:fixed;left:-9999px;top:0;z-index:-1;";
+    container.innerHTML = html;
+    document.body.appendChild(container);
+
+    if (!(window as any).html2pdf) {
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+      document.head.appendChild(script);
+      await new Promise((resolve) => { script.onload = resolve; });
+    }
+
+    const el = container.querySelector("#romaneio-content") as HTMLElement;
+    const opt = {
+      margin: [15, 15, 15, 15],
+      filename: `romaneio-sany-${Date.now()}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true, allowTaint: true },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+
+    try {
+      await (window as any).html2pdf().set(opt).from(el).save();
+    } finally {
+      document.body.removeChild(container);
+    }
   };
 
   if (loading) {

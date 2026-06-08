@@ -22,6 +22,8 @@ function chaveItem(produtoId: string, fragrancia: string, variacao: string): str
   return `${produtoId}||${fragrancia}||${variacao}`;
 }
 
+const LOGO_SANY = "https://sanydobrasil.com.br/wp-content/uploads/2024/06/Site-Sany_Logo-Sany-Mix-grande-300x300.png";
+
 export default function SanyPage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [categorias, setCategorias] = useState<string[]>([]);
@@ -169,8 +171,11 @@ export default function SanyPage() {
 
   if (loading) {
     return (
-      <div className="loading-screen">
-        <div className="loading-text">Carregando produtos do fornecedor...</div>
+      <div className="page-wrap">
+        <div className="loading-screen">
+          <div className="loading-spinner" />
+          <div className="loading-text">Carregando produtos...</div>
+        </div>
       </div>
     );
   }
@@ -202,33 +207,38 @@ export default function SanyPage() {
         <div className="container header-inner">
           <a href="/pedidos-fornecedores" className="back-btn">← Voltar</a>
           <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
+          <img src={LOGO_SANY} alt="Sany do Brasil" className="header-logo header-logo-sany" />
           <div className="header-text">
             <h1>Sany do Brasil</h1>
-            <p>Selecione os produtos, variações e quantidades</p>
+            <p>Pedido de compra</p>
           </div>
         </div>
       </div>
 
       <main className="main-content">
         <div className="container">
-          <div className="toolbar no-print">
-            <div className="toolbar-field">
-              <label className="toolbar-label">Vendedor(a)</label>
-              <input value={vendedor} onChange={(e) => setVendedor(e.target.value)} placeholder="Seu nome" className="toolbar-input" />
+          <div className="vendedor-bar no-print">
+            <label className="vendedor-label">Vendedor(a)</label>
+            <input
+              value={vendedor}
+              onChange={(e) => setVendedor(e.target.value)}
+              placeholder="Seu nome"
+              className="vendedor-input"
+            />
+          </div>
+
+          <div className="resumo-bar no-print">
+            <div className="resumo-item">
+              <span className="resumo-num">{totalItens}</span>
+              <span className="resumo-leg">itens</span>
             </div>
-            <div className="toolbar-stats">
-              <div className="stat-box">
-                <div className="stat-num">{totalItens}</div>
-                <div className="stat-label">itens</div>
-              </div>
-              <div className="stat-box">
-                <div className="stat-num">{totalCaixas}</div>
-                <div className="stat-label">caixas</div>
-              </div>
-              <button onClick={gerarRomaneio} className="btn btn-primary" disabled={totalItens === 0}>
-                Gerar Romaneio PDF
-              </button>
+            <div className="resumo-item">
+              <span className="resumo-num">{totalCaixas}</span>
+              <span className="resumo-leg">caixas</span>
             </div>
+            <button onClick={gerarRomaneio} className="btn-resumo" disabled={totalItens === 0}>
+              Gerar PDF
+            </button>
           </div>
 
           {categorias.map((cat) => {
@@ -257,10 +267,12 @@ export default function SanyPage() {
       </div>
 
       <style>{`
-        .page-wrap { display: flex; flex-direction: column; min-height: 100vh; }
+        .page-wrap { display: flex; flex-direction: column; min-height: 100vh; background: #f5faf7; }
 
-        .loading-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #64748b; flex-direction: column; }
-        .loading-text { font-size: 1rem; }
+        .loading-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; color: #64748b; padding: 40px; }
+        .loading-spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #15814a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 1rem; color: #64748b; }
 
         .main-center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
         .empty-state { text-align: center; color: #64748b; }
@@ -268,52 +280,72 @@ export default function SanyPage() {
         .empty-state h2 { color: #0d5e35; margin-bottom: 8px; font-size: 1.2rem; }
         .empty-erro { font-size: 0.85rem; margin-top: 8px; color: #ef4444; }
 
-        .main-content { flex: 1; padding: 16px 0; }
+        .header-logo-sany { background: #fff; padding: 4px; border-radius: 10px; }
 
-        .toolbar { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; }
-        .toolbar-field { flex: 1; min-width: 180px; }
-        .toolbar-label { display: block; font-weight: 600; font-size: 0.8rem; color: #64748b; margin-bottom: 4px; }
-        .toolbar-input { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; font-family: inherit; }
-        .toolbar-stats { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+        .main-content { flex: 1; padding: 0; }
 
-        .stat-box { background: #e8f5ee; padding: 8px 14px; border-radius: 10px; text-align: center; white-space: nowrap; }
-        .stat-num { font-size: 1.3rem; font-weight: 900; color: #0d5e35; line-height: 1.2; }
-        .stat-label { font-size: 0.7rem; color: #64748b; }
+        .vendedor-bar { background: #fff; margin: 12px; padding: 12px 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 6px; }
+        .vendedor-label { font-weight: 700; font-size: 0.8rem; color: #64748b; letter-spacing: 0.3px; text-transform: uppercase; }
+        .vendedor-input { width: 100%; padding: 14px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1.1rem; font-family: inherit; background: #fff; }
+        .vendedor-input:focus { outline: none; border-color: #15814a; box-shadow: 0 0 0 4px rgba(21,129,74,0.1); }
 
-        .cat-section { margin-bottom: 24px; }
-        .cat-title { font-size: 1.2rem; font-weight: 800; color: #0d5e35; margin-bottom: 10px; }
+        .resumo-bar { background: #fff; margin: 0 12px 16px; padding: 12px 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px; }
+        .resumo-item { display: flex; flex-direction: column; align-items: center; background: #e8f5ee; padding: 8px 20px; border-radius: 12px; }
+        .resumo-num { font-size: 1.4rem; font-weight: 900; color: #0d5e35; line-height: 1.2; }
+        .resumo-leg { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-resumo { margin-left: auto; padding: 14px 24px; border: none; border-radius: 14px; background: #15814a; color: #fff; font-weight: 800; font-size: 1rem; font-family: inherit; white-space: nowrap; cursor: pointer; box-shadow: 0 6px 14px rgba(21,129,74,0.25); transition: all 0.15s; }
+        .btn-resumo:active { transform: scale(0.97); }
+        .btn-resumo:disabled { opacity: 0.4; }
+
+        .cat-section { padding: 0 12px; margin-bottom: 24px; }
+        .cat-title { font-size: 1.1rem; font-weight: 800; color: #0d5e35; margin-bottom: 10px; padding: 0 4px; }
 
         .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
 
-        .prod-card { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 12px; transition: all 0.15s; }
-        .prod-card.has-item { border: 2px solid #15814a; box-shadow: 0 4px 12px rgba(21,129,74,0.12); }
-        .prod-card-inner { display: flex; gap: 10px; }
-        .prod-img { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; border: 1px solid #f0f0f0; flex-shrink: 0; align-self: flex-start; }
-        .prod-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-        .prod-name { font-size: 0.9rem; font-weight: 700; line-height: 1.2; }
+        .prod-card { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 14px; transition: all 0.15s; }
+        .prod-card.has-item { border: 2px solid #15814a; box-shadow: 0 4px 16px rgba(21,129,74,0.15); }
+        .prod-card-inner { display: flex; gap: 12px; }
+        .prod-img { width: 56px; height: 56px; object-fit: contain; border-radius: 10px; border: 1px solid #f0f0f0; flex-shrink: 0; align-self: flex-start; }
+        .prod-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+        .prod-name { font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
 
-        .prod-select { width: 100%; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; background: #fff; }
-        .prod-input { width: 100%; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; }
+        .prod-select { width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; font-family: inherit; background: #fff; appearance: auto; }
+        .prod-input { width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; font-family: inherit; }
 
-        .qtd-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
-        .qtd-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8faf8; cursor: pointer; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; user-select: none; }
-        .qtd-btn:active { background: #e2e8f0; }
-        .qtd-input { width: 44px; text-align: center; padding: 4px 0; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; font-weight: 700; font-family: inherit; }
-        .qtd-label { font-size: 0.7rem; color: #94a3b8; }
+        .qtd-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+        .qtd-btn { width: 38px; height: 38px; border-radius: 10px; border: 2px solid #e2e8f0; background: #fff; cursor: pointer; font-size: 20px; font-weight: 700; display: flex; align-items: center; justify-content: center; user-select: none; transition: all 0.1s; color: #15814a; }
+        .qtd-btn:active { background: #e8f5ee; border-color: #15814a; }
+        .qtd-btn:disabled { opacity: 0.3; }
+        .qtd-input { width: 48px; text-align: center; padding: 6px 0; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1.1rem; font-weight: 800; font-family: inherit; }
+        .qtd-label { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+        .qtd-badge { display: inline-flex; align-items: center; background: #15814a; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
 
-        .qtd-badge { display: inline-flex; align-items: center; gap: 4px; background: #15814a; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+        @media (min-width: 768px) {
+          .vendedor-bar { margin: 16px 24px; padding: 16px 24px; flex-direction: row; align-items: center; gap: 16px; }
+          .vendedor-label { margin-bottom: 0; }
+          .vendedor-input { max-width: 300px; }
+          .resumo-bar { margin: 0 24px 20px; }
+          .cat-section { padding: 0 24px; margin-bottom: 32px; }
+          .prod-grid { gap: 12px; }
+          .prod-card { padding: 16px; }
+          .prod-img { width: 64px; height: 64px; }
+        }
 
         @media (max-width: 600px) {
           .prod-grid { grid-template-columns: 1fr; }
-          .prod-card { padding: 10px; }
-          .prod-img { width: 48px; height: 48px; }
-          .prod-name { font-size: 0.85rem; }
-          .toolbar { flex-direction: column; align-items: stretch; }
-          .toolbar-stats { justify-content: stretch; }
-          .toolbar-stats .btn { flex: 1; text-align: center; }
-          .stat-box { flex: 1; }
-          .qtd-btn { width: 36px; height: 36px; }
-          .qtd-input { width: 50px; font-size: 1.1rem; }
+          .prod-card { padding: 12px; border-radius: 14px; }
+          .prod-img { width: 50px; height: 50px; }
+          .prod-name { font-size: 0.9rem; }
+          .prod-select, .prod-input { padding: 12px 14px; font-size: 1rem; border-radius: 12px; }
+          .qtd-btn { width: 44px; height: 44px; font-size: 22px; }
+          .qtd-input { width: 54px; font-size: 1.2rem; }
+          .qtd-label { font-size: 0.8rem; }
+          .cat-title { font-size: 1rem; padding: 0 2px; }
+          .resumo-bar { padding: 10px 14px; }
+          .resumo-num { font-size: 1.2rem; }
+          .resumo-item { padding: 6px 16px; }
+          .btn-resumo { padding: 12px 20px; font-size: 0.95rem; }
+          .vendedor-input { font-size: 1rem; padding: 12px 14px; }
         }
       `}</style>
     </div>

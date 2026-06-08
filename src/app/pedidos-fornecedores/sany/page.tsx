@@ -18,6 +18,10 @@ type ItemPedido = {
   variacao: string;
 };
 
+function chaveItem(produtoId: string, fragrancia: string, variacao: string): string {
+  return `${produtoId}||${fragrancia}||${variacao}`;
+}
+
 export default function SanyPage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [categorias, setCategorias] = useState<string[]>([]);
@@ -41,18 +45,14 @@ export default function SanyPage() {
       });
   }, []);
 
-  const updateItem = (produto: Produto, caixas: number, fragrancia?: string, variacao?: string) => {
+  const updateItem = (produto: Produto, caixas: number, fragrancia: string, variacao: string) => {
+    const key = chaveItem(produto.id, fragrancia, variacao);
     setItens((prev) => {
       const next = { ...prev };
       if (caixas <= 0) {
-        delete next[produto.id];
+        delete next[key];
       } else {
-        next[produto.id] = {
-          produto,
-          caixas,
-          fragrancia: fragrancia || "",
-          variacao: variacao || "",
-        };
+        next[key] = { produto, caixas, fragrancia, variacao };
       }
       return next;
     });
@@ -114,16 +114,14 @@ export default function SanyPage() {
       <body>
         <div id="content">
           <div class="header-rom">
-            <h1>🧹 ROMANEIO - SANY DO BRASIL</h1>
+            <h1>Romaneio - Sany do Brasil</h1>
             <p>Pedido gerado em ${dataAtual}</p>
           </div>
-
           <div class="info">
             <div><strong>Vendedor(a):</strong> ${vendedor || "Não informado"}</div>
             <div><strong>Total de itens:</strong> ${totalItens}</div>
             <div><strong>Total caixas:</strong> ${totalCaixas}</div>
           </div>
-
           <table>
             <thead>
               <tr>
@@ -143,12 +141,10 @@ export default function SanyPage() {
               </tr>
             </tbody>
           </table>
-
           <div class="footer-rom">
             <p>VENDEDORAS - TULIPA © ${new Date().getFullYear()} · Documento gerado automaticamente</p>
           </div>
         </div>
-
         <script>
           (function() {
             var opt = {
@@ -173,28 +169,27 @@ export default function SanyPage() {
 
   if (loading) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#64748b", flexDirection: "column" }}>
-        <div style={{ fontSize: 24, marginBottom: 8 }}>🔄</div>
-        <div>Carregando produtos do fornecedor...</div>
+      <div className="loading-screen">
+        <div className="loading-text">Carregando produtos do fornecedor...</div>
       </div>
     );
   }
 
   if (erro || produtos.length === 0) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <div className="header">
+      <div className="page-wrap">
+        <div className="header no-print">
           <div className="container header-inner">
             <a href="/pedidos-fornecedores" className="back-btn">← Voltar</a>
-            <div className="header-text"><h1>🧹 Sany do Brasil</h1></div>
+            <div className="header-text"><h1>Sany do Brasil</h1></div>
           </div>
         </div>
-        <main style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ textAlign: "center", color: "#64748b" }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>⚠️</div>
-            <h2 style={{ color: "#0d5e35", marginBottom: 8 }}>Produtos indisponíveis</h2>
+        <main className="main-center">
+          <div className="empty-state">
+            <div className="empty-icon">!</div>
+            <h2>Produtos indisponíveis</h2>
             <p>Não foi possível carregar os produtos do site do fornecedor.</p>
-            <p style={{ fontSize: "0.85rem", marginTop: 8 }}>{erro}</p>
+            {erro && <p className="empty-erro">{erro}</p>}
           </div>
         </main>
       </div>
@@ -202,37 +197,36 @@ export default function SanyPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div className="page-wrap">
       <div className="header no-print">
         <div className="container header-inner">
           <a href="/pedidos-fornecedores" className="back-btn">← Voltar</a>
           <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
           <div className="header-text">
-            <h1>🧹 Sany do Brasil</h1>
+            <h1>Sany do Brasil</h1>
             <p>Selecione os produtos, variações e quantidades</p>
           </div>
         </div>
       </div>
 
-      <main style={{ flex: 1, padding: "20px 0" }}>
+      <main className="main-content">
         <div className="container">
-          <div className="no-print" style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 24, flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <label style={{ display: "block", fontWeight: 600, fontSize: "0.85rem", color: "#64748b", marginBottom: 4 }}>Vendedor(a)</label>
-              <input value={vendedor} onChange={(e) => setVendedor(e.target.value)} placeholder="Seu nome" style={{ width: "100%", padding: "10px 14px", border: "2px solid #e2e8f0", borderRadius: 10, fontSize: "1rem", fontFamily: "Barlow, sans-serif" }} />
+          <div className="toolbar no-print">
+            <div className="toolbar-field">
+              <label className="toolbar-label">Vendedor(a)</label>
+              <input value={vendedor} onChange={(e) => setVendedor(e.target.value)} placeholder="Seu nome" className="toolbar-input" />
             </div>
-            <div style={{ display: "flex", gap: 8, alignItems: "flex-end", paddingTop: 18 }}>
-              <div style={{ background: "#e8f5ee", padding: "10px 18px", borderRadius: 10, textAlign: "center" }}>
-                <div style={{ fontSize: "1.5rem", fontWeight: 900, color: "#0d5e35" }}>{totalItens}</div>
-                <div style={{ fontSize: "0.75rem", color: "#64748b" }}>itens</div>
+            <div className="toolbar-stats">
+              <div className="stat-box">
+                <div className="stat-num">{totalItens}</div>
+                <div className="stat-label">itens</div>
               </div>
-              <div style={{ background: "#e8f5ee", padding: "10px 18px", borderRadius: 10, textAlign: "center" }}>
-                <div style={{ fontSize: "1.5rem", fontWeight: 900, color: "#0d5e35" }}>{totalCaixas}</div>
-                <div style={{ fontSize: "0.75rem", color: "#64748b" }}>caixas</div>
+              <div className="stat-box">
+                <div className="stat-num">{totalCaixas}</div>
+                <div className="stat-label">caixas</div>
               </div>
-              <button onClick={gerarRomaneio} className="btn btn-primary" disabled={totalItens === 0}
-                style={{ opacity: totalItens === 0 ? 0.5 : 1, cursor: totalItens === 0 ? "not-allowed" : "pointer" }}>
-                📄 Gerar Romaneio PDF
+              <button onClick={gerarRomaneio} className="btn btn-primary" disabled={totalItens === 0}>
+                Gerar Romaneio PDF
               </button>
             </div>
           </div>
@@ -240,89 +234,17 @@ export default function SanyPage() {
           {categorias.map((cat) => {
             const catProdutos = produtos.filter((p) => p.categoria === cat);
             return (
-              <section key={cat} style={{ marginBottom: 32 }}>
-                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0d5e35", marginBottom: 12, letterSpacing: "-0.3px" }}>{cat}</h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 12 }}>
-                  {catProdutos.map((prod) => {
-                    const item = itens[prod.id];
-                    return (
-                      <div key={prod.id} style={{
-                        background: "#fff", borderRadius: 16, border: item ? "2px solid #15814a" : "1px solid #e2e8f0",
-                        padding: 16, display: "flex", gap: 12, transition: "all 0.15s",
-                        boxShadow: item ? "0 4px 12px rgba(21,129,74,0.12)" : "none",
-                      }}>
-                        <img src={prod.imagem} alt={prod.nome} style={{ width: 64, height: 64, objectFit: "contain", borderRadius: 8, border: "1px solid #f0f0f0", flexShrink: 0, alignSelf: "center" }} />
-                        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
-                          <strong style={{ fontSize: "0.95rem", lineHeight: 1.2 }}>{prod.nome}</strong>
-
-                          {prod.tipos && (
-                            <div>
-                              <select value={item?.variacao || ""} onChange={(e) => {
-                                const qtd = item?.caixas || 0;
-                                if (qtd > 0) updateItem(prod, qtd, item?.fragrancia, e.target.value);
-                              }} style={{ width: "100%", padding: "4px 6px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: "0.8rem", fontFamily: "Barlow, sans-serif", background: "#fff" }}>
-                                <option value="">Tamanho/Tipo</option>
-                                {prod.tipos.map((t) => <option key={t} value={t}>{t}</option>)}
-                              </select>
-                            </div>
-                          )}
-
-                          {prod.fragrancias && (
-                            <div>
-                              <select value={item?.fragrancia || ""} onChange={(e) => {
-                                const qtd = item?.caixas || 0;
-                                if (qtd > 0) updateItem(prod, qtd, e.target.value, item?.variacao);
-                              }} style={{ width: "100%", padding: "4px 6px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: "0.8rem", fontFamily: "Barlow, sans-serif", background: "#fff" }}>
-                                <option value="">Fragrância</option>
-                                {prod.fragrancias.map((f) => <option key={f} value={f}>{f}</option>)}
-                              </select>
-                            </div>
-                          )}
-
-                          {(prod.tipos || prod.fragrancias) && (
-                            <div>
-                              <input value={(!prod.tipos && !prod.fragrancias) ? "" : (item?.variacao && !prod.tipos ? item.variacao : "") || (!prod.fragrancias ? "" : item?.fragrancia || "")} 
-                                onChange={(e) => {
-                                  const qtd = item?.caixas || 0;
-                                  if (qtd > 0 && !prod.tipos && !prod.fragrancias) {
-                                    updateItem(prod, qtd, "", e.target.value);
-                                  }
-                                }}
-                                placeholder="Outra variação..." 
-                                style={{ width: "100%", padding: "4px 6px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: "0.8rem", fontFamily: "Barlow, sans-serif" }} />
-                            </div>
-                          )}
-
-                          {!prod.tipos && !prod.fragrancias && (
-                            <div>
-                              <input value={item?.variacao || ""} 
-                                onChange={(e) => {
-                                  const qtd = item?.caixas || 0;
-                                  if (qtd > 0) updateItem(prod, qtd, "", e.target.value);
-                                }}
-                                placeholder="Variação (ex: 500ml, 1kg...)" 
-                                style={{ width: "100%", padding: "4px 6px", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: "0.8rem", fontFamily: "Barlow, sans-serif" }} />
-                            </div>
-                          )}
-
-                          <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 4 }}>
-                            <button onClick={() => {
-                              const qtd = (item?.caixas || 0) - 1;
-                              updateItem(prod, qtd, item?.fragrancia, item?.variacao);
-                            }} style={{ width: 28, height: 28, borderRadius: 8, border: "1px solid #e2e8f0", background: "#f8faf8", cursor: "pointer", fontSize: 16, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>−</button>
-                            <input type="number" min="0" value={item?.caixas || 0} onChange={(e) => {
-                              updateItem(prod, Math.max(0, parseInt(e.target.value) || 0), item?.fragrancia, item?.variacao);
-                            }} style={{ width: 44, textAlign: "center", padding: "4px 0", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: "1rem", fontWeight: 700, fontFamily: "Barlow, sans-serif" }} />
-                            <button onClick={() => {
-                              const qtd = (item?.caixas || 0) + 1;
-                              updateItem(prod, qtd, item?.fragrancia || "", item?.variacao || "");
-                            }} style={{ width: 28, height: 28, borderRadius: 8, border: "1px solid #e2e8f0", background: "#f8faf8", cursor: "pointer", fontSize: 16, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>+</button>
-                            <span style={{ fontSize: "0.7rem", color: "#94a3b8", marginLeft: 2 }}>caixas</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <section key={cat} className="cat-section">
+                <h2 className="cat-title">{cat}</h2>
+                <div className="prod-grid">
+                  {catProdutos.map((prod) => (
+                    <ProdutoCard
+                      key={prod.id}
+                      produto={prod}
+                      itens={itens}
+                      updateItem={updateItem}
+                    />
+                  ))}
                 </div>
               </section>
             );
@@ -333,14 +255,145 @@ export default function SanyPage() {
       <div className="no-print">
         <Footer />
       </div>
+
+      <style>{`
+        .page-wrap { display: flex; flex-direction: column; min-height: 100vh; }
+
+        .loading-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #64748b; flex-direction: column; }
+        .loading-text { font-size: 1rem; }
+
+        .main-center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 16px; }
+        .empty-state { text-align: center; color: #64748b; }
+        .empty-icon { font-size: 48px; margin-bottom: 12px; font-weight: 900; color: #94a3b8; }
+        .empty-state h2 { color: #0d5e35; margin-bottom: 8px; font-size: 1.2rem; }
+        .empty-erro { font-size: 0.85rem; margin-top: 8px; color: #ef4444; }
+
+        .main-content { flex: 1; padding: 16px 0; }
+
+        .toolbar { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 20px; flex-wrap: wrap; }
+        .toolbar-field { flex: 1; min-width: 180px; }
+        .toolbar-label { display: block; font-weight: 600; font-size: 0.8rem; color: #64748b; margin-bottom: 4px; }
+        .toolbar-input { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; font-family: inherit; }
+        .toolbar-stats { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+
+        .stat-box { background: #e8f5ee; padding: 8px 14px; border-radius: 10px; text-align: center; white-space: nowrap; }
+        .stat-num { font-size: 1.3rem; font-weight: 900; color: #0d5e35; line-height: 1.2; }
+        .stat-label { font-size: 0.7rem; color: #64748b; }
+
+        .cat-section { margin-bottom: 24px; }
+        .cat-title { font-size: 1.2rem; font-weight: 800; color: #0d5e35; margin-bottom: 10px; }
+
+        .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+
+        .prod-card { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 12px; transition: all 0.15s; }
+        .prod-card.has-item { border: 2px solid #15814a; box-shadow: 0 4px 12px rgba(21,129,74,0.12); }
+        .prod-card-inner { display: flex; gap: 10px; }
+        .prod-img { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; border: 1px solid #f0f0f0; flex-shrink: 0; align-self: flex-start; }
+        .prod-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+        .prod-name { font-size: 0.9rem; font-weight: 700; line-height: 1.2; }
+
+        .prod-select { width: 100%; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; background: #fff; }
+        .prod-input { width: 100%; padding: 6px 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; }
+
+        .qtd-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+        .qtd-btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8faf8; cursor: pointer; font-size: 18px; font-weight: 700; display: flex; align-items: center; justify-content: center; user-select: none; }
+        .qtd-btn:active { background: #e2e8f0; }
+        .qtd-input { width: 44px; text-align: center; padding: 4px 0; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 1rem; font-weight: 700; font-family: inherit; }
+        .qtd-label { font-size: 0.7rem; color: #94a3b8; }
+
+        .qtd-badge { display: inline-flex; align-items: center; gap: 4px; background: #15814a; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+
+        @media (max-width: 600px) {
+          .prod-grid { grid-template-columns: 1fr; }
+          .prod-card { padding: 10px; }
+          .prod-img { width: 48px; height: 48px; }
+          .prod-name { font-size: 0.85rem; }
+          .toolbar { flex-direction: column; align-items: stretch; }
+          .toolbar-stats { justify-content: stretch; }
+          .toolbar-stats .btn { flex: 1; text-align: center; }
+          .stat-box { flex: 1; }
+          .qtd-btn { width: 36px; height: 36px; }
+          .qtd-input { width: 50px; font-size: 1.1rem; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function ProdutoCard({
+  produto,
+  itens,
+  updateItem,
+}: {
+  produto: Produto;
+  itens: Record<string, ItemPedido>;
+  updateItem: (produto: Produto, caixas: number, fragrancia: string, variacao: string) => void;
+}) {
+  const [selFragrancia, setSelFragrancia] = useState("");
+  const [selVariacao, setSelVariacao] = useState("");
+  const [selCustom, setSelCustom] = useState("");
+
+  const temFragrancias = !!produto.fragrancias?.length;
+  const temTipos = !!produto.tipos?.length;
+
+  const chaveAtual = chaveItem(
+    produto.id,
+    temFragrancias ? selFragrancia : "",
+    temTipos ? selVariacao : selCustom
+  );
+  const item = itens[chaveAtual];
+
+  const fragranciaFinal = temFragrancias ? selFragrancia : "";
+  const variacaoFinal = temTipos ? selVariacao : selCustom;
+
+  const handleQtd = (novoValor: number) => {
+    updateItem(produto, Math.max(0, novoValor), fragranciaFinal, variacaoFinal);
+  };
+
+  return (
+    <div className={`prod-card ${item ? "has-item" : ""}`}>
+      <div className="prod-card-inner">
+        <img src={produto.imagem} alt={produto.nome} className="prod-img" />
+        <div className="prod-body">
+          <strong className="prod-name">{produto.nome}</strong>
+
+          {temFragrancias && (
+            <select className="prod-select" value={selFragrancia} onChange={(e) => setSelFragrancia(e.target.value)}>
+              <option value="">Fragrância</option>
+              {produto.fragrancias!.map((f) => <option key={f} value={f}>{f}</option>)}
+            </select>
+          )}
+
+          {temTipos && (
+            <select className="prod-select" value={selVariacao} onChange={(e) => setSelVariacao(e.target.value)}>
+              <option value="">Tamanho/Tipo</option>
+              {produto.tipos!.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          )}
+
+          {!temTipos && !temFragrancias && (
+            <input className="prod-input" value={selCustom} onChange={(e) => setSelCustom(e.target.value)} placeholder="Variação (ex: 500ml, 1kg...)" />
+          )}
+
+          <div className="qtd-row">
+            <button className="qtd-btn" onClick={() => handleQtd((item?.caixas || 0) - 1)} disabled={!item}>−</button>
+            <input type="number" min="0" className="qtd-input" value={item?.caixas || 0}
+              onChange={(e) => handleQtd(parseInt(e.target.value) || 0)} />
+            <button className="qtd-btn" onClick={() => handleQtd((item?.caixas || 0) + 1)}>+</button>
+            <span className="qtd-label">caixas</span>
+            {item && <span className="qtd-badge">{selFragrancia || selVariacao || selCustom || "ok"}</span>}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 function Footer() {
   return (
-    <footer style={{ textAlign: "center", padding: "20px", fontSize: "0.8rem", color: "#94a3b8", borderTop: "1px solid #e2e8f0", background: "white" }}>
-      <p>© {new Date().getFullYear()} VENDEDORAS - TULIPA 🌷</p>
+    <footer className="footer">
+      <p>© {new Date().getFullYear()} VENDEDORAS - TULIPA</p>
+      <style>{`.footer { text-align: center; padding: 20px; font-size: 0.8rem; color: #94a3b8; border-top: 1px solid #e2e8f0; background: white; }`}</style>
     </footer>
   );
 }

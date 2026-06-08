@@ -10,49 +10,59 @@ const VARIACOES_CONHECIDAS: Record<string, { fragrancias?: string[]; tipos?: str
   },
   "saponáceo cremoso": {
     fragrancias: ["Cloro", "Lavanda", "Floral", "Limão", "Eucalipto"],
-    tipos: ["500ml", "1L"],
+    tipos: ["300ml", "500ml", "1L"],
   },
   "saponáceo em pó": {
     fragrancias: ["Cloro", "Lavanda", "Floral", "Limão", "Eucalipto"],
     tipos: ["500g", "1kg"],
   },
   "desinfetante sany mix 2l": {
+    fragrancias: ["Pinho", "Mil Flores"],
     tipos: ["2L"],
   },
   "desinfetante sany mix 5l": {
+    fragrancias: ["Pinho", "Mil Flores"],
     tipos: ["5L"],
   },
   "amaciante sany baby 2l": {
-    fragrancias: ["Bebê", "Original"],
+    fragrancias: ["Aconchego", "Intenso"],
     tipos: ["2L"],
   },
   "amaciante sany baby 5l": {
-    fragrancias: ["Bebê", "Original"],
+    fragrancias: ["Aconchego", "Intenso"],
     tipos: ["5L"],
   },
   "evita mofo 180g": {
+    fragrancias: ["Lavanda", "Sonhos de Infância"],
     tipos: ["180g"],
   },
   "evita mofo 100g": {
+    fragrancias: ["Lavanda", "Sonhos de Infância"],
     tipos: ["100g"],
   },
   "água sanitária": {
     tipos: ["2L", "5L"],
   },
   "gel adesivo": {
-    tipos: ["Tradicional"],
+    fragrancias: ["Lavanda", "Marine", "Citrus"],
   },
   "gel adesivo em blister": {
-    tipos: ["Blister"],
+    fragrancias: ["Lavanda", "Marine", "Citrus"],
+  },
+  "pastilha adesiva": {
+    fragrancias: ["Lavanda", "Pinho", "Floral"],
+  },
+  "pastilha para caixa acoplada": {
+    fragrancias: ["Lavanda", "Pinho", "Floral"],
   },
   "bloco odorizante": {
-    tipos: ["Tradicional"],
+    fragrancias: ["Floral", "Lavanda", "Eucalipto"],
   },
   "bloco odorizante refil em blister": {
-    tipos: ["Blister"],
+    fragrancias: ["Floral", "Lavanda", "Eucalipto"],
   },
   "pedra sanitária": {
-    fragrancias: ["Floral", "Lavanda", "Eucalipto"],
+    fragrancias: ["Floral", "Lavanda", "Eucalipto", "Jasmim"],
   },
   "pedra perfumada": {
     fragrancias: ["Floral", "Lavanda", "Eucalipto"],
@@ -61,7 +71,7 @@ const VARIACOES_CONHECIDAS: Record<string, { fragrancias?: string[]; tipos?: str
     fragrancias: ["Original", "Marine"],
   },
   "desengordurantes": {
-    fragrancias: ["Original", "Citronela"],
+    fragrancias: ["Original", "Citronela", "Laranja"],
   },
   "tira limo": {
     fragrancias: ["Original", "Cloro Ativo"],
@@ -69,10 +79,19 @@ const VARIACOES_CONHECIDAS: Record<string, { fragrancias?: string[]; tipos?: str
   "anti mofo": {
     fragrancias: ["Original", "Lavanda"],
   },
-  "gel acendedor": {
-    tipos: ["Tradicional", "Ecológico"],
+  "pasta rosa multiuso": {
+    tipos: ["500g"],
   },
 };
+
+const TODAS_FRAGANCIAS = [
+  "Original", "Campestre", "Floral", "Máxima Limpeza",
+  "Lavanda", "Citronela", "Eucalipto", "Bebê",
+  "Neve", "Frescor do Mar", "Primavera", "Marine",
+  "Cloro Ativo", "Cloro", "Limão", "Jasmim",
+  "Aconchego", "Intenso", "Sonhos de Infância",
+  "Pinho", "Mil Flores", "Laranja", "Citrus",
+];
 
 function extrairVariacoesDoTexto(html: string): { fragrancias: string[]; tipos: string[] } {
   const result: { fragrancias: string[]; tipos: string[] } = { fragrancias: [], tipos: [] };
@@ -81,9 +100,8 @@ function extrairVariacoesDoTexto(html: string): { fragrancias: string[]; tipos: 
   const fragMatch = text.match(/fragrância[s]?:?\s*([^\.]+)/i);
   if (fragMatch) {
     const parts = fragMatch[1].split(/[–\-—›,;]/).map((s) => s.trim()).filter(Boolean);
-    const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera", "Marine", "Cloro Ativo", "Cloro", "Limão"];
     for (const p of parts) {
-      for (const k of conhecidas) {
+      for (const k of TODAS_FRAGANCIAS) {
         if (p.toLowerCase().includes(k.toLowerCase()) && !result.fragrancias.includes(k)) {
           result.fragrancias.push(k);
         }
@@ -92,8 +110,7 @@ function extrairVariacoesDoTexto(html: string): { fragrancias: string[]; tipos: 
   }
 
   if (result.fragrancias.length === 0) {
-    const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera", "Marine", "Cloro Ativo", "Cloro", "Limão"];
-    result.fragrancias = conhecidas.filter((f) => text.includes(f));
+    result.fragrancias = TODAS_FRAGANCIAS.filter((f) => text.includes(f));
   }
 
   return result;

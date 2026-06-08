@@ -54,26 +54,29 @@ export default function SanyPage() {
   const totalCaixas = Object.values(itens).reduce((s, i) => s + i.caixas, 0);
   const totalItens = Object.keys(itens).length;
 
-  const gerarRomaneio = () => {
+  const gerarRomaneio = async () => {
     const sel = Object.values(itens);
     if (sel.length === 0) return;
 
-    let rows = "";
-    for (const item of sel) {
-      rows += `
-        <div style="display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #ddd;gap:16px;">
-          <img src="${item.produto.imagem}" style="width:70px;height:70px;object-fit:contain;border-radius:8px;border:1px solid #eee;" />
-          <div style="flex:1;">
-            <strong style="font-size:16px;">${item.produto.nome}</strong>
-            ${item.fragrancia ? `<br/><span style="color:#666;font-size:14px;">Fragrância: ${item.fragrancia}</span>` : ""}
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:24px;font-weight:900;color:#0d5e35;">${item.caixas}</div>
-            <div style="font-size:12px;color:#666;">caixa(s)</div>
-          </div>
-        </div>
+    const paraImagem = async (url: string) => {
+      try {
+        const r = await fetch(`/api/image-proxy?url=${encodeURIComponent(url)}`);
+        const d = await r.json();
+        return d.dataUrl || url;
+      } catch { return url; }
+    };
+
+    const rows = await Promise.all(sel.map(async (item) => {
+      const imgData = await paraImagem(item.produto.imagem);
+      return `
+        <tr>
+          <td class="img-cell"><img src="${imgData}" /></td>
+          <td><strong>${item.produto.nome}</strong></td>
+          <td>${item.fragrancia || "-"}</td>
+          <td class="qtd-cell">${item.caixas}</td>
+        </tr>
       `;
-    }
+    }));
 
     const dataAtual = new Date().toLocaleDateString("pt-BR");
     const html = `
@@ -123,14 +126,7 @@ export default function SanyPage() {
               </tr>
             </thead>
             <tbody>
-              ${sel.map((item) => `
-                <tr>
-                  <td class="img-cell"><img src="${item.produto.imagem}" /></td>
-                  <td><strong>${item.produto.nome}</strong></td>
-                  <td>${item.fragrancia || "-"}</td>
-                  <td class="qtd-cell">${item.caixas}</td>
-                </tr>
-              `).join("")}
+              ${rows.join("")}
               <tr class="total-row">
                 <td></td>
                 <td><strong>TOTAL</strong></td>

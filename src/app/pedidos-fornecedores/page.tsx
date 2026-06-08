@@ -2,6 +2,7 @@
 
 const fornecedores = [
   { id: "sany", nome: "Sany do Brasil", icone: "🧹", desc: "Produtos de limpeza e higiene", cor: "#0d5e35" },
+  { id: "flashlimp", nome: "Flash Limp", icone: "✨", desc: "Mops, panos, esponjas e acessórios", cor: "#1565c0" },
 ];
 
 export default function PedidosFornecedoresPage() {

@@ -9,9 +9,11 @@ const VARIACOES_CONHECIDAS: Record<string, { fragrancias?: string[]; tipos?: str
     fragrancias: ["Floral", "Lavanda", "Eucalipto"],
   },
   "saponáceo cremoso": {
+    fragrancias: ["Cloro", "Lavanda", "Floral", "Limão", "Eucalipto"],
     tipos: ["500ml", "1L"],
   },
   "saponáceo em pó": {
+    fragrancias: ["Cloro", "Lavanda", "Floral", "Limão", "Eucalipto"],
     tipos: ["500g", "1kg"],
   },
   "desinfetante sany mix 2l": {
@@ -79,7 +81,7 @@ function extrairVariacoesDoTexto(html: string): { fragrancias: string[]; tipos: 
   const fragMatch = text.match(/fragrância[s]?:?\s*([^\.]+)/i);
   if (fragMatch) {
     const parts = fragMatch[1].split(/[–\-—›,;]/).map((s) => s.trim()).filter(Boolean);
-    const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera", "Marine", "Cloro Ativo"];
+    const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera", "Marine", "Cloro Ativo", "Cloro", "Limão"];
     for (const p of parts) {
       for (const k of conhecidas) {
         if (p.toLowerCase().includes(k.toLowerCase()) && !result.fragrancias.includes(k)) {
@@ -90,7 +92,7 @@ function extrairVariacoesDoTexto(html: string): { fragrancias: string[]; tipos: 
   }
 
   if (result.fragrancias.length === 0) {
-    const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera", "Marine", "Cloro Ativo"];
+    const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera", "Marine", "Cloro Ativo", "Cloro", "Limão"];
     result.fragrancias = conhecidas.filter((f) => text.includes(f));
   }
 

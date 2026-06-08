@@ -206,8 +206,7 @@ export default function SanyPage() {
       <div className="header no-print">
         <div className="container header-inner">
           <a href="/pedidos-fornecedores" className="back-btn">← Voltar</a>
-          <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
-          <img src={LOGO_SANY} alt="Sany do Brasil" className="header-logo header-logo-sany" />
+          <img src={LOGO_SANY} alt="Sany do Brasil" className="header-logo" />
           <div className="header-text">
             <h1>Sany do Brasil</h1>
             <p>Pedido de compra</p>
@@ -279,8 +278,6 @@ export default function SanyPage() {
         .empty-icon { font-size: 48px; margin-bottom: 12px; font-weight: 900; color: #94a3b8; }
         .empty-state h2 { color: #0d5e35; margin-bottom: 8px; font-size: 1.2rem; }
         .empty-erro { font-size: 0.85rem; margin-top: 8px; color: #ef4444; }
-
-        .header-logo-sany { background: #fff; padding: 4px; border-radius: 10px; }
 
         .main-content { flex: 1; padding: 0; }
 

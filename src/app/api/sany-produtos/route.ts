@@ -28,21 +28,37 @@ export async function GET() {
         let nome = nomeEl.text().trim();
         if (!nome || !imagem) return;
 
-        const conteudo = $col.find(".elementor-tab-content").text();
         const fragrancias: string[] = [];
-        const fragMatch = conteudo.match(/fragrância[s]?:?\s*([^\.]+)/i);
-        if (fragMatch) {
-          fragMatch[1].split(/[–\-—,]/).forEach((f) => {
-            const fTrim = f.replace(/[–\-—]/g, "").trim();
-            if (fTrim) fragrancias.push(fTrim);
+        const $content = $col.find(".elementor-tab-content");
+        const contentHtml = $content.html() || "";
+
+        if (contentHtml.includes("fragrância") || contentHtml.includes("Fragrância")) {
+          $content.find("b, strong").each((_, el) => {
+            const texto = $(el).text().replace(/[\s\u00A0]+/g, " ").replace(/[–\-—›]/g, "").trim();
+            if (texto && texto.length < 40 && !texto.match(/^(dispon[v|í]vel|fragrância)/i)) {
+              const limpo = texto.replace(/^\s*[\u2022\u2023\u25E6\u2043\u2219*]\s*/, "").trim();
+              if (limpo && !fragrancias.includes(limpo)) fragrancias.push(limpo);
+            }
           });
-        }
-        if (conteudo.includes("Original") && conteudo.includes("Campestre")) {
-          const found: string[] = [];
-          for (const f of ["Original", "Campestre", "Floral", "Máxima Limpeza"]) {
-            if (conteudo.includes(f)) found.push(f);
+
+          const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza"];
+          const hasConhecidas = conhecidas.filter((f) => contentHtml.includes(f));
+          if (hasConhecidas.length >= 2) {
+            produtos.push({
+              id: nome.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
+              nome,
+              imagem,
+              categoria,
+              fragrancias: hasConhecidas,
+            });
+            return;
           }
-          if (found.length > 0) {
+        }
+
+        if (fragrancias.length === 0) {
+          const conhecidas = ["Original", "Campestre", "Floral", "Máxima Limpeza", "Lavanda", "Citronela", "Eucalipto", "Bebê", "Neve", "Frescor do Mar", "Primavera"];
+          const found = conhecidas.filter((f) => contentHtml.includes(f));
+          if (found.length >= 2) {
             produtos.push({
               id: nome.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
               nome,
@@ -59,7 +75,7 @@ export async function GET() {
           nome,
           imagem,
           categoria,
-          fragrancias: fragrancias.length > 0 ? fragrancias : undefined,
+          fragrancias: fragrancias.length > 0 ? [...new Set(fragrancias)] : undefined,
         });
       });
     });

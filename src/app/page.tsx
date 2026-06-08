@@ -43,9 +43,16 @@ const menuItems = [
     desc: "Veja transportadoras próximas a Curitiba que atendem todo o Brasil.",
     badge: "Entregas",
   },
+  {
+    href: "/pedidos-fornecedores",
+    icon: "📋",
+    title: "Pedidos Fornecedores",
+    desc: "Faça pedidos direto dos fornecedores com romaneio em PDF.",
+    badge: "Compras",
+  },
 ];
 
-const highlights = ["6 ferramentas", "Acesso rápido", "Layout responsivo"];
+const highlights = ["7 ferramentas", "Acesso rápido", "Layout responsivo"];
 
 export default function Home() {
   return (

@@ -491,6 +491,9 @@ a {
 .menu-card:nth-child(6) {
   animation-delay: 0.2s;
 }
+.menu-card:nth-child(7) {
+  animation-delay: 0.24s;
+}
 
 @media (max-width: 980px) {
   .hero-section {

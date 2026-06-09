@@ -257,9 +257,9 @@ export default function SanyPage() {
         .prod-card { background: #fff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 14px; transition: all 0.15s; }
         .prod-card.has-item { border: 2px solid #15814a; box-shadow: 0 4px 16px rgba(21,129,74,0.15); }
         .prod-card-inner { display: flex; gap: 12px; }
-        .prod-img { width: 56px; height: 56px; object-fit: contain; border-radius: 10px; border: 1px solid #f0f0f0; flex-shrink: 0; align-self: flex-start; }
+        .prod-img { width: 100px; height: 100px; object-fit: contain; border-radius: 10px; border: 1px solid #f0f0f0; flex-shrink: 0; align-self: flex-start; }
         .prod-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-        .prod-name { font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
+        .prod-name { font-size: 0.95rem; font-weight: 700; line-height: 1.3; text-transform: uppercase; color: #000; }
 
         .prod-select { width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; font-family: inherit; background: #fff; appearance: auto; }
         .prod-input { width: 100%; padding: 10px 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; font-family: inherit; }
@@ -280,13 +280,13 @@ export default function SanyPage() {
           .cat-section { padding: 0 24px; margin-bottom: 32px; }
           .prod-grid { gap: 12px; }
           .prod-card { padding: 16px; }
-          .prod-img { width: 64px; height: 64px; }
+          .prod-img { width: 120px; height: 120px; }
         }
 
         @media (max-width: 600px) {
           .prod-grid { grid-template-columns: 1fr; }
           .prod-card { padding: 12px; border-radius: 14px; }
-          .prod-img { width: 50px; height: 50px; }
+          .prod-img { width: 80px; height: 80px; }
           .prod-name { font-size: 0.9rem; }
           .prod-select, .prod-input { padding: 12px 14px; font-size: 1rem; border-radius: 12px; }
           .qtd-btn { width: 44px; height: 44px; font-size: 22px; }

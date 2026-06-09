@@ -255,9 +255,9 @@ export default function FlashLimpPage() {
         .prod-card { background: #fff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 10px; transition: all 0.15s; }
         .prod-card.has-item { border: 2px solid #1565c0; box-shadow: 0 4px 16px rgba(21,101,192,0.15); }
         .prod-card-inner { display: flex; gap: 10px; align-items: center; }
-        .prod-img { width: 52px; height: 52px; object-fit: contain; border-radius: 8px; border: 1px solid #f0f0f0; flex-shrink: 0; }
+        .prod-img { width: 90px; height: 90px; object-fit: contain; border-radius: 8px; border: 1px solid #f0f0f0; flex-shrink: 0; }
         .prod-body { flex: 1; min-width: 0; }
-        .prod-name { font-size: 0.85rem; font-weight: 700; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .prod-name { font-size: 0.85rem; font-weight: 700; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-transform: uppercase; color: #000; }
         .prod-ref { font-size: 0.7rem; color: #94a3b8; margin-top: 2px; }
 
         .qtd-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
@@ -272,12 +272,13 @@ export default function FlashLimpPage() {
           .resumo-bar { margin: 0 24px 20px; }
           .cat-section { padding: 0 24px; margin-bottom: 28px; }
           .prod-grid { gap: 10px; }
+          .prod-img { width: 100px; height: 100px; }
         }
 
         @media (max-width: 600px) {
           .prod-grid { grid-template-columns: 1fr; }
           .prod-card { padding: 8px; }
-          .prod-img { width: 44px; height: 44px; }
+          .prod-img { width: 70px; height: 70px; }
           .prod-name { font-size: 0.8rem; }
           .qtd-btn { width: 38px; height: 38px; }
           .qtd-input { width: 48px; }

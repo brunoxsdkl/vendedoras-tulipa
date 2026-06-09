@@ -6,6 +6,7 @@ const fornecedores = [
   { id: "visbella", nome: "Vis Bella Brasil", icone: "🛡️", desc: "Silicones, epóxis, adesivos e limpeza automotiva", cor: "#e65100" },
   { id: "haracem", nome: "Haracem", icone: "🪥", desc: "Vassouras, rodos e acessórios", cor: "#dc2626" },
   { id: "toq", nome: "toQ", icone: "🧹", desc: "Vassouras, rodos, pás, escovas e utilidades", cor: "#54268C" },
+  { id: "robertosacos", nome: "Roberto Sacos", icone: "🗑️", desc: "Sacos de lixo e embalagens", cor: "#1a1a2e" },
 ];
 
 export default function PedidosFornecedoresPage() {

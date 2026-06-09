@@ -6,8 +6,10 @@ type Produto = {
   id: string;
   nome: string;
   imagem: string;
+  imagemFallback: string;
   categoria: string;
   descricao: string;
+  ref?: string;
 };
 
 type ItemPedido = {
@@ -15,43 +17,43 @@ type ItemPedido = {
   quantidade: number;
 };
 
-const BASE_URL = "https://www.toq.ind.br/";
+const BASE = "https://www.toq.ind.br";
 
 const produtos: Produto[] = [
   // Vassouras
-  { id: "1", nome: "Pluri", imagem: BASE_URL + "img/produtos/pluri.svg", categoria: "Vassouras", descricao: "Vassoura multiuso sem capa" },
-  { id: "2", nome: "Pluri Plus", imagem: BASE_URL + "img/produtos/pluri-plus.svg", categoria: "Vassouras", descricao: "Vassoura multiuso com capa" },
-  { id: "3", nome: "Pluri Cantos", imagem: BASE_URL + "img/produtos/pluri-cantos.svg", categoria: "Vassouras", descricao: "Vassoura multiuso angular com capa" },
-  { id: "4", nome: "Pluri Max", imagem: BASE_URL + "img/produtos/pluri-max.svg", categoria: "Vassouras", descricao: "Vassoura multiuso grande com capa" },
-  { id: "5", nome: "Super Pluma", imagem: BASE_URL + "img/produtos/super-pluma.svg", categoria: "Vassouras", descricao: "Vassoura para todos os tipos de pisos e sujeiras" },
-  { id: "6", nome: "Plena Plus", imagem: BASE_URL + "img/produtos/plena-plus.svg", categoria: "Vassouras", descricao: "Vassoura pêlo longo com capa" },
-  { id: "7", nome: "Sutile", imagem: BASE_URL + "img/produtos/sutile.svg", categoria: "Vassouras", descricao: "Vassoura de uso interno sem capa" },
-  { id: "8", nome: "Sutile Plus", imagem: BASE_URL + "img/produtos/sutile-plus.svg", categoria: "Vassouras", descricao: "Vassoura de uso interno com capa" },
-  { id: "9", nome: "Xterna", imagem: BASE_URL + "img/produtos/xterna.svg", categoria: "Vassouras", descricao: "Vassoura de uso externo sem capa" },
-  { id: "10", nome: "Xterna Plus", imagem: BASE_URL + "img/produtos/xterna-plus.svg", categoria: "Vassouras", descricao: "Vassoura de uso externo com capa" },
-  { id: "11", nome: "Esfreg-o", imagem: BASE_URL + "img/produtos/esfreg-o.svg", categoria: "Vassouras", descricao: "Esfregão" },
-  { id: "12", nome: "Forc 30 cm", imagem: BASE_URL + "img/produtos/forc-30.svg", categoria: "Vassouras", descricao: "Vassourão de uso externo" },
-  { id: "13", nome: "Forc 40 cm", imagem: BASE_URL + "img/produtos/forc-40.svg", categoria: "Vassouras", descricao: "Vassourão de uso externo" },
-  { id: "14", nome: "Flora", imagem: BASE_URL + "img/produtos/flora.svg", categoria: "Vassouras", descricao: "Vassoura para Jardim" },
+  { id: "1", nome: "Pluri", imagem: BASE + "/fotos/produtos/pluri-1.png", imagemFallback: BASE + "/img/produtos/pluri.svg", categoria: "Vassouras", descricao: "Vassoura multiuso sem capa", ref: "329" },
+  { id: "2", nome: "Pluri Plus", imagem: BASE + "/fotos/produtos/pluri-plus-1.png", imagemFallback: BASE + "/img/produtos/pluri-plus.svg", categoria: "Vassouras", descricao: "Vassoura multiuso com capa", ref: "336" },
+  { id: "3", nome: "Pluri Cantos", imagem: BASE + "/fotos/produtos/pluri-cantos-1.png", imagemFallback: BASE + "/img/produtos/pluri-cantos.svg", categoria: "Vassouras", descricao: "Vassoura multiuso angular com capa" },
+  { id: "4", nome: "Pluri Max", imagem: BASE + "/fotos/produtos/pluri-max-1.png", imagemFallback: BASE + "/img/produtos/pluri-max.svg", categoria: "Vassouras", descricao: "Vassoura multiuso grande com capa" },
+  { id: "5", nome: "Super Pluma", imagem: BASE + "/fotos/produtos/super-pluma-1.png", imagemFallback: BASE + "/img/produtos/super-pluma.svg", categoria: "Vassouras", descricao: "Vassoura para todos os tipos de pisos e sujeiras" },
+  { id: "6", nome: "Plena Plus", imagem: BASE + "/fotos/produtos/plena-plus-1.png", imagemFallback: BASE + "/img/produtos/plena-plus.svg", categoria: "Vassouras", descricao: "Vassoura pêlo longo com capa" },
+  { id: "7", nome: "Sutile", imagem: BASE + "/fotos/produtos/sutile-1.png", imagemFallback: BASE + "/img/produtos/sutile.svg", categoria: "Vassouras", descricao: "Vassoura de uso interno sem capa" },
+  { id: "8", nome: "Sutile Plus", imagem: BASE + "/fotos/produtos/sutile-plus-1.png", imagemFallback: BASE + "/img/produtos/sutile-plus.svg", categoria: "Vassouras", descricao: "Vassoura de uso interno com capa" },
+  { id: "9", nome: "Xterna", imagem: BASE + "/fotos/produtos/xterna-1.png", imagemFallback: BASE + "/img/produtos/xterna.svg", categoria: "Vassouras", descricao: "Vassoura de uso externo sem capa" },
+  { id: "10", nome: "Xterna Plus", imagem: BASE + "/fotos/produtos/xterna-plus-1.png", imagemFallback: BASE + "/img/produtos/xterna-plus.svg", categoria: "Vassouras", descricao: "Vassoura de uso externo com capa" },
+  { id: "11", nome: "Esfregão", imagem: BASE + "/fotos/produtos/esfreg-o-1.png", imagemFallback: BASE + "/img/produtos/esfreg-o.svg", categoria: "Vassouras", descricao: "Esfregão" },
+  { id: "12", nome: "Forc 30 cm", imagem: BASE + "/fotos/produtos/forc-30-1.png", imagemFallback: BASE + "/img/produtos/forc-30.svg", categoria: "Vassouras", descricao: "Vassourão de uso externo" },
+  { id: "13", nome: "Forc 40 cm", imagem: BASE + "/fotos/produtos/forc-40-1.png", imagemFallback: BASE + "/img/produtos/forc-40.svg", categoria: "Vassouras", descricao: "Vassourão de uso externo" },
+  { id: "14", nome: "Flora", imagem: BASE + "/fotos/produtos/flora-1.png", imagemFallback: BASE + "/img/produtos/flora.svg", categoria: "Vassouras", descricao: "Vassoura para Jardim" },
   // Rodos
-  { id: "15", nome: "Rod-o 30 cm", imagem: BASE_URL + "img/produtos/rod-o-30.svg", categoria: "Rodos", descricao: "Rodo duplo 30 cm" },
-  { id: "16", nome: "Rod-o 40 cm", imagem: BASE_URL + "img/produtos/rod-o-40.svg", categoria: "Rodos", descricao: "Rodo duplo 40 cm" },
-  { id: "17", nome: "Rod-o 60 cm", imagem: BASE_URL + "img/produtos/teste.png", categoria: "Rodos", descricao: "Rodo duplo 60 cm" },
-  { id: "18", nome: "Limpi", imagem: BASE_URL + "img/produtos/limpi.svg", categoria: "Rodos", descricao: "Rodinho multiuso" },
+  { id: "15", nome: "Rod-o 30 cm", imagem: BASE + "/fotos/produtos/rod-o-30-1.png", imagemFallback: BASE + "/img/produtos/rod-o-30.svg", categoria: "Rodos", descricao: "Rodo duplo 30 cm" },
+  { id: "16", nome: "Rod-o 40 cm", imagem: BASE + "/fotos/produtos/rod-o-40-1.png", imagemFallback: BASE + "/img/produtos/rod-o-40.svg", categoria: "Rodos", descricao: "Rodo duplo 40 cm" },
+  { id: "17", nome: "Rod-o 60 cm", imagem: BASE + "/fotos/produtos/rod-o-60-1.png", imagemFallback: BASE + "/img/produtos/rod-o-60.svg", categoria: "Rodos", descricao: "Rodo duplo 60 cm" },
+  { id: "18", nome: "Limpi", imagem: BASE + "/fotos/produtos/limpi-1.png", imagemFallback: BASE + "/img/produtos/limpi.svg", categoria: "Rodos", descricao: "Rodinho multiuso" },
   // Pás
-  { id: "19", nome: "Junt", imagem: BASE_URL + "img/produtos/junt.svg", categoria: "Pás", descricao: "Pá para lixo" },
-  { id: "20", nome: "Colet", imagem: BASE_URL + "img/produtos/colet.svg", categoria: "Pás", descricao: "Pá para lixo com cabo" },
+  { id: "19", nome: "Junt", imagem: BASE + "/fotos/produtos/junt-1.png", imagemFallback: BASE + "/img/produtos/junt.svg", categoria: "Pás", descricao: "Pá para lixo" },
+  { id: "20", nome: "Colet", imagem: BASE + "/fotos/produtos/colet-1.png", imagemFallback: BASE + "/img/produtos/colet.svg", categoria: "Pás", descricao: "Pá para lixo com cabo" },
   // Escovas
-  { id: "21", nome: "Fricci", imagem: BASE_URL + "img/produtos/fricci.svg", categoria: "Escovas", descricao: "Escova de madeira" },
-  { id: "22", nome: "Fricci Plus", imagem: BASE_URL + "img/produtos/fricci-plus.svg", categoria: "Escovas", descricao: "Escova plástica" },
-  { id: "23", nome: "Fricci Max", imagem: BASE_URL + "img/produtos/fricci-max.svg", categoria: "Escovas", descricao: "Escova plástica grande" },
-  { id: "24", nome: "Atrita", imagem: BASE_URL + "img/produtos/atrita.svg", categoria: "Escovas", descricao: "Escova plástica com alça" },
-  { id: "25", nome: "Sanit", imagem: BASE_URL + "img/produtos/sanit.svg", categoria: "Escovas", descricao: "Escova sanitária" },
-  { id: "26", nome: "Sanit Plus", imagem: BASE_URL + "img/produtos/sanit-plus.svg", categoria: "Escovas", descricao: "Escova sanitária com estojo" },
-  { id: "27", nome: "Chuá", imagem: BASE_URL + "img/produtos/chua.svg", categoria: "Escovas", descricao: "Escova de banho" },
+  { id: "21", nome: "Fricci", imagem: BASE + "/fotos/produtos/fricci-1.png", imagemFallback: BASE + "/img/produtos/fricci.svg", categoria: "Escovas", descricao: "Escova de madeira" },
+  { id: "22", nome: "Fricci Plus", imagem: BASE + "/fotos/produtos/fricci-plus-1.png", imagemFallback: BASE + "/img/produtos/fricci-plus.svg", categoria: "Escovas", descricao: "Escova plástica" },
+  { id: "23", nome: "Fricci Max", imagem: BASE + "/fotos/produtos/fricci-max-1.png", imagemFallback: BASE + "/img/produtos/fricci-max.svg", categoria: "Escovas", descricao: "Escova plástica grande" },
+  { id: "24", nome: "Atrita", imagem: BASE + "/fotos/produtos/atrita-1.png", imagemFallback: BASE + "/img/produtos/atrita.svg", categoria: "Escovas", descricao: "Escova plástica com alça" },
+  { id: "25", nome: "Sanit", imagem: BASE + "/fotos/produtos/sanit-1.png", imagemFallback: BASE + "/img/produtos/sanit.svg", categoria: "Escovas", descricao: "Escova sanitária" },
+  { id: "26", nome: "Sanit Plus", imagem: BASE + "/fotos/produtos/sanit-plus-1.png", imagemFallback: BASE + "/img/produtos/sanit-plus.svg", categoria: "Escovas", descricao: "Escova sanitária com estojo" },
+  { id: "27", nome: "Chuá", imagem: BASE + "/fotos/produtos/chua-1.png", imagemFallback: BASE + "/img/produtos/chua.svg", categoria: "Escovas", descricao: "Escova de banho" },
   // Utilidades
-  { id: "28", nome: "Prendedura", imagem: BASE_URL + "img/produtos/prendedura.svg", categoria: "Utilidades", descricao: "Prendedores multiuso" },
-  { id: "29", nome: "Pendur-e", imagem: BASE_URL + "img/produtos/pendur-e.svg", categoria: "Utilidades", descricao: "Cabide" },
+  { id: "28", nome: "Prendedura", imagem: BASE + "/fotos/produtos/prendedura-1.png", imagemFallback: BASE + "/img/produtos/prendedura.svg", categoria: "Utilidades", descricao: "Prendedores multiuso" },
+  { id: "29", nome: "Pendur-e", imagem: BASE + "/fotos/produtos/pendur-e-1.png", imagemFallback: BASE + "/img/produtos/pendur-e.svg", categoria: "Utilidades", descricao: "Cabide" },
 ];
 
 export default function ToqPage() {
@@ -201,7 +203,7 @@ export default function ToqPage() {
                       alt={produto.nome}
                       style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%2354268C' stroke-width='1.5'%3E%3Cpath d='M12 2v20'/%3E%3Cpath d='m17 5-5-3-5 3'/%3E%3Cpath d='m17 19-5 3-5-3'/%3E%3C/svg%3E";
+                        (e.target as HTMLImageElement).src = produto.imagemFallback;
                       }}
                     />
                   </div>
@@ -210,6 +212,7 @@ export default function ToqPage() {
                       {produto.categoria}
                     </span>
                     <h3 style={{ margin: "0 0 4px 0", fontSize: "0.95rem", color: "#000", textTransform: "uppercase", fontWeight: 700 }}>{produto.nome}</h3>
+                    {produto.ref && <p style={{ margin: 0, fontSize: "0.7rem", color: "#94a3b8" }}>Ref: {produto.ref}</p>}
                     <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>{produto.descricao}</p>
                   </div>
                   <div style={{ padding: "8px 12px 12px", borderTop: "1px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>

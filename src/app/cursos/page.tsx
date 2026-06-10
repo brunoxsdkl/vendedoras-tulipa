@@ -16,6 +16,7 @@ type Curso = {
   descricao: string;
   carga: string;
   vagas: number;
+  preco: string;
   alunos: Aluno[];
 };
 
@@ -40,11 +41,9 @@ function saveCursos(c: Curso[]) {
 
 function defaultCursos(): Curso[] {
   return [
-    { id: uid(), nome: "Limpeza Basica", descricao: "Produtos essenciais de limpeza para iniciantes", carga: "4h", vagas: 20, alunos: [] },
-    { id: uid(), nome: "Limpeza Avancada", descricao: "Formulas e tecnicas avancadas de limpeza", carga: "8h", vagas: 15, alunos: [] },
-    { id: uid(), nome: "Cosmeticos", descricao: "Criacao de produtos cosmeticos e cuidados pessoais", carga: "6h", vagas: 12, alunos: [] },
-    { id: uid(), nome: "Velas e Aromatizacao", descricao: "Producao de velas, difusores e essencias", carga: "4h", vagas: 10, alunos: [] },
-    { id: uid(), nome: "Amaciante e Tecidos", descricao: "Amaciante caseiro e tratamento de roupas", carga: "4h", vagas: 18, alunos: [] },
+    { id: uid(), nome: "Cosmeticos e Perfumes", descricao: "Aprenda a criar cosméticos e perfumes do zero", carga: "08:30 as 12:00", vagas: 20, preco: "R$ 150,00", alunos: [] },
+    { id: uid(), nome: "Velas", descricao: "Producao de velas artesanais e aromatizacao", carga: "08:30 as 12:00", vagas: 20, preco: "R$ 150,00", alunos: [] },
+    { id: uid(), nome: "Saboaria", descricao: "Criacao de sabonetes artesanais e presentes", carga: "08:30 as 12:00", vagas: 20, preco: "R$ 150,00", alunos: [] },
   ];
 }
 
@@ -144,6 +143,7 @@ export default function CursosPage() {
   const [formDesc, setFormDesc] = useState("");
   const [formCarga, setFormCarga] = useState("");
   const [formVagas, setFormVagas] = useState("20");
+  const [formPreco, setFormPreco] = useState("R$ 150,00");
 
   /* modal aluno */
   const [showAlunoModal, setShowAlunoModal] = useState(false);
@@ -170,6 +170,7 @@ export default function CursosPage() {
     setFormDesc("");
     setFormCarga("");
     setFormVagas("20");
+    setFormPreco("R$ 150,00");
     setShowCursoModal(true);
   };
   const openEditCurso = (c: Curso) => {
@@ -178,14 +179,15 @@ export default function CursosPage() {
     setFormDesc(c.descricao);
     setFormCarga(c.carga);
     setFormVagas(String(c.vagas));
+    setFormPreco(c.preco || "");
     setShowCursoModal(true);
   };
   const saveCurso = () => {
     if (!formNome.trim()) return;
     if (editingCurso) {
-      persist(cursos.map((c) => c.id === editingCurso.id ? { ...c, nome: formNome.trim(), descricao: formDesc.trim(), carga: formCarga.trim(), vagas: Number(formVagas) || c.vagas } : c));
+      persist(cursos.map((c) => c.id === editingCurso.id ? { ...c, nome: formNome.trim(), descricao: formDesc.trim(), carga: formCarga.trim(), vagas: Number(formVagas) || c.vagas, preco: formPreco.trim() } : c));
     } else {
-      const nc: Curso = { id: uid(), nome: formNome.trim(), descricao: formDesc.trim(), carga: formCarga.trim(), vagas: Number(formVagas) || 20, alunos: [] };
+      const nc: Curso = { id: uid(), nome: formNome.trim(), descricao: formDesc.trim(), carga: formCarga.trim(), vagas: Number(formVagas) || 20, preco: formPreco.trim(), alunos: [] };
       persist([...cursos, nc]);
     }
     setShowCursoModal(false);
@@ -311,6 +313,7 @@ export default function CursosPage() {
                       <div className="curso-card-info">
                         <span>&#9202; {c.carga}</span>
                         <span>&#128101; {ocupadas}/{c.vagas} vagas</span>
+                        {c.preco && <span style={{fontWeight:800,color:"#0d5e35",fontSize:"0.95rem"}}>{c.preco}</span>}
                       </div>
                       <div className="vaga-bar">
                         <div className={"vaga-bar-fill " + statusClass} style={{ width: Math.min(pct, 100) + "%" }} />
@@ -337,7 +340,7 @@ export default function CursosPage() {
               <button className="back" onClick={() => { setView("dashboard"); setSelectedId(null); }}>&#8592; Voltar</button>
               <div className="detail-info">
                 <h2>{selected.nome}</h2>
-                <p>{selected.descricao} | {selected.carga}</p>
+                <p>{selected.descricao} | {selected.carga} {selected.preco && <span style={{fontWeight:800,color:"#0d5e35"}}> | {selected.preco}</span>}</p>
               </div>
               <div className="detail-stats">
                 <div className="stat-box">
@@ -448,12 +451,16 @@ export default function CursosPage() {
               </div>
               <div style={{ display: "flex", gap: 12 }}>
                 <div className="form-group" style={{ flex: 1 }}>
-                  <label>Carga horaria</label>
-                  <input value={formCarga} onChange={(e) => setFormCarga(e.target.value)} placeholder="Ex: 4h" />
+                  <label>Horario / Carga</label>
+                  <input value={formCarga} onChange={(e) => setFormCarga(e.target.value)} placeholder="Ex: 08:30 as 12:00" />
                 </div>
                 <div className="form-group" style={{ flex: 1 }}>
                   <label>Vagas</label>
                   <input type="number" min="1" value={formVagas} onChange={(e) => setFormVagas(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Valor</label>
+                  <input value={formPreco} onChange={(e) => setFormPreco(e.target.value)} placeholder="Ex: R$ 150,00" />
                 </div>
               </div>
               <div className="modal-actions">

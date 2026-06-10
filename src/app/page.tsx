@@ -44,7 +44,6 @@ const menuItems = [
     badge: "Entregas",
   },
   {
-  {
     href: "/cursos",
     icon: "\U0001f393",
     title: "Cursos",

@@ -50,6 +50,7 @@ const menuItems = [
     desc: "Gerencie listas de alunos, gere PDFs e compartilhe no WhatsApp.",
     badge: "Gest\u00e3o",
   },
+  {
     href: "/pedidos-fornecedores",
     icon: "📋",
     title: "Pedidos Fornecedores",

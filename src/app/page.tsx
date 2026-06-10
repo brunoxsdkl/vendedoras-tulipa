@@ -45,9 +45,9 @@ const menuItems = [
   },
   {
     href: "/cursos",
-    icon: "\U0001f393",
+    icon: "\u{1F393}",
     title: "Cursos",
-    desc: "Gerencie listas de alunos, gere PDFs e compartilhe no WhatsApp.",
+    desc: "Gerencie cursos, alunos, vagas, gere PDFs e compartilhe no WhatsApp.",
     badge: "Gest\u00e3o",
   },
   {

@@ -104,10 +104,17 @@ export default function InformacoesUteis() {
             <p className="info-obs">
               Exigências para compor cadastro (compra no boleto):
             </p>
+            <div className="doc-actions-bar">
+              <span className="doc-actions-label">Enviar tudo no WhatsApp ou copiar:</span>
+              <div className="ramal-actions">
+                <WppBtn texto={`*EXIGÊNCIAS PARA CADASTRO (COMPRA NO BOLETO)*\n\n1. ${faturamento[0]}\n2. ${faturamento[1]}\n3. ${faturamento[2]}\n4. ${faturamento[3]}`} />
+                <CopiarBtn texto={`EXIGÊNCIAS PARA CADASTRO (COMPRA NO BOLETO)\n\n1. ${faturamento[0]}\n2. ${faturamento[1]}\n3. ${faturamento[2]}\n4. ${faturamento[3]}`} />
+              </div>
+            </div>
             <ul className="doc-list">
               {faturamento.map((doc, i) => (
                 <li key={i} className="doc-item">
-                  <span>{doc}</span>
+                  <span>{i + 1}. {doc}</span>
                   <div className="ramal-actions">
                     <WppBtn texto={doc} />
                     <CopiarBtn texto={doc} />

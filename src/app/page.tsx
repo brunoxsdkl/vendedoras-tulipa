@@ -57,6 +57,13 @@ const menuItems = [
     desc: "Faça pedidos direto dos fornecedores com romaneio em PDF.",
     badge: "Compras",
   },
+  {
+    href: "/informacoes-uteis",
+    icon: "ℹ️",
+    title: "Informações Úteis",
+    desc: "Ramais, documentos para faturamento e CNPJ da empresa.",
+    badge: "Consultas",
+  },
 ];
 
 const highlights = ["8 ferramentas", "Acesso rápido", "Layout responsivo"];

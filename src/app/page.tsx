@@ -44,6 +44,13 @@ const menuItems = [
     badge: "Entregas",
   },
   {
+  {
+    href: "/cursos",
+    icon: "\U0001f393",
+    title: "Cursos",
+    desc: "Gerencie listas de alunos, gere PDFs e compartilhe no WhatsApp.",
+    badge: "Gest\u00e3o",
+  },
     href: "/pedidos-fornecedores",
     icon: "📋",
     title: "Pedidos Fornecedores",
@@ -52,7 +59,7 @@ const menuItems = [
   },
 ];
 
-const highlights = ["7 ferramentas", "Acesso rápido", "Layout responsivo"];
+const highlights = ["8 ferramentas", "Acesso rápido", "Layout responsivo"];
 
 export default function Home() {
   return (

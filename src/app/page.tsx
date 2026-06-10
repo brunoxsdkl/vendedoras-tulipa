@@ -133,7 +133,7 @@ export default function Home() {
 
 function Header() {
   return (
-    <div className="header">
+    <header className="header">
       <div className="header-inner">
         <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
         <div className="header-text">
@@ -141,7 +141,7 @@ function Header() {
           <h1>VENDEDORAS - TULIPA</h1>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
 

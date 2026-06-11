@@ -23,40 +23,23 @@ type Curso = {
 const uid = () => Math.random().toString(36).slice(2, 10);
 const today = () => new Date().toLocaleDateString("pt-BR");
 
+async function apiFetch(url: string, options?: RequestInit) {
+  const res = await fetch(url, options);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || `Erro ${res.status}`);
+  }
+  return res.json();
+}
+
 const api = {
-  async getCursos(): Promise<Curso[]> {
-    const res = await fetch("/api/cursos");
-    if (!res.ok) throw new Error("Erro ao carregar cursos");
-    return res.json();
-  },
-  async createCurso(data: Partial<Curso>) {
-    const res = await fetch("/api/cursos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-    if (!res.ok) throw new Error("Erro ao criar curso");
-    return res.json();
-  },
-  async updateCurso(id: string, data: Partial<Curso>) {
-    const res = await fetch(`/api/cursos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
-    if (!res.ok) throw new Error("Erro ao atualizar curso");
-    return res.json();
-  },
-  async deleteCurso(id: string) {
-    const res = await fetch(`/api/cursos/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Erro ao excluir curso");
-  },
-  async createAluno(cursoId: string, nome: string, telefone: string) {
-    const res = await fetch("/api/alunos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ curso_id: cursoId, nome, telefone }) });
-    if (!res.ok) throw new Error("Erro ao adicionar aluno");
-    return res.json();
-  },
-  async updateAluno(id: string, nome: string, telefone: string) {
-    const res = await fetch(`/api/alunos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ nome, telefone }) });
-    if (!res.ok) throw new Error("Erro ao atualizar aluno");
-    return res.json();
-  },
-  async deleteAluno(id: string) {
-    const res = await fetch(`/api/alunos/${id}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Erro ao excluir aluno");
-  },
+  getCursos(): Promise<Curso[]> { return apiFetch("/api/cursos"); },
+  createCurso(data: Partial<Curso>) { return apiFetch("/api/cursos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
+  updateCurso(id: string, data: Partial<Curso>) { return apiFetch(`/api/cursos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
+  deleteCurso(id: string) { return apiFetch(`/api/cursos/${id}`, { method: "DELETE" }); },
+  createAluno(cursoId: string, nome: string, telefone: string) { return apiFetch("/api/alunos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ curso_id: cursoId, nome, telefone }) }); },
+  updateAluno(id: string, nome: string, telefone: string) { return apiFetch(`/api/alunos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ nome, telefone }) }); },
+  deleteAluno(id: string) { return apiFetch(`/api/alunos/${id}`, { method: "DELETE" }); },
 };
 
 export default function CursosPage() {
@@ -107,15 +90,19 @@ export default function CursosPage() {
     setShowCursoModal(true);
   };
   const saveCurso = async () => {
-    if (!formNome.trim()) return;
+    if (!formNome.trim()) { alert("Preencha o nome do curso"); return; }
     const payload = { nome: formNome.trim(), descricao: formDesc.trim(), carga: formCarga.trim(), vagas: Number(formVagas) || 20, preco: `R$ ${formPreco.replace("R$", "").trim()}` };
-    if (editingCurso) {
-      await api.updateCurso(editingCurso.id, payload);
-    } else {
-      await api.createCurso(payload);
+    try {
+      if (editingCurso) {
+        await api.updateCurso(editingCurso.id, payload);
+      } else {
+        await api.createCurso(payload);
+      }
+      await carregar();
+      setShowCursoModal(false);
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Erro ao salvar curso");
     }
-    await carregar();
-    setShowCursoModal(false);
   };
   const deleteCurso = async (id: string) => {
     if (!confirm("Excluir este curso e todos os alunos?")) return;

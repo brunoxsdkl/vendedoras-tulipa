@@ -21,8 +21,8 @@ export async function POST(req: Request) {
       parcelas: body.parcelas || 1,
       valor_parcela: body.valor_parcela || null,
       status_pagamento: body.status_pagamento || "Pendente",
-      pago: body.status_pagamento === "Pago",
-      pendente: body.status_pagamento !== "Pago" && body.status_pagamento !== "Cancelado",
+      pago: body.status_pagamento === "Pago" ? 1 : 0,
+      pendente: body.status_pagamento !== "Pago" && body.status_pagamento !== "Cancelado" ? 1 : 0,
       data_pagamento: body.data_pagamento || null,
       data_inscricao: new Date().toISOString(),
     })

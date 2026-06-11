@@ -8,6 +8,18 @@ type Aluno = {
   telefone: string;
   whatsapp?: string;
   data_inscricao: string;
+  cpf?: string;
+  email?: string;
+  data_nascimento?: string;
+  cidade?: string;
+  valor_curso?: number;
+  forma_pagamento?: string;
+  parcelas?: number;
+  valor_parcela?: number;
+  status_pagamento?: string;
+  pago?: boolean;
+  pendente?: boolean;
+  data_pagamento?: string;
 };
 
 type Curso = {
@@ -37,8 +49,8 @@ const api = {
   createCurso(data: Partial<Curso>) { return apiFetch("/api/cursos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
   updateCurso(id: string, data: Partial<Curso>) { return apiFetch(`/api/cursos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
   deleteCurso(id: string) { return apiFetch(`/api/cursos/${id}`, { method: "DELETE" }); },
-  createAluno(cursoId: string, nome: string, telefone: string) { return apiFetch("/api/alunos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ curso_id: cursoId, nome, telefone }) }); },
-  updateAluno(id: string, nome: string, telefone: string) { return apiFetch(`/api/alunos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ nome, telefone }) }); },
+  createAluno(data: Record<string, unknown>) { return apiFetch("/api/alunos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
+  updateAluno(id: string, data: Record<string, unknown>) { return apiFetch(`/api/alunos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
   deleteAluno(id: string) { return apiFetch(`/api/alunos/${id}`, { method: "DELETE" }); },
 };
 
@@ -61,6 +73,16 @@ export default function CursosPage() {
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
   const [aNome, setANome] = useState("");
   const [aTel, setATel] = useState("");
+  const [aCPF, setACPF] = useState("");
+  const [aEmail, setAEmail] = useState("");
+  const [aDataNasc, setADataNasc] = useState("");
+  const [aCidade, setACidade] = useState("");
+  const [aValorCurso, setAValorCurso] = useState("");
+  const [aFormaPagamento, setAFormaPagamento] = useState("PIX");
+  const [aParcelas, setAParcelas] = useState("1");
+  const [aValorParcela, setAValorParcela] = useState("");
+  const [aStatusPagamento, setAStatusPagamento] = useState("Pendente");
+  const [aDataPagamento, setADataPagamento] = useState("");
 
   const carregar = useCallback(async () => {
     try {
@@ -112,19 +134,39 @@ export default function CursosPage() {
   };
 
   const openNewAluno = () => {
-    setEditingAluno(null); setANome(""); setATel("");
+    setEditingAluno(null); setANome(""); setATel(""); setACPF(""); setAEmail(""); setADataNasc(""); setACidade("");
+    setAValorCurso(""); setAFormaPagamento("PIX"); setAParcelas("1"); setAValorParcela(""); setAStatusPagamento("Pendente"); setADataPagamento("");
     setShowAlunoModal(true);
   };
   const openEditAluno = (a: Aluno) => {
-    setEditingAluno(a); setANome(a.nome); setATel(a.telefone || a.whatsapp || "");
+    setEditingAluno(a); setANome(a.nome); setATel(a.telefone || a.whatsapp || ""); setACPF(a.cpf || "");
+    setAEmail(a.email || ""); setADataNasc(a.data_nascimento || ""); setACidade(a.cidade || "");
+    setAValorCurso(a.valor_curso ? String(a.valor_curso) : "");
+    setAFormaPagamento(a.forma_pagamento || "PIX"); setAParcelas(a.parcelas ? String(a.parcelas) : "1");
+    setAValorParcela(a.valor_parcela ? String(a.valor_parcela) : "");
+    setAStatusPagamento(a.status_pagamento || "Pendente"); setADataPagamento(a.data_pagamento || "");
     setShowAlunoModal(true);
   };
   const saveAluno = async () => {
     if (!selected || !aNome.trim()) return;
+    const payload: Record<string, unknown> = {
+      nome: aNome.trim(),
+      telefone: aTel.trim(),
+      cpf: aCPF.trim(),
+      email: aEmail.trim(),
+      data_nascimento: aDataNasc.trim(),
+      cidade: aCidade.trim(),
+      valor_curso: aValorCurso.trim() ? parseFloat(aValorCurso.trim().replace(",", ".")) : null,
+      forma_pagamento: aFormaPagamento,
+      parcelas: aParcelas.trim() ? parseInt(aParcelas.trim()) : 1,
+      valor_parcela: aValorParcela.trim() ? parseFloat(aValorParcela.trim().replace(",", ".")) : null,
+      status_pagamento: aStatusPagamento,
+      data_pagamento: aDataPagamento.trim() || null,
+    };
     if (editingAluno) {
-      await api.updateAluno(editingAluno.id, aNome.trim(), aTel.trim());
+      await api.updateAluno(editingAluno.id, payload);
     } else {
-      await api.createAluno(selected.id, aNome.trim(), aTel.trim());
+      await api.createAluno({ ...payload, curso_id: selected.id });
     }
     await carregar();
     setShowAlunoModal(false);
@@ -304,20 +346,27 @@ export default function CursosPage() {
                 <table className="alunos-table">
                   <thead>
                     <tr>
-                      <th style={{ width: 40 }}>N&#186;</th>
+                      <th style={{ width: 32 }}>N&#186;</th>
                       <th>Nome</th>
-                      <th style={{ width: 150 }}>Telefone</th>
-                      <th style={{ width: 110 }}>Inscricao</th>
-                      <th style={{ width: 110 }}>Acoes</th>
+                      <th style={{ width: 130 }}>Telefone</th>
+                      <th style={{ width: 90 }}>Pgto</th>
+                      <th style={{ width: 90 }}>Status</th>
+                      <th style={{ width: 90 }}>Inscricao</th>
+                      <th style={{ width: 100 }}>Acoes</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {selected.alunos.map((a, i) => (
+                    {selected.alunos.map((a, i) => {
+                      const statusColor = a.status_pagamento === "Pago" ? "#16a34a" : a.status_pagamento === "Cancelado" ? "#dc2626" : "#eab308";
+                      const formaIcon = a.forma_pagamento === "PIX" ? "\uD83D\uDCB5" : a.forma_pagamento === "CARTÃO" ? "\uD83D\uDCB3" : a.forma_pagamento === "DINHEIRO" ? "\uD83D\uDCB0" : "";
+                      return (
                       <tr key={a.id}>
                         <td style={{ textAlign: "center", color: "#94a3b8" }}>{i + 1}</td>
                         <td style={{ fontWeight: 600 }}>{a.nome}</td>
-                        <td style={{ color: "#64748b" }}>{a.telefone || a.whatsapp || "-"}</td>
-                        <td style={{ color: "#64748b", fontSize: "0.82rem" }}>{a.data_inscricao ? new Date(a.data_inscricao).toLocaleDateString("pt-BR") : "-"}</td>
+                        <td style={{ color: "#64748b", fontSize: "0.82rem" }}>{a.telefone || a.whatsapp || "-"}</td>
+                        <td style={{ fontSize: "0.82rem" }}>{formaIcon} {a.forma_pagamento || "-"}</td>
+                        <td><span className={"pag-badge " + (a.status_pagamento || "pendente").toLowerCase()} style={{ background: statusColor + "22", color: statusColor }}>{a.status_pagamento || "Pendente"}</span></td>
+                        <td style={{ color: "#64748b", fontSize: "0.78rem" }}>{a.data_inscricao ? new Date(a.data_inscricao).toLocaleDateString("pt-BR") : "-"}</td>
                         <td>
                           <div style={{ display: "flex", gap: 4 }}>
                             <button className="action-btn edit" onClick={() => openEditAluno(a)} title="Editar">&#9998;&#65039;</button>
@@ -326,7 +375,7 @@ export default function CursosPage() {
                           </div>
                         </td>
                       </tr>
-                    ))}
+                    );})}
                   </tbody>
                 </table>
               </div>
@@ -376,7 +425,7 @@ export default function CursosPage() {
 
       {showAlunoModal && (
         <div className="modal-overlay" onClick={() => setShowAlunoModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal modal-aluno" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{editingAluno ? "Editar Aluno" : "Novo Aluno"}</h2>
               <button className="modal-close" onClick={() => setShowAlunoModal(false)}>&#10005;</button>
@@ -386,9 +435,67 @@ export default function CursosPage() {
                 <label>Nome completo</label>
                 <input value={aNome} onChange={(e) => setANome(e.target.value)} placeholder="Nome do aluno" />
               </div>
-              <div className="form-group">
-                <label>Telefone</label>
-                <input value={aTel} onChange={(e) => setATel(e.target.value)} placeholder="(00) 00000-0000" />
+              <div style={{ display: "flex", gap: 12 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Telefone</label>
+                  <input value={aTel} onChange={(e) => setATel(e.target.value)} placeholder="(00) 00000-0000" />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>CPF</label>
+                  <input value={aCPF} onChange={(e) => setACPF(e.target.value)} placeholder="000.000.000-00" />
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>E-mail</label>
+                  <input value={aEmail} onChange={(e) => setAEmail(e.target.value)} placeholder="aluno@email.com" />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Data Nascimento</label>
+                  <input type="date" value={aDataNasc} onChange={(e) => setADataNasc(e.target.value)} />
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Cidade</label>
+                  <input value={aCidade} onChange={(e) => setACidade(e.target.value)} placeholder="Cidade do aluno" />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Valor Curso (R$)</label>
+                  <input value={aValorCurso} onChange={(e) => setAValorCurso(e.target.value)} placeholder="150,00" />
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Forma Pagamento</label>
+                  <select value={aFormaPagamento} onChange={(e) => setAFormaPagamento(e.target.value)}>
+                    <option value="PIX">PIX</option>
+                    <option value="CARTÃO">Cartão</option>
+                    <option value="DINHEIRO">Dinheiro</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Status Pagamento</label>
+                  <select value={aStatusPagamento} onChange={(e) => setAStatusPagamento(e.target.value)}>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Pago">Pago</option>
+                    <option value="Cancelado">Cancelado</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Data Pagamento</label>
+                  <input type="date" value={aDataPagamento} onChange={(e) => setADataPagamento(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Parcelas</label>
+                  <input type="number" min="1" max="24" value={aParcelas} onChange={(e) => setAParcelas(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Valor Parcela (R$)</label>
+                  <input value={aValorParcela} onChange={(e) => setAValorParcela(e.target.value)} placeholder="75,00" />
+                </div>
               </div>
               <div className="modal-actions">
                 <button className="btn btn-secondary" onClick={() => setShowAlunoModal(false)}>Cancelar</button>
@@ -469,6 +576,10 @@ const pageCss = `
 .action-btn.del:hover{background:#fecaca;}
 .action-btn.whats{background:#dcfce7;color:#16a34a;}
 .action-btn.whats:hover{background:#bbf7d0;}
+.pag-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:700;letter-spacing:0.03em;}
+.modal-aluno{max-width:580px!important;}
+.modal-body select{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:0.95rem;font-family:Barlow,sans-serif;background:#fff;transition:all 0.2s;cursor:pointer;appearance:auto;}
+.modal-body select:focus{outline:none;border-color:#15814a;box-shadow:0 0 0 3px rgba(21,129,74,0.1);}
 .empty-state{text-align:center;padding:60px 20px;color:#94a3b8;}
 .empty-state .icon{font-size:3rem;opacity:0.3;margin-bottom:12px;}
 .empty-state p{font-size:1rem;}

@@ -3,9 +3,11 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const body = await req.json();
+  const id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
   const { data, error } = await supabase
     .from("alunos")
     .insert({
+      id,
       curso_id: body.curso_id,
       nome: body.nome,
       telefone: body.telefone || "",

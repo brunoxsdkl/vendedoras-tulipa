@@ -13,9 +13,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json();
+  const id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
   const { data, error } = await supabase
     .from("cursos")
     .insert({
+      id,
       nome: body.nome,
       descricao: body.descricao || "",
       horario: body.carga || "",

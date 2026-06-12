@@ -1,4 +1,4 @@
-﻿"use client";
+﻿﻿"use client";
 
 import { useState } from "react";
 
@@ -186,10 +186,15 @@ export default function ReceitasPage() {
       ${obsHtml}
       <h3>Modo de preparo:</h3><p>${r.modo}</p>
       <div class="footer">Tulipa Essências</div>
-      <script>window.onload=function(){window.print();window.close();}</script>
+      
     </body></html>`;
     printWindow.document.write(html);
     printWindow.document.close();
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.onafterprint = () => printWindow.close();
+    }, 300);
   };
 
   return (

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 
@@ -166,6 +166,32 @@ export default function ReceitasPage() {
     window.open(`https://wa.me/?text=${texto}`, "_blank");
   };
 
+  const imprimirReceita = (r: Receita) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    const ingredientesHtml = r.ingredientes.map(i => `<li>${i}</li>`).join("");
+    const obsHtml = r.obs ? `<p style="background:#fffbe6;padding:8px 12px;border-radius:8px;margin-bottom:12px;color:#b8860b;">💡 ${r.obs}</p>` : "";
+    const html = `<!DOCTYPE html><html><head><title>${r.nome}</title><style>
+      body{font-family:Arial,sans-serif;padding:40px;color:#333;}
+      h1{color:#0d5e35;font-size:24px;margin-bottom:8px;}
+      .badge{display:inline-block;background:#e8f5ee;color:#0d5e35;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:600;margin-left:8px;}
+      h3{color:#2d3748;margin-top:20px;font-size:16px;}
+      ul{padding-left:20px;}
+      li{margin-bottom:4px;font-size:14px;color:#555;}
+      p{font-size:14px;line-height:1.5;color:#555;}
+      .footer{margin-top:30px;text-align:center;font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:15px;}
+    </style></head><body>
+      <h1>${r.nome} <span class="badge">${r.rendimento}</span></h1>
+      <h3>Ingredientes:</h3><ul>${ingredientesHtml}</ul>
+      ${obsHtml}
+      <h3>Modo de preparo:</h3><p>${r.modo}</p>
+      <div class="footer">Tulipa Essências</div>
+      <script>window.onload=function(){window.print();window.close();}</script>
+    </body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
   return (
     <div>
       <div className="header no-print">
@@ -307,13 +333,24 @@ export default function ReceitasPage() {
                   </div>
                 )}
 
-                <div style={{ display: "flex", gap: 10 }}>
+                                <div style={{ display: "flex", gap: 8 }}>
                   <button
                     className="btn btn-primary"
                     style={{ flex: 1 }}
                     onClick={() => copiar(receita)}
                   >
                     📋 Copiar
+                  </button>
+                  <button
+                    className="btn"
+                    style={{
+                      flex: 1,
+                      background: "#64748b",
+                      color: "#fff",
+                    }}
+                    onClick={() => imprimirReceita(receita)}
+                  >
+                    🖨️ Imprimir
                   </button>
                   <button
                     className="btn"
@@ -327,7 +364,6 @@ export default function ReceitasPage() {
                     📱 WhatsApp
                   </button>
                 </div>
-              </div>
             ))}
           </div>
         </div>

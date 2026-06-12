@@ -1,4 +1,4 @@
-﻿﻿"use client";
+"use client";
 
 import { useState } from "react";
 
@@ -165,7 +165,6 @@ export default function ReceitasPage() {
     const texto = encodeURIComponent(formatReceitaTexto(r));
     window.open(`https://wa.me/?text=${texto}`, "_blank");
   };
-
   const imprimirReceita = (r: Receita) => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
@@ -186,7 +185,6 @@ export default function ReceitasPage() {
       ${obsHtml}
       <h3>Modo de preparo:</h3><p>${r.modo}</p>
       <div class="footer">Tulipa Essências</div>
-      
     </body></html>`;
     printWindow.document.write(html);
     printWindow.document.close();
@@ -338,7 +336,7 @@ export default function ReceitasPage() {
                   </div>
                 )}
 
-                                <div style={{ display: "flex", gap: 8 }}>
+                <div style={{ display: "flex", gap: 8 }}>
                   <button
                     className="btn btn-primary"
                     style={{ flex: 1 }}
@@ -369,6 +367,7 @@ export default function ReceitasPage() {
                     📱 WhatsApp
                   </button>
                 </div>
+              </div>
             ))}
           </div>
         </div>

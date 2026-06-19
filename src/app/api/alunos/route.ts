@@ -3,7 +3,8 @@ import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const id = Date.now().toString() + Math.random().toString(36).slice(2, 6);
+  const id = crypto.randomUUID();
+  const data_inscricao = new Date().toISOString();
   const { data, error } = await supabase
     .from("alunos")
     .insert({
@@ -24,11 +25,23 @@ export async function POST(req: Request) {
       pago: body.status_pagamento === "Pago" ? 1 : 0,
       pendente: body.status_pagamento !== "Pago" && body.status_pagamento !== "Cancelado" ? 1 : 0,
       data_pagamento: body.data_pagamento || null,
-      data_inscricao: new Date().toISOString(),
+      data_inscricao,
     })
     .select()
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (body.status_pagamento === "Pago" && body.data_pagamento) {
+    await supabase.from("pagamentos").insert({
+      id: crypto.randomUUID(),
+      aluno_id: id,
+      data: body.data_pagamento,
+      valor: body.valor_curso || null,
+      forma: body.forma_pagamento || null,
+      observacao: "Pagamento registrado no cadastro",
+    });
+  }
+
   return NextResponse.json(data);
 }

@@ -69,6 +69,15 @@ export default function CursosPage() {
   const [formVagas, setFormVagas] = useState("20");
   const [formPreco, setFormPreco] = useState("150");
 
+  const [showInscricaoModal, setShowInscricaoModal] = useState(false);
+  const [iCursoId, setICursoId] = useState("");
+  const [iNome, setINome] = useState("");
+  const [iTel, setITel] = useState("");
+  const [iEmail, setIEmail] = useState("");
+  const [iCidade, setICidade] = useState("");
+  const [iEnviando, setIEnviando] = useState(false);
+  const [iSucesso, setISucesso] = useState(false);
+
   const [showAlunoModal, setShowAlunoModal] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
   const [aNome, setANome] = useState("");
@@ -113,7 +122,7 @@ export default function CursosPage() {
   };
   const saveCurso = async () => {
     if (!formNome.trim()) { alert("Preencha o nome do curso"); return; }
-    const payload = { nome: formNome.trim(), descricao: formDesc.trim(), carga: formCarga.trim(), vagas: Number(formVagas) || 20, preco: `R$ ${formPreco.replace("R$", "").trim()}` };
+    const payload = { nome: formNome.trim(), descricao: formDesc.trim(), horario: formCarga.trim(), vagas: Number(formVagas) || 20, preco: `R$ ${formPreco.replace("R$", "").trim()}` };
     try {
       if (editingCurso) {
         await api.updateCurso(editingCurso.id, payload);
@@ -176,6 +185,17 @@ export default function CursosPage() {
     await carregar();
   };
 
+  const saveInscricao = async () => {
+    if (!iCursoId || !iNome.trim() || !iTel.trim()) { alert("Selecione um curso e preencha nome e telefone"); return; }
+    setIEnviando(true);
+    try {
+      await api.createAluno({ curso_id: iCursoId, nome: iNome.trim(), telefone: iTel.trim(), email: iEmail.trim() || null, cidade: iCidade.trim() || null, status_pagamento: "Pendente" });
+      setISucesso(true);
+      await carregar();
+    } catch (e: unknown) { alert(e instanceof Error ? e.message : "Erro"); }
+    finally { setIEnviando(false); }
+  };
+
   const gerarPDF = (c: Curso) => {
     let rows = "";
     c.alunos.forEach((a, i) => {
@@ -228,11 +248,32 @@ export default function CursosPage() {
           <>
             <div className="top-actions">
               <button className="btn btn-primary" onClick={openNewCurso}>+ Novo Curso</button>
+              <button className="btn btn-secondary" onClick={() => { const url = window.location.origin + "/cursos/inscricao"; navigator.clipboard.writeText(url); alert("Link copiado: " + url); }}>&#128279; Link inscrição</button>
+              <button className="btn btn-secondary" onClick={() => { setICursoId(""); setINome(""); setITel(""); setIEmail(""); setICidade(""); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
               <span style={{ color: "#64748b", fontSize: "0.9rem", alignSelf: "center" }}>
                 {cursos.length} curso(s) cadastrado(s)
               </span>
             </div>
 
+            {cursos.length > 0 && (
+              <>
+                {(() => {
+                  const todos = cursos.flatMap(c => c.alunos);
+                  const recibido = todos.filter(a => a.status_pagamento === "Pago").reduce((s, a) => s + (a.valor_curso || 0), 0);
+                  const pendente = todos.filter(a => a.status_pagamento === "Pendente").reduce((s, a) => s + (a.valor_curso || 0), 0);
+                  const cancelado = todos.filter(a => a.status_pagamento === "Cancelado").reduce((s, a) => s + (a.valor_curso || 0), 0);
+                  return (
+                    <div className="fin-summary">
+                      <div className="fin-card"><div className="fin-label">Recebido</div><div className="fin-value" style={{color:"#16a34a"}}>R$ {recibido.toFixed(2).replace(".", ",")}</div></div>
+                      <div className="fin-card"><div className="fin-label">Pendente</div><div className="fin-value" style={{color:"#eab308"}}>R$ {pendente.toFixed(2).replace(".", ",")}</div></div>
+                      <div className="fin-card"><div className="fin-label">Cancelado</div><div className="fin-value" style={{color:"#dc2626"}}>R$ {cancelado.toFixed(2).replace(".", ",")}</div></div>
+                      <div className="fin-card"><div className="fin-label">Alunos</div><div className="fin-value" style={{color:"#0d5e35"}}>{todos.length}</div></div>
+                      <div className="fin-card"><div className="fin-label">Total</div><div className="fin-value" style={{color:"#0d5e35"}}>R$ {(recibido + pendente).toFixed(2).replace(".", ",")}</div></div>
+                    </div>
+                  );
+                })()}
+              </>
+            )}
             {cursos.length === 0 ? (
               <div className="empty-state">
                 <div className="icon">&#127891;</div>
@@ -262,6 +303,12 @@ export default function CursosPage() {
                         <span>&#128101; {ocupadas}/{c.vagas} vagas</span>
                         {c.valor > 0 && <span style={{fontWeight:800,color:"#0d5e35",fontSize:"0.95rem"}}>R$ {c.valor.toFixed(2).replace(".", ",")}</span>}
                       </div>
+                      {c.alunos.length > 0 && (
+                        <div className="curso-card-fin">
+                          <span style={{color:"#16a34a"}}>R$ {c.alunos.filter(a=>a.status_pagamento==="Pago").reduce((s,a)=>s+(a.valor_curso||0),0).toFixed(2).replace(".", ",")} recebido</span>
+                          <span style={{color:"#eab308"}}>R$ {c.alunos.filter(a=>a.status_pagamento==="Pendente").reduce((s,a)=>s+(a.valor_curso||0),0).toFixed(2).replace(".", ",")} pendente</span>
+                        </div>
+                      )}
                       <div className="vaga-bar">
                         <div className={"vaga-bar-fill " + statusClass} style={{ width: Math.min(pct, 100) + "%" }} />
                       </div>
@@ -315,6 +362,8 @@ export default function CursosPage() {
                 </>
               )}
               <button className="btn btn-secondary" onClick={() => openEditCurso(selected)}>&#9998;&#65039; Editar Curso</button>
+              <button className="btn btn-secondary" onClick={() => { const url = window.location.origin + "/cursos/inscricao"; navigator.clipboard.writeText(url); alert("Link copiado: " + url); }}>&#128279; Link inscrição</button>
+              <button className="btn btn-secondary" onClick={() => { setICursoId(selected.id); setINome(""); setITel(""); setIEmail(""); setICidade(""); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
             </div>
 
             <div className="aluno-form-card">
@@ -506,6 +555,59 @@ export default function CursosPage() {
         </div>
       )}
 
+      {showInscricaoModal && (
+        <div className="modal-overlay" onClick={() => setShowInscricaoModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{iSucesso ? "✅ Inscrição realizada" : "📋 Nova inscrição"}</h2>
+              <button className="modal-close" onClick={() => setShowInscricaoModal(false)}>&#10005;</button>
+            </div>
+            <div className="modal-body">
+              {iSucesso ? (
+                <div style={{ textAlign: "center", padding: "20px 0" }}>
+                  <p style={{ color: "#64748b", marginBottom: 20 }}>Aluno cadastrado com sucesso!</p>
+                  <button className="btn btn-primary" onClick={() => { setISucesso(false); setINome(""); setITel(""); setIEmail(""); setICidade(""); }}>Nova inscrição</button>
+                </div>
+              ) : (
+                <>
+                  <div className="form-group">
+                    <label>Curso</label>
+                    <select value={iCursoId} onChange={(e) => setICursoId(e.target.value)} required>
+                      <option value="">Selecione um curso</option>
+                      {cursos.filter(c => c.alunos.length < c.vagas).map((c) => (
+                        <option key={c.id} value={c.id}>{c.nome} - {c.horario} ({c.vagas - c.alunos.length} vagas)</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Nome completo</label>
+                    <input value={iNome} onChange={(e) => setINome(e.target.value)} placeholder="Nome do aluno" />
+                  </div>
+                  <div style={{ display: "flex", gap: 12 }}>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label>Telefone</label>
+                      <input value={iTel} onChange={(e) => setITel(e.target.value)} placeholder="(00) 00000-0000" />
+                    </div>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label>E-mail</label>
+                      <input value={iEmail} onChange={(e) => setIEmail(e.target.value)} placeholder="opcional" />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Cidade</label>
+                    <input value={iCidade} onChange={(e) => setICidade(e.target.value)} placeholder="opcional" />
+                  </div>
+                  <div className="modal-actions">
+                    <button className="btn btn-secondary" onClick={() => setShowInscricaoModal(false)}>Fechar</button>
+                    <button className="btn btn-primary" onClick={saveInscricao} disabled={iEnviando}>{iEnviando ? "Salvando..." : "Inscrever"}</button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{pageCss}</style>
     </div>
   );
@@ -532,6 +634,11 @@ const pageCss = `
 .vaga-text{display:flex;justify-content:space-between;font-size:0.82rem;color:#64748b;font-weight:600;}
 .curso-card-footer{display:flex;gap:8px;margin-top:16px;}
 .curso-card-footer .btn{flex:1;font-size:0.85rem;padding:10px 12px;border-radius:12px;}
+.fin-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px;}
+.fin-card{background:#fff;border-radius:16px;padding:18px 20px;border:1px solid #e2e8f0;text-align:center;}
+.fin-card .fin-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;margin-bottom:4px;}
+.fin-card .fin-value{font-size:1.2rem;font-weight:900;}
+.curso-card-fin{display:flex;gap:12px;margin-bottom:10px;font-size:0.78rem;font-weight:700;justify-content:space-between;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
 .modal{background:#fff;border-radius:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.2);}
 .modal-header{padding:24px 28px 0;display:flex;justify-content:space-between;align-items:center;}

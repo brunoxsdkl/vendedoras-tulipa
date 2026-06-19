@@ -27,6 +27,21 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  if (body.status_pagamento === "Pago" && body.data_pagamento) {
+    const { count } = await supabase.from("pagamentos").select("*", { count: "exact", head: true }).eq("aluno_id", id);
+    if (!count) {
+      await supabase.from("pagamentos").insert({
+        id: crypto.randomUUID(),
+        aluno_id: id,
+        data: body.data_pagamento,
+        valor: body.valor_curso || null,
+        forma: body.forma_pagamento || null,
+        observacao: "Pagamento registrado na edição",
+      });
+    }
+  }
+
   return NextResponse.json(data);
 }
 

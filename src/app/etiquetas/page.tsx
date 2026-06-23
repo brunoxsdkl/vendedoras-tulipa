@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const LABEL_W = 60
 const LABEL_H = 25
@@ -16,6 +16,19 @@ export default function EtiquetasPage() {
   const [texts, setTexts] = useState<string[]>([""])
   const [fontSize, setFontSize] = useState(11)
   const [fileName, setFileName] = useState("etiquetas")
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const data = params.get("texts")
+    if (data) {
+      try {
+        const decoded = JSON.parse(atob(data))
+        if (Array.isArray(decoded) && decoded.length > 0) {
+          setTexts(decoded)
+        }
+      } catch {}
+    }
+  }, [])
 
   const addText = () => setTexts([...texts, ""])
 

@@ -18,6 +18,13 @@ const catalogos: Catalogo[] = [
     icone: "🌿",
     pdf: "/catalogos/oleos-odorizantes.pdf",
   },
+  {
+    id: "oleos-essenciais",
+    nome: "Óleos Essenciais",
+    descricao: "Óleos essenciais 10ml — Tabela de preços",
+    icone: "💧",
+    pdf: "/catalogos/oleos-essenciais.pdf",
+  },
 
 ];
 

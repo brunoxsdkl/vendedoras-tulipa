@@ -127,9 +127,9 @@
     .search-section {
       position: relative;
       z-index: 10;
-      max-width: 1200px;
-      margin: -20px auto 0;
-      padding: 0 24px;
+      max-width: 1280px;
+      margin: -24px auto 0;
+      padding: 0 16px;
     }
     .search-card {
       background: rgba(255,255,255,0.85);
@@ -195,9 +195,9 @@
     }
 
     .catalog-section {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 32px 24px 60px;
+      padding: 28px 16px 48px;
     }
     .section-title {
       text-align: center;
@@ -224,11 +224,11 @@
     .oil-grid {
       display: grid;
       grid-template-columns: repeat(1, 1fr);
-      gap: 28px;
+      gap: 24px;
     }
-    @media (min-width: 640px) { .oil-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .oil-grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 1280px) { .oil-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 640px) { .oil-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+    @media (min-width: 1024px) { .oil-grid { grid-template-columns: repeat(3, 1fr); gap: 22px; } }
+    @media (min-width: 1280px) { .oil-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
 
     .oil-card {
       display: flex;
@@ -250,7 +250,7 @@
     .oil-card .card-img {
       position: relative;
       width: 100%;
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 1 / 1;
       overflow: hidden;
       background: #f0ece4;
     }

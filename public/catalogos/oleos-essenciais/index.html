@@ -74,7 +74,6 @@
       position: relative;
       width: 100%;
       aspect-ratio: 1400 / 620;
-      max-height: 620px;
       overflow: hidden;
       background: #e8e3d8;
     }
@@ -231,26 +230,25 @@
     @media (min-width: 1280px) { .oil-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
 
     .oil-card {
-      display: flex;
-      flex-direction: column;
-      background: #fff;
+      position: relative;
       border-radius: 20px;
       overflow: hidden;
       cursor: pointer;
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid #e0dad0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      aspect-ratio: 3 / 4;
     }
     .oil-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 24px 48px rgba(0,0,0,0.08);
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.10);
       border-color: #01843d;
     }
-
     .oil-card .card-img {
-      position: relative;
+      position: absolute;
+      inset: 0;
       width: 100%;
-      aspect-ratio: 1 / 1;
+      height: 100%;
       overflow: hidden;
       background: #f0ece4;
     }
@@ -261,12 +259,16 @@
       transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .oil-card:hover .card-img img {
-      transform: scale(1.07);
+      transform: scale(1.06);
     }
-    .oil-card .card-img .img-glow {
+    .oil-card .card-gradient {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 50%, rgba(1,132,61,0.06) 100%);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 55%;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.65) 100%);
+      pointer-events: none;
     }
     .oil-card .card-tag {
       position: absolute;
@@ -281,48 +283,50 @@
       font-weight: 600;
       color: #fff;
       letter-spacing: 1.2px;
+      z-index: 2;
     }
-
-    .oil-card .card-divider {
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #01843d, transparent);
-      opacity: 0.3;
-      flex-shrink: 0;
-    }
-
     .oil-card .card-body {
-      padding: 20px 22px 22px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #fff;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 18px 18px;
+      z-index: 2;
     }
     .oil-card .card-body h3 {
       font-family: 'Playfair Display', Georgia, serif;
       font-weight: 700;
-      font-size: 1.2rem;
-      color: #1a1a18;
+      font-size: 1.25rem;
+      color: #fff;
       letter-spacing: -0.01em;
-      margin-bottom: 8px;
-      line-height: 1.25;
+      margin-bottom: 4px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.25);
     }
     .oil-card .card-body p {
-      font-size: 0.8rem;
-      color: #6b685e;
-      line-height: 1.55;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.4;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      flex: 1;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.15);
     }
     .oil-card .card-body .card-arrow {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 12px;
-      font-size: 0.72rem;
+      gap: 4px;
+      margin-top: 6px;
+      font-size: 0.68rem;
       font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.5px;
+      transition: gap 0.2s;
+    }
+    .oil-card:hover .card-body .card-arrow {
+      gap: 10px;
+      color: #fff;
+    }
       color: #01843d;
       letter-spacing: 1px;
       transition: gap 0.25s;
@@ -639,10 +643,9 @@
       card.innerHTML = `
         <div class="card-img">
           <img src="${oil.file}" alt="${oil.name}" loading="lazy">
-          <div class="img-glow"></div>
-          <span class="card-tag">${oil.tag.toUpperCase()}</span>
         </div>
-        <div class="card-divider"></div>
+        <div class="card-gradient"></div>
+        <span class="card-tag">${oil.tag.toUpperCase()}</span>
         <div class="card-body">
           <h3>${oil.name}</h3>
           <p>${oil.desc}</p>

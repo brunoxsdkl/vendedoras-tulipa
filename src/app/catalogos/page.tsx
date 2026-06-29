@@ -21,9 +21,9 @@ const catalogos: Catalogo[] = [
   {
     id: "oleos-essenciais",
     nome: "Óleos Essenciais",
-    descricao: "Óleos essenciais 10ml — Tabela de preços",
+    descricao: "Catálogo completo com descrições e filtros — TULIPA ESSÊNCIAS",
     icone: "💧",
-    pdf: "/catalogos/oleos-essenciais.pdf",
+    pdf: "/catalogos/oleos-essenciais/index.html",
   },
 
 ];

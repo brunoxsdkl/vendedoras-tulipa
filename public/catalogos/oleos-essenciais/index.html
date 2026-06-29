@@ -22,53 +22,6 @@
       letter-spacing: -0.02em;
     }
 
-    .header-glass {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 50;
-      background: linear-gradient(135deg, rgba(1,132,61,0.95) 0%, rgba(1,107,50,0.92) 50%, rgba(0,80,38,0.9) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding: 0 24px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 4px 30px rgba(1,132,61,0.15);
-    }
-    .header-glass .logo-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-glass .logo-wrap img {
-      height: 38px;
-      width: auto;
-      border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
-    .header-glass .logo-wrap .brand {
-      color: #fff;
-      font-weight: 600;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-    .header-glass .logo-wrap .brand small {
-      display: block;
-      font-size: 0.65rem;
-      font-weight: 400;
-      opacity: 0.8;
-      letter-spacing: 1px;
-    }
-    .header-glass .header-count {
-      color: rgba(255,255,255,0.85);
-      font-size: 0.8rem;
-      letter-spacing: 1px;
-      font-weight: 500;
-    }
-
     /* Hero Banner Full */
     .hero-banner {
       position: relative;
@@ -88,32 +41,6 @@
       inset: 0;
       background: linear-gradient(90deg, rgba(1,132,61,0.5) 0%, transparent 50%, transparent 100%);
       pointer-events: none;
-    }
-    .hero-banner .banner-title {
-      position: absolute;
-      top: 50%;
-      left: 6%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      max-width: 500px;
-    }
-    .hero-banner .banner-title h1 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: #fff;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      text-shadow: 0 2px 30px rgba(0,0,0,0.2);
-    }
-    .hero-banner .banner-title h1 span {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 400;
-      font-family: 'Instrument Sans', sans-serif;
-      opacity: 0.9;
-      letter-spacing: 4px;
-      margin-top: 8px;
     }
     .hero-banner .banner-fade {
       position: absolute;
@@ -524,26 +451,9 @@
 </head>
 <body>
 
-  <header class="header-glass">
-    <div class="logo-wrap">
-      <img src="logo-padrao.png" alt="TULIPA">
-      <div class="brand">
-        TULIPA ESSÊNCIAS
-        <small>CATÁLOGO DE ÓLEOS</small>
-      </div>
-    </div>
-     <div style="color:rgba(255,255,255,0.85);font-size:0.8rem;letter-spacing:1px;font-weight:500;">ÓLEOS ESSENCIAIS</div>
-  </header>
-
   <div class="hero-banner">
     <img src="banner-oleo.png" alt="Óleos Essenciais">
     <div class="banner-overlay"></div>
-    <div class="banner-title">
-      <h1>
-        Óleos Essenciais
-        <span>TULIPA ESSÊNCIAS</span>
-      </h1>
-    </div>
     <div class="banner-fade"></div>
   </div>
 

@@ -99,22 +99,33 @@ export default function CatalogosPage() {
                   </p>
                 </div>
                 <div style={{ display: "flex", gap: 8, padding: "0 24px 20px" }}>
-                  <button onClick={() => { setSelected(c); setView("viewer"); }}
-                    style={{
-                      flex: 1, padding: "10px 0", borderRadius: 10, border: "none",
-                      background: "#15814a", color: "#fff", fontWeight: 700, fontSize: "0.9rem",
-                      cursor: "pointer", fontFamily: "Barlow, sans-serif",
-                    }}
-                  >📄 Abrir</button>
-                  {c.id === "oleos-essenciais" && (
+                  {c.id === "oleos-essenciais" ? (
                     <a href="/catalogos/oleos-essenciais"
                       style={{
-                        padding: "10px 16px", borderRadius: 10, border: "none",
-                        background: "#6366f1", color: "#fff", fontWeight: 700, fontSize: "0.9rem",
+                        flex: 1, padding: "10px 0", borderRadius: 10, border: "none",
+                        background: "#15814a", color: "#fff", fontWeight: 700, fontSize: "0.9rem",
                         cursor: "pointer", fontFamily: "Barlow, sans-serif",
-                        display: "flex", alignItems: "center", gap: 4, textDecoration: "none",
+                        display: "flex", alignItems: "center", justifyContent: "center", gap: 6, textDecoration: "none",
                       }}
-                    >🖼️ Cards</a>
+                    >🖼️ Ver Catálogo</a>
+                  ) : (
+                    <button onClick={() => { setSelected(c); setView("viewer"); }}
+                      style={{
+                        flex: 1, padding: "10px 0", borderRadius: 10, border: "none",
+                        background: "#15814a", color: "#fff", fontWeight: 700, fontSize: "0.9rem",
+                        cursor: "pointer", fontFamily: "Barlow, sans-serif",
+                      }}
+                    >📄 Abrir</button>
+                  )}
+                  {c.id === "oleos-essenciais" && (
+                    <button onClick={() => { setSelected(c); setView("viewer"); }}
+                      style={{
+                        padding: "10px 14px", borderRadius: 10, border: "1px solid #dce5e0",
+                        background: "#fff", color: "#1a2a32", fontWeight: 600, fontSize: "0.85rem",
+                        cursor: "pointer", fontFamily: "Barlow, sans-serif",
+                        display: "flex", alignItems: "center", gap: 4,
+                      }}
+                    >📄 PDF</button>
                   )}
                   <button onClick={() => shareWhatsApp(`${window.location.origin}/catalogos`, c.nome)}
                     style={{

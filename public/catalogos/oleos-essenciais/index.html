@@ -55,7 +55,7 @@
       line-height: 1.45;
     }
 
-    .doterra-green {
+    .primary-green {
       color: #3a5f3a;
     }
 
@@ -99,7 +99,6 @@
       <div class="hidden md:flex items-center gap-x-8 text-sm">
         <a href="#catalogo" class="hover:text-[#3a5f3a] transition-colors">Catálogo</a>
         <a href="#como-usar" class="hover:text-[#3a5f3a] transition-colors">Como Usar</a>
-        <a href="https://www.doterra.com/br" target="_blank" class="hover:text-[#3a5f3a] transition-colors">Site Oficial</a>
       </div>
 
       <div class="flex items-center gap-x-3">
@@ -168,7 +167,7 @@
         <h2 class="section-header text-4xl font-semibold tracking-tight">Nossa Seleção</h2>
       </div>
       <div class="text-xs text-[#7c7668] hidden md:block">
-        Baseado no Guia de Produtos dōTERRA Brasil 2024
+        Catálogo Tulipa Essências 2024
       </div>
     </div>
 
@@ -196,7 +195,7 @@
         </div>
       </div>
       <div class="mt-6 pt-5 border-t text-[10px] text-[#7c7668]">
-        Os preços e informações podem variar. Consulte www.doterra.com.br para a tabela atualizada.
+        Os preços e informações podem variar. Consulte sua consultora para a tabela atualizada.
       </div>
     </div>
   </div>
@@ -337,7 +336,7 @@
       
       document.getElementById('modal-name').innerHTML = oil.name
       document.getElementById('modal-meta').innerHTML = `Óleo Essencial • ${oil.tag.toUpperCase()}`
-      document.getElementById('modal-desc').innerHTML = oil.desc + `<br><br><span class="text-xs text-[#7c7668]">Fonte: Guia de Produtos dōTERRA 2024</span>`
+      document.getElementById('modal-desc').innerHTML = oil.desc + `<br><br><span class="text-xs text-[#7c7668]">Fonte: Informações oficiais de óleos essenciais</span>`
     }
 
     function closeModal() {
@@ -381,7 +380,7 @@
       const firstBtn = document.querySelector('.flex.gap-2 button')
       if (firstBtn) firstBtn.classList.add('bg-[#3a5f3a]', 'text-white')
       
-      // Easter egg: press "d" for doterra info
+      // Easter egg: press "d" to flash grid
       document.addEventListener('keypress', function(e) {
         if (e.key.toLowerCase() === 'd' && document.activeElement.tagName === 'BODY') {
           const grid = document.getElementById('grid')
@@ -391,7 +390,7 @@
         }
       })
       
-      console.log('%c[Catálogo dōTERRA] 34 óleos carregados com descrições do guia oficial.', 'color:#8a8476')
+      console.log('%c[Catálogo Tulipa] 34 óleos carregados.', 'color:#8a8476')
     }
 
     window.onload = initCatalog

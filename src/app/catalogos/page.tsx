@@ -106,6 +106,16 @@ export default function CatalogosPage() {
                       cursor: "pointer", fontFamily: "Barlow, sans-serif",
                     }}
                   >📄 Abrir</button>
+                  {c.id === "oleos-essenciais" && (
+                    <a href="/catalogos/oleos-essenciais"
+                      style={{
+                        padding: "10px 16px", borderRadius: 10, border: "none",
+                        background: "#6366f1", color: "#fff", fontWeight: 700, fontSize: "0.9rem",
+                        cursor: "pointer", fontFamily: "Barlow, sans-serif",
+                        display: "flex", alignItems: "center", gap: 4, textDecoration: "none",
+                      }}
+                    >🖼️ Cards</a>
+                  )}
                   <button onClick={() => shareWhatsApp(`${window.location.origin}/catalogos`, c.nome)}
                     style={{
                       padding: "10px 16px", borderRadius: 10, border: "none",

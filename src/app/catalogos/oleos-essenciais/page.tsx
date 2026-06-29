@@ -55,7 +55,7 @@ export default function OleosEssenciaisPage() {
         </div>
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
           <img
-            src={`/catalogos/oleos-essenciais/${selected}.png`}
+                    src={`/catalogos/oleos-essenciais/${produto.arquivo}.png`}
             alt={produto.nome}
             style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", borderRadius: 12 }}
           />
@@ -88,7 +88,7 @@ export default function OleosEssenciaisPage() {
               >
                 <div className="oleo-card-img">
                   <img
-                    src={`/catalogos/oleos-essenciais/${p.id}.png`}
+                    src={`/catalogos/oleos-essenciais/${p.arquivo}.png`}
                     alt={p.nome}
                     loading="lazy"
                   />

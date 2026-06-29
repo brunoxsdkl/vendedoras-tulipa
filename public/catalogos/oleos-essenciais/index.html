@@ -119,6 +119,26 @@
       color: #fff;
       border-color: #01843d;
     }
+    .search-card .pdf-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 18px;
+      border-radius: 100px;
+      border: 1px solid #01843d;
+      background: rgba(1,132,61,0.06);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #01843d;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .search-card .pdf-btn:hover {
+      background: #01843d;
+      color: #fff;
+    }
 
     .catalog-section {
       max-width: 1280px;
@@ -164,7 +184,7 @@
       transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid #e0dad0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 3 / 5;
     }
     .oil-card:hover {
       transform: translateY(-6px) scale(1.02);
@@ -447,6 +467,20 @@
       color: #a39d8f;
       border-top: 1px solid #e8e3d8;
     }
+
+    @media print {
+      body { background: #fff; }
+      .search-section, .viewer-overlay, .footer, .pdf-btn { display: none !important; }
+      .hero-banner { max-height: 300px; }
+      .catalog-section { padding: 16px !important; }
+      .oil-grid { gap: 12px !important; }
+      .oil-card { break-inside: avoid; border-radius: 12px; }
+      .oil-card .card-body h3 { font-size: 1rem; }
+      .oil-card .card-body p { font-size: 0.7rem; -webkit-line-clamp: 1; }
+      .oil-card .card-body .card-arrow { display: none; }
+      .section-title { margin-bottom: 12px !important; }
+      .section-title h2 { font-size: 1.4rem; }
+    }
   </style>
 </head>
 <body>
@@ -469,6 +503,7 @@
         <button onclick="filterByTag('pele')">Pele</button>
         <button onclick="filterByTag('purifica')">Purificação</button>
       </div>
+      <button class="pdf-btn" onclick="gerarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
     </div>
   </div>
 
@@ -643,6 +678,10 @@
           setTimeout(() => { btn.innerHTML = orig; }, 1400);
         });
       }
+    }
+
+    function gerarPDF() {
+      window.print();
     }
 
     document.addEventListener('keydown', function(e) {

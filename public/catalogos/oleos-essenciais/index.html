@@ -7,15 +7,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;400;500&amp;family=Instrument+Sans:wght@400;500&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap');
     
-    :root {
-      --green: #01843d;
-      --cream: #f8f5f0;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
       font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+      background: #f8f5f0;
+      min-height: 100vh;
     }
     
     .heading-serif {
@@ -23,205 +22,546 @@
       letter-spacing: -0.02em;
     }
 
-    .oil-card {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid #e5e0d5;
+    .header-glass {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      background: linear-gradient(135deg, rgba(1,132,61,0.95) 0%, rgba(1,107,50,0.92) 50%, rgba(0,80,38,0.9) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 30px rgba(1,132,61,0.15);
     }
-    
+    .header-glass .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-glass .logo-wrap img {
+      height: 38px;
+      width: auto;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .header-glass .logo-wrap .brand {
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .header-glass .logo-wrap .brand small {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 400;
+      opacity: 0.8;
+      letter-spacing: 1px;
+    }
+    .header-glass .header-count {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .hero-section {
+      padding: 96px 24px 40px;
+      text-align: center;
+      background: linear-gradient(180deg, #01843d 0%, #f8f5f0 100%);
+      position: relative;
+    }
+    .hero-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(180deg, transparent, #f8f5f0);
+    }
+    .hero-section h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.1);
+    }
+    .hero-section h1 span {
+      display: block;
+      font-size: 1rem;
+      font-weight: 400;
+      font-family: 'Instrument Sans', sans-serif;
+      opacity: 0.85;
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+    .hero-section .subtitle {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.9rem;
+      margin-top: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .search-section {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: -20px auto 0;
+      padding: 0 24px;
+    }
+    .search-card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 768px) {
+      .search-card { flex-direction: row; align-items: center; }
+    }
+    .search-card .search-wrap {
+      flex: 1;
+      position: relative;
+    }
+    .search-card .search-wrap i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a39d8f;
+    }
+    .search-card .search-wrap input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 12px 12px 12px 44px;
+      font-size: 0.95rem;
+      outline: none;
+      color: #2c2a25;
+    }
+    .search-card .search-wrap input::placeholder { color: #a39d8f; }
+    .search-card .filter-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .search-card .filter-group button {
+      padding: 7px 16px;
+      border-radius: 100px;
+      border: 1px solid #d4cdc0;
+      background: transparent;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #4a4a40;
+      font-family: inherit;
+    }
+    .search-card .filter-group button:hover {
+      background: rgba(1,132,61,0.08);
+      border-color: #01843d;
+    }
+    .search-card .filter-group button.active {
+      background: #01843d;
+      color: #fff;
+      border-color: #01843d;
+    }
+
+    .catalog-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .section-title h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem;
+      color: #2c2a25;
+      letter-spacing: -0.02em;
+    }
+    .section-title .badge {
+      display: inline-block;
+      background: rgba(1,132,61,0.1);
+      color: #01843d;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 100px;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+    }
+
+    .oil-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px;
+    }
+    @media (min-width: 640px) { .oil-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .oil-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 1280px) { .oil-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .oil-card {
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid #e8e3d8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+    }
     .oil-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.07);
       border-color: #c9b99a;
     }
-
-    .oil-img {
+    .oil-card .card-img-wrap {
+      position: relative;
+      aspect-ratio: 1 / 1;
       background: #f8f5f0;
-      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
     }
-    
-    .oil-card:hover .oil-img {
-      transform: scale(1.03);
+    .oil-card .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .section-header {
-      letter-spacing: -0.03em;
+    .oil-card:hover .card-img-wrap img {
+      transform: scale(1.06);
     }
-
-    .desc-text {
+    .oil-card .card-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #01843d;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .oil-card .card-body {
+      padding: 16px 18px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .oil-card .card-body h3 {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #2c2a25;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .oil-card .card-body p {
+      font-size: 0.82rem;
+      color: #6b685e;
+      line-height: 1.45;
       display: -webkit-box;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      line-height: 1.45;
+      flex: 1;
     }
-
-    .primary-green {
-      color: #01843d;
+    .oil-card .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #f0ede6;
     }
-
-    .catalog-container {
-      background: #f8f5f0;
-    }
-
-    .nav {
-      backdrop-filter: blur(12px);
-      background: rgba(248, 245, 240, 0.95);
-    }
-
-    .oil-name {
-      font-size: 1.05rem;
-      line-height: 1.1;
-    }
-
-    .clean-card {
-      background: white;
-    }
-
-    .meta {
-      font-size: 0.75rem;
+    .oil-card .card-footer span {
+      font-size: 0.7rem;
+      color: #a39d8f;
       letter-spacing: 0.5px;
+    }
+    .oil-card .card-footer .view-btn {
+      font-size: 0.75rem;
+      color: #01843d;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s;
+    }
+    .oil-card:hover .card-footer .view-btn {
+      gap: 8px;
+    }
+
+    .viewer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .viewer-overlay.open {
+      display: flex;
+    }
+    .viewer-glass {
+      display: flex;
+      width: 100%;
+      max-width: 1100px;
+      max-height: 90vh;
+      border-radius: 28px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .viewer-glass .viewer-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+    .viewer-glass .viewer-close:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    .viewer-glass .viewer-image {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: rgba(0,0,0,0.2);
+      min-height: 400px;
+      position: relative;
+    }
+    .viewer-glass .viewer-image img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .viewer-glass .viewer-image .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .viewer-glass .viewer-image .nav-arrow:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-50%) scale(1.05);
+    }
+    .viewer-glass .viewer-image .nav-arrow.prev { left: 16px; }
+    .viewer-glass .viewer-image .nav-arrow.next { right: 16px; }
+    .viewer-glass .viewer-image .counter {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
+      padding: 4px 16px;
+      border-radius: 100px;
+    }
+    .viewer-glass .viewer-info {
+      width: 360px;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(40px);
+      border-left: 1px solid rgba(255,255,255,0.08);
+      overflow-y: auto;
+    }
+    .viewer-glass .viewer-info .tag {
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .viewer-glass .viewer-info .name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .viewer-glass .viewer-info .divider {
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #01843d, #00c853);
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .viewer-glass .viewer-info .desc {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      flex: 1;
+    }
+    .viewer-glass .viewer-info .share-btn {
+      margin-top: 24px;
+      padding: 12px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #01843d, #00a84a);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .viewer-glass .viewer-info .share-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(1,132,61,0.3);
+    }
+
+    @media (max-width: 768px) {
+      .hero-section h1 { font-size: 2rem; }
+      .viewer-glass { flex-direction: column; max-height: 95vh; }
+      .viewer-glass .viewer-image { padding: 20px; min-height: 250px; }
+      .viewer-glass .viewer-image img { max-height: 40vh; }
+      .viewer-glass .viewer-info { width: 100%; padding: 24px 20px; max-height: 45vh; }
+      .viewer-glass .viewer-image .nav-arrow { width: 36px; height: 36px; font-size: 14px; }
+      .viewer-glass .viewer-image .nav-arrow.prev { left: 8px; }
+      .viewer-glass .viewer-image .nav-arrow.next { right: 8px; }
+      .viewer-glass .viewer-info .name { font-size: 1.5rem; }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      color: #a39d8f;
+      border-top: 1px solid #e8e3d8;
     }
   </style>
 </head>
-<body class="bg-[#f8f5f0] text-[#2c2a25]">
-  <!-- Top Nav -->
-  <nav class="nav sticky top-0 z-50 border-b border-[#e5e0d5]">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-x-3">
-        <img src="logo-padrao.png" alt="TULIPA ESSÊNCIAS" class="h-14 w-auto rounded-full">
-        <div>
-          <span class="font-semibold text-xl tracking-tight">TULIPA ESSÊNCIAS</span>
-        </div>
-      </div>
-      
-      <div class="hidden md:flex items-center gap-x-8 text-sm">
-        <a href="#catalogo" class="hover:text-[#01843d] transition-colors">Catálogo</a>
-        <a href="#como-usar" class="hover:text-[#01843d] transition-colors">Como Usar</a>
-      </div>
+<body>
 
-      <div class="flex items-center gap-x-3">
-        <div class="hidden sm:flex items-center text-xs px-3 py-1 bg-white border border-[#e5e0d5] rounded-full">
-          <i class="fa-solid fa-check text-emerald-700 mr-1.5"></i>
-          <span class="text-[#4a4a40]">Guia 2024</span>
-        </div>
+  <header class="header-glass">
+    <div class="logo-wrap">
+      <img src="logo-padrao.png" alt="TULIPA">
+      <div class="brand">
+        TULIPA ESSÊNCIAS
+        <small>CATÁLOGO DE ÓLEOS</small>
       </div>
     </div>
-  </nav>
+    <div class="header-count" id="header-count">32 óleos</div>
+  </header>
 
-  <!-- Hero -->
-  <div class="max-w-5xl mx-auto px-6 pt-14 pb-10 text-center">
-    <div class="inline-flex items-center gap-x-2 bg-white border border-[#e5e0d5] rounded-full px-4 py-1 mb-6 text-xs tracking-[1px]">
-      <div class="w-1.5 h-1.5 bg-[#01843d] rounded-full"></div>
-      CATÁLOGO PARA VENDEDORAS
-    </div>
-    
-    <h1 class="heading-serif text-6xl md:text-7xl font-bold tracking-tighter text-[#2c2a25] leading-none mb-4">
-      ÓLEOS ESSENCIAIS<br>
-      <span class="text-[#01843d]">- TULIPA ESSÊNCIAS</span>
+  <section class="hero-section">
+    <h1>
+      Óleos Essenciais
+      <span>TULIPA ESSÊNCIAS</span>
     </h1>
-    
-    <p class="max-w-md mx-auto text-lg text-[#5c5a52]">
-      Seleção dos 34 óleos mais procurados.<br>
-      Descrições oficiais do Guia de Produtos.
-    </p>
+    <p class="subtitle">Seleção dos 32 óleos mais procurados • Guia de Produtos dōTERRA</p>
+  </section>
 
-    <div class="flex justify-center gap-x-4 mt-8">
-      <a href="#catalogo" 
-         class="inline-flex items-center gap-x-2 bg-[#01843d] hover:bg-[#016b32] transition-colors text-white px-8 py-3.5 rounded-2xl text-sm font-medium">
-        <span>Ver o Catálogo</span>
-        <i class="fa-solid fa-arrow-down"></i>
-      </a>
-      <button onclick="window.print()" 
-              class="inline-flex items-center gap-x-2 border border-[#c9b99a] hover:bg-white transition-colors px-6 py-3.5 rounded-2xl text-sm font-medium">
-        <i class="fa-solid fa-print mr-1.5"></i>
-        <span>Imprimir</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Search & Filters -->
-  <div class="max-w-7xl mx-auto px-6 pb-6">
-    <div class="flex flex-col md:flex-row gap-3 items-center bg-white border border-[#e5e0d5] rounded-3xl px-5 py-4">
-      <div class="flex-1 relative w-full">
-        <i class="fa-solid fa-search absolute left-5 top-3.5 text-[#a39d8f]"></i>
-        <input id="search" type="text" placeholder="Buscar por nome do óleo (ex: Lavanda, Bergamota...)" 
-               class="w-full bg-transparent pl-12 pr-4 py-3 text-base outline-none placeholder:text-[#a39d8f]" 
-               onkeyup="filterOils()">
+  <div class="search-section">
+    <div class="search-card">
+      <div class="search-wrap">
+        <i class="fa-solid fa-search"></i>
+        <input id="search" type="text" placeholder="Buscar óleo essencial..." onkeyup="filterOils()">
       </div>
-      <div class="flex gap-2 text-xs">
-        <button onclick="filterByTag('all')" class="active-tag px-4 py-2 rounded-2xl bg-[#01843d] text-white text-sm">Todos</button>
-        <button onclick="filterByTag('relax')" class="px-4 py-2 rounded-2xl border border-[#c9b99a] hover:bg-[#f8f5f0] text-sm">Relaxamento</button>
-        <button onclick="filterByTag('pele')" class="px-4 py-2 rounded-2xl border border-[#c9b99a] hover:bg-[#f8f5f0] text-sm">Pele</button>
-        <button onclick="filterByTag('purifica')" class="px-4 py-2 rounded-2xl border border-[#c9b99a] hover:bg-[#f8f5f0] text-sm">Purificação</button>
+      <div class="filter-group">
+        <button class="active" onclick="filterByTag('all')">Todos</button>
+        <button onclick="filterByTag('relax')">Relaxamento</button>
+        <button onclick="filterByTag('pele')">Pele</button>
+        <button onclick="filterByTag('purifica')">Purificação</button>
       </div>
     </div>
   </div>
 
-  <!-- Catalog Grid -->
-  <div id="catalogo" class="max-w-7xl mx-auto px-6 pb-16">
-    <div class="flex flex-col items-center text-center mb-6 px-1">
-      <div>
-        <span class="text-xs tracking-[2px] text-[#7c7668]">34 ÓLEOS ESSENCIAIS</span>
-        <h2 class="section-header text-4xl font-semibold tracking-tight">Nossa Seleção</h2>
-      </div>
-      <div class="text-xs text-[#7c7668] hidden md:block">
-        Catálogo Tulipa Essências 2024
-      </div>
+  <section class="catalog-section">
+    <div class="section-title">
+      <div class="badge">✦ NOSSA SELEÇÃO</div>
+      <h2 id="grid-title">32 Óleos Essenciais</h2>
     </div>
+    <div id="grid" class="oil-grid"></div>
+  </section>
 
-    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      <!-- Populated by JS -->
-    </div>
-  </div>
-
-  <!-- Como Usar -->
-  <div id="como-usar" class="max-w-5xl mx-auto px-6 pb-16">
-    <div class="bg-white border border-[#e5e0d5] rounded-3xl p-8 md:p-10">
-      <h3 class="font-semibold text-2xl tracking-tight mb-4">Como usar com segurança</h3>
-      <div class="grid md:grid-cols-3 gap-6 text-sm text-[#4a463e]">
-        <div>
-          <div class="font-medium mb-1.5 flex items-center gap-x-2"><i class="fa-solid fa-wind text-[#01843d]"></i> <span>Aromático</span></div>
-          <p class="text-[#5c5a52]">Difusor ou inalação. 3 a 4 gotas.</p>
-        </div>
-        <div>
-          <div class="font-medium mb-1.5 flex items-center gap-x-2"><i class="fa-solid fa-hand-dots text-[#01843d]"></i> <span>Tópico</span></div>
-          <p class="text-[#5c5a52]">Sempre dilua em óleo carreador (10:1). Teste de sensibilidade recomendado.</p>
-        </div>
-        <div>
-          <div class="font-medium mb-1.5 flex items-center gap-x-2"><i class="fa-solid fa-info-circle text-[#01843d]"></i> <span>Importante</span></div>
-          <p class="text-[#5c5a52]">Consulte o Guia oficial ou uma consultora para uso específico, gravidez ou crianças.</p>
-        </div>
-      </div>
-      <div class="mt-6 pt-5 border-t text-[10px] text-[#7c7668]">
-        Os preços e informações podem variar. Consulte sua consultora para a tabela atualizada.
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="border-t border-[#e5e0d5] py-8 text-center text-xs text-[#7c7668]">
-    <div class="max-w-5xl mx-auto px-6">
-      Catálogo de Óleos Essenciais - TULIPA ESSÊNCIAS<br>
-      Imagens e descrições baseadas no Guia de Produtos oficial. Para uso de vendedoras.
-    </div>
+  <footer class="footer">
+    Catálogo de Óleos Essenciais - TULIPA ESSÊNCIAS<br>
+    Imagens e descrições baseadas no Guia de Produtos oficial dōTERRA
   </footer>
 
-  <!-- Modal -->
-  <div id="modal" onclick="closeModal()" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
-    <div onclick="event.stopImmediatePropagation()" class="bg-white max-w-lg w-full rounded-3xl overflow-hidden border border-[#e5e0d5]">
-      <div id="modal-img" class="w-full h-72 bg-[#f8f5f0] flex items-center justify-center">
-        <!-- dynamic image -->
+  <div class="viewer-overlay" id="viewer">
+    <div class="viewer-glass" onclick="event.stopPropagation()">
+      <button class="viewer-close" onclick="closeViewer()"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="viewer-image">
+        <button class="nav-arrow prev" onclick="navigateOil(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="viewer-img" src="" alt="">
+        <button class="nav-arrow next" onclick="navigateOil(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="counter" id="viewer-counter"></div>
       </div>
-      <div class="p-7">
-        <div id="modal-name" class="text-3xl font-semibold tracking-tight heading-serif"></div>
-        <div id="modal-meta" class="text-xs text-[#7c7668] mt-0.5 mb-3"></div>
-        
-        <div id="modal-desc" class="text-[#3c3a32] leading-relaxed"></div>
-        
-        <div class="mt-6 flex gap-3">
-          <button onclick="closeModal()" class="flex-1 py-3 text-sm font-medium border border-[#c9b99a] rounded-2xl hover:bg-[#f8f5f0]">Fechar</button>
-          <button onclick="shareOil()" class="flex-1 py-3 text-sm font-medium bg-[#01843d] text-white rounded-2xl">Compartilhar</button>
-        </div>
+
+      <div class="viewer-info">
+        <div class="tag" id="viewer-tag"></div>
+        <div class="name" id="viewer-name"></div>
+        <div class="divider"></div>
+        <div class="desc" id="viewer-desc"></div>
+        <button class="share-btn" onclick="shareOil()">
+          <i class="fa-solid fa-share-nodes"></i> Compartilhar
+        </button>
       </div>
     </div>
   </div>
@@ -260,139 +600,131 @@
       { name: "Pimenta Rosa", file: "Pimenta Rosa.png", tag: "purifica", desc: "Aroma picante e frutado vibrante. Ajuda a elevar o humor e criar atmosferas energizantes." },
       { name: "Sálvia Esclareia", file: "Salvia Esclareia.png", tag: "relax", desc: "Usos desde a Idade Média. Ajuda a relaxar, acalmar e promove aspecto revitalizado à pele." },
       { name: "Tomilho Branco", file: "Tomilho Branco.png", tag: "purifica", desc: "Óleo potente com efeitos purificantes. Era oferecido a guerreiros na Idade Média por sua força e coragem." }
-    ]
+    ];
 
-    function createCard(oil) {
-      const card = document.createElement('div')
-      card.className = `oil-card clean-card rounded-3xl overflow-hidden cursor-pointer group min-h-[460px] flex flex-col`
+    let currentIndex = 0;
+    let filteredOils = oils;
+
+    function createCard(oil, index) {
+      const card = document.createElement('div');
+      card.className = 'oil-card';
       card.innerHTML = `
-        <div class="relative flex-1 aspect-[3/4]">
-          <img src="${oil.file}" alt="${oil.name}" class="oil-img absolute inset-0 w-full h-full object-cover" onerror="this.style.background='#e5e0d5'; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmNWYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZG8gT2xlbzwvdGV4dD48L3N2Zz4='">
-          <div class="absolute top-3 right-3">
-            <span class="meta px-2.5 py-0.5 bg-white/90 backdrop-blur rounded-full text-[#01843d] font-medium shadow-sm">${oil.tag.toUpperCase()}</span>
+        <div class="card-img-wrap">
+          <img src="${oil.file}" alt="${oil.name}" loading="lazy">
+          <span class="card-tag">${oil.tag.toUpperCase()}</span>
+        </div>
+        <div class="card-body">
+          <h3>${oil.name}</h3>
+          <p>${oil.desc}</p>
+          <div class="card-footer">
+            <span>TULIPA</span>
+            <span class="view-btn">Ampliar <i class="fa-solid fa-arrow-right"></i></span>
           </div>
         </div>
-        <div class="p-4">
-          <div class="oil-name font-semibold text-[#2c2a25] tracking-tight mb-1.5">${oil.name}</div>
-          <p class="desc-text text-sm text-[#5c5a52]">${oil.desc}</p>
-          
-          <div class="mt-3 flex items-center text-xs text-[#7c7668]">
-            <span class="flex-1">TULIPA ESSÊNCIAS</span>
-            <span class="group-hover:text-[#01843d] transition-colors flex items-center">Ver detalhes <i class="fa-solid fa-chevron-right ml-1 text-[9px]"></i></span>
-          </div>
-        </div>
-      `
-      card.onclick = () => showModal(oil)
-      return card
+      `;
+      card.onclick = () => openViewer(index);
+      return card;
     }
 
-    function renderOils(filteredOils) {
-      const grid = document.getElementById('grid')
-      grid.innerHTML = ''
-      filteredOils.forEach(oil => {
-        grid.appendChild(createCard(oil))
-      })
+    function renderOils(oilsArray) {
+      filteredOils = oilsArray;
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      oilsArray.forEach((oil, i) => grid.appendChild(createCard(oil, i)));
+      document.getElementById('grid-title').textContent = oilsArray.length + ' Óleo' + (oilsArray.length !== 1 ? 's' : '') + ' Essencial' + (oilsArray.length !== 1 ? 'is' : '');
+      document.getElementById('header-count').textContent = oilsArray.length + ' óleo' + (oilsArray.length !== 1 ? 's' : '');
     }
 
     function filterOils() {
-      const term = document.getElementById('search').value.toLowerCase().trim()
-      const filtered = oils.filter(o => o.name.toLowerCase().includes(term))
-      renderOils(filtered)
+      const term = document.getElementById('search').value.toLowerCase().trim();
+      const filtered = oils.filter(o => o.name.toLowerCase().includes(term));
+      renderOils(filtered);
+      updateActiveTag('all');
     }
 
-    let currentTag = 'all'
     function filterByTag(tag) {
-      currentTag = tag
-      document.querySelectorAll('.flex.gap-2 button').forEach(btn => {
-        btn.classList.remove('bg-[#01843d]', 'text-white')
-        btn.classList.add('border', 'border-[#c9b99a]')
-        if ((tag === 'all' && btn.textContent === 'Todos') ||
+      const term = document.getElementById('search').value.toLowerCase().trim();
+      let filtered = oils;
+      if (tag !== 'all') filtered = filtered.filter(o => o.tag === tag);
+      if (term) filtered = filtered.filter(o => o.name.toLowerCase().includes(term));
+      renderOils(filtered);
+      updateActiveTag(tag);
+    }
+
+    function updateActiveTag(tag) {
+      document.querySelectorAll('.filter-group button').forEach(btn => {
+        btn.classList.remove('active');
+        if ((tag === 'all' && btn.textContent.includes('Todos')) ||
             (tag === 'relax' && btn.textContent.includes('Relax')) ||
             (tag === 'pele' && btn.textContent.includes('Pele')) ||
             (tag === 'purifica' && btn.textContent.includes('Purif'))) {
-          btn.classList.add('bg-[#01843d]', 'text-white')
-          btn.classList.remove('border', 'border-[#c9b99a]')
+          btn.classList.add('active');
         }
-      })
-      
-      const term = document.getElementById('search').value.toLowerCase().trim()
-      let filtered = oils
-      if (tag !== 'all') filtered = filtered.filter(o => o.tag === tag)
-      if (term) filtered = filtered.filter(o => o.name.toLowerCase().includes(term))
-      renderOils(filtered)
+      });
     }
 
-    let currentOil = null
-
-    function showModal(oil) {
-      currentOil = oil
-      document.getElementById('modal').classList.remove('hidden')
-      document.getElementById('modal').classList.add('flex')
-      
-      const imgContainer = document.getElementById('modal-img')
-      imgContainer.innerHTML = `<img src="${oil.file}" class="max-h-full max-w-full object-contain" alt="${oil.name}">`
-      
-      document.getElementById('modal-name').innerHTML = oil.name
-      document.getElementById('modal-meta').innerHTML = `Óleo Essencial • ${oil.tag.toUpperCase()}`
-      document.getElementById('modal-desc').innerHTML = oil.desc + `<br><br><span class="text-xs text-[#7c7668]">Fonte: Informações oficiais de óleos essenciais</span>`
+    function openViewer(index) {
+      currentIndex = index;
+      updateViewer();
+      document.getElementById('viewer').classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
 
-    function closeModal() {
-      const modal = document.getElementById('modal')
-      modal.classList.remove('flex')
-      modal.classList.add('hidden')
+    function closeViewer() {
+      document.getElementById('viewer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function navigateOil(dir) {
+      currentIndex = (currentIndex + dir + filteredOils.length) % filteredOils.length;
+      updateViewer();
+    }
+
+    function updateViewer() {
+      const oil = filteredOils[currentIndex];
+      document.getElementById('viewer-img').src = oil.file;
+      document.getElementById('viewer-img').alt = oil.name;
+      document.getElementById('viewer-name').textContent = oil.name;
+      document.getElementById('viewer-desc').textContent = oil.desc;
+      document.getElementById('viewer-tag').textContent = 'ÓLEO ESSENCIAL • ' + oil.tag.toUpperCase();
+      document.getElementById('viewer-counter').textContent = (currentIndex + 1) + ' / ' + filteredOils.length;
     }
 
     function shareOil() {
-      if (!currentOil) return
-      const text = `${currentOil.name} — ${currentOil.desc}`
+      const oil = filteredOils[currentIndex];
+      if (!oil) return;
+      const text = oil.name + ' — ' + oil.desc;
       if (navigator.share) {
-        navigator.share({ title: currentOil.name, text })
+        navigator.share({ title: oil.name, text });
       } else {
         navigator.clipboard.writeText(text).then(() => {
-          const orig = event.target.innerHTML
-          event.target.innerHTML = 'Copiado!'
-          setTimeout(() => { if (event.target) event.target.innerHTML = orig }, 1400)
-        })
+          const btn = document.querySelector('.share-btn');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Copiado!';
+          setTimeout(() => { btn.innerHTML = orig; }, 1400);
+        });
       }
     }
 
-    // Keyboard support
     document.addEventListener('keydown', function(e) {
-      if (e.key === '/' && document.activeElement.tagName === 'BODY') {
-        e.preventDefault()
-        document.getElementById('search').focus()
-      }
       if (e.key === 'Escape') {
-        const modal = document.getElementById('modal')
-        if (!modal.classList.contains('hidden')) closeModal()
+        const v = document.getElementById('viewer');
+        if (v.classList.contains('open')) closeViewer();
       }
-    })
+      if (e.key === 'ArrowLeft') {
+        const v = document.getElementById('viewer');
+        if (v.classList.contains('open')) navigateOil(-1);
+      }
+      if (e.key === 'ArrowRight') {
+        const v = document.getElementById('viewer');
+        if (v.classList.contains('open')) navigateOil(1);
+      }
+    });
 
-    // Init
-    function initCatalog() {
-      // Tailwind script already loaded
-      renderOils(oils)
-      
-      // Activate first tag button
-      const firstBtn = document.querySelector('.flex.gap-2 button')
-      if (firstBtn) firstBtn.classList.add('bg-[#01843d]', 'text-white')
-      
-      // Easter egg: press "d" to flash grid
-      document.addEventListener('keypress', function(e) {
-        if (e.key.toLowerCase() === 'd' && document.activeElement.tagName === 'BODY') {
-          const grid = document.getElementById('grid')
-          grid.style.transition = 'all .3s'
-          grid.style.opacity = '0.2'
-          setTimeout(() => { grid.style.opacity = '1' }, 280)
-        }
-      })
-      
-      console.log('%c[Catálogo Tulipa] 34 óleos carregados.', 'color:#8a8476')
-    }
+    document.getElementById('viewer').onclick = closeViewer;
 
-    window.onload = initCatalog
+    renderOils(oils);
+    document.querySelector('.filter-group button:first-child')?.classList.add('active');
   </script>
 </body>
 </html>
-

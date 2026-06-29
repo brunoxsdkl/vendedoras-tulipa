@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -504,7 +504,7 @@
         <small>CATÁLOGO DE ÓLEOS</small>
       </div>
     </div>
-    <div class="header-count" id="header-count">32 óleos</div>
+     <div style="color:rgba(255,255,255,0.85);font-size:0.8rem;letter-spacing:1px;font-weight:500;">ÓLEOS ESSENCIAIS</div>
   </header>
 
   <section class="hero-section">
@@ -512,7 +512,7 @@
       Óleos Essenciais
       <span>TULIPA ESSÊNCIAS</span>
     </h1>
-    <p class="subtitle">Seleção dos 32 óleos mais procurados • Guia de Produtos dōTERRA</p>
+    <p class="subtitle">Seleção dos óleos mais procurados • Guia de Produtos dōTERRA</p>
   </section>
 
   <div class="search-section">
@@ -533,7 +533,7 @@
   <section class="catalog-section">
     <div class="section-title">
       <div class="badge">✦ NOSSA SELEÇÃO</div>
-      <h2 id="grid-title">32 Óleos Essenciais</h2>
+      <h2 id="grid-title">Óleos Essenciais</h2>
     </div>
     <div id="grid" class="oil-grid"></div>
   </section>
@@ -631,8 +631,7 @@
       const grid = document.getElementById('grid');
       grid.innerHTML = '';
       oilsArray.forEach((oil, i) => grid.appendChild(createCard(oil, i)));
-      document.getElementById('grid-title').textContent = oilsArray.length + ' Óleo' + (oilsArray.length !== 1 ? 's' : '') + ' Essencial' + (oilsArray.length !== 1 ? 'is' : '');
-      document.getElementById('header-count').textContent = oilsArray.length + ' óleo' + (oilsArray.length !== 1 ? 's' : '');
+      document.getElementById('grid-title').textContent = 'Óleos Essenciais';
     }
 
     function filterOils() {

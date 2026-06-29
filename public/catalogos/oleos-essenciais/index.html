@@ -472,7 +472,9 @@
     .video-bg-section {
       position: relative;
       width: 100%;
+      min-height: 600px;
       overflow: hidden;
+      background: #f0ece4;
     }
     .video-bg-section .bg-video {
       position: absolute;
@@ -483,6 +485,7 @@
       object-fit: cover;
       z-index: 0;
       pointer-events: none;
+      display: block;
     }
     .video-bg-section .bg-glass {
       position: absolute;
@@ -537,8 +540,8 @@
   </div>
 
   <div class="video-bg-section">
-    <video class="bg-video" autoplay muted loop playsinline poster="banner-oleo.png">
-      <source src="https://cdn.pixabay.com/video/2024/03/10/203662-921832586_large.mp4" type="video/mp4">
+    <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="banner-oleo.png">
+      <source src="https://cdn.pixabay.com/video/2021/11/07/94992-644694733_large.mp4" type="video/mp4">
     </video>
     <div class="bg-glass"></div>
 

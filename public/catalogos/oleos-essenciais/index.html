@@ -72,20 +72,18 @@
     .hero-section {
       position: relative;
       width: 100%;
-      aspect-ratio: 2 / 1;
-      max-height: 600px;
-      overflow: hidden;
+      line-height: 0;
     }
     .hero-section img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
       display: block;
     }
     .hero-section .hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(180deg, rgba(1,132,61,0.4) 0%, rgba(1,132,61,0.1) 50%, transparent 100%);
+      pointer-events: none;
     }
     .hero-section .hero-title {
       position: absolute;
@@ -95,6 +93,7 @@
       text-align: center;
       width: 90%;
       max-width: 700px;
+      pointer-events: none;
     }
     .hero-section .hero-title h1 {
       font-family: 'Playfair Display', Georgia, serif;
@@ -119,6 +118,7 @@
       bottom: 0; left: 0; right: 0;
       height: 80px;
       background: linear-gradient(180deg, transparent, #f8f5f0);
+      pointer-events: none;
     }
 
     .search-section {

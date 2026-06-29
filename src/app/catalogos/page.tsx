@@ -117,16 +117,7 @@ export default function CatalogosPage() {
                       }}
                     >📄 Abrir</button>
                   )}
-                  {c.id === "oleos-essenciais" && (
-                    <button onClick={() => { setSelected(c); setView("viewer"); }}
-                      style={{
-                        padding: "10px 14px", borderRadius: 10, border: "1px solid #dce5e0",
-                        background: "#fff", color: "#1a2a32", fontWeight: 600, fontSize: "0.85rem",
-                        cursor: "pointer", fontFamily: "Barlow, sans-serif",
-                        display: "flex", alignItems: "center", gap: 4,
-                      }}
-                    >📄 PDF</button>
-                  )}
+
                   <button onClick={() => shareWhatsApp(`${window.location.origin}/catalogos`, c.nome)}
                     style={{
                       padding: "10px 16px", borderRadius: 10, border: "none",

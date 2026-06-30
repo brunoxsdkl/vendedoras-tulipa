@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PERFUMARIA FEMININA - TULIPA ESSÊNCIAS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500&display=swap');
+
+    :root {
+      --rose: #c44a6c;
+      --cream: #fdf8f5;
+      --gold: #c9a96e;
+    }
+
+    body {
+      font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    .heading-serif {
+      font-family: 'Playfair Display', Georgia, serif;
+      letter-spacing: -0.02em;
+    }
+
+    .perfume-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid #e8d5cd;
+    }
+
+    .perfume-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      border-color: var(--gold);
+    }
+
+    .perfume-img {
+      background: #fdf8f5;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .perfume-card:hover .perfume-img {
+      transform: scale(1.03);
+    }
+
+    .section-header {
+      letter-spacing: -0.03em;
+    }
+
+    .rose-color {
+      color: var(--rose);
+    }
+
+    .catalog-container {
+      background: var(--cream);
+    }
+
+    .meta {
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* Fullscreen Viewer */
+    #viewer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+    }
+    #viewer.open {
+      display: flex;
+    }
+    #viewer .viewer-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    #viewer .viewer-image-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-width: 0;
+    }
+    #viewer .viewer-image-area img {
+      max-width: 85%;
+      max-height: 85%;
+      object-fit: contain;
+    }
+    #viewer .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    #viewer .nav-arrow:hover { background: rgba(255,255,255,0.3); }
+    #viewer .nav-arrow.prev { left: 20px; }
+    #viewer .nav-arrow.next { right: 20px; }
+    #viewer .viewer-sidebar {
+      width: 420px;
+      background: white;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    #viewer .viewer-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 10;
+    }
+    #viewer .viewer-close:hover { background: rgba(255,255,255,0.3); }
+    #viewer .viewer-counter {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    .note-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      margin: 2px;
+    }
+
+    @media (max-width: 768px) {
+      #viewer .viewer-container { flex-direction: column; }
+      #viewer .viewer-sidebar { width: 100%; height: 50%; padding: 24px 20px; }
+      #viewer .viewer-image-area { height: 50%; }
+      #viewer .nav-arrow { width: 36px; height: 36px; font-size: 16px; }
+      #viewer .nav-arrow.prev { left: 10px; }
+      #viewer .nav-arrow.next { right: 10px; }
+    }
+  </style>
+</head>
+<body class="bg-[#fdf8f5] text-[#2c2a25]">
+
+  <!-- Header -->
+  <div class="max-w-7xl mx-auto px-6 pt-8 pb-6">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-full bg-[#c44a6c] flex items-center justify-center text-white font-bold text-lg">T</div>
+      <div>
+        <span class="font-semibold text-lg tracking-tight">TULIPA ESSÊNCIAS</span>
+        <div class="text-xs text-[#7c7668] tracking-[1px]">CATÁLOGO DE PERFUMARIA FEMININA</div>
+      </div>
+    </div>
+    <div class="flex flex-col md:flex-row gap-3 items-center bg-white border border-[#e8d5cd] rounded-3xl px-5 py-4">
+      <div class="flex-1 relative w-full">
+        <i class="fa-solid fa-search absolute left-5 top-3.5 text-[#a39d8f]"></i>
+        <input id="search" type="text" placeholder="Buscar perfume (ex: Allure, J'adore, Miss Dior...)"
+               class="w-full bg-transparent pl-12 pr-4 py-3 text-base outline-none placeholder:text-[#a39d8f]"
+               onkeyup="filterPerfumes()">
+      </div>
+      <div class="flex gap-2 text-xs flex-wrap">
+        <button onclick="filterByTag('all')" class="active-tag px-4 py-2 rounded-2xl bg-[#c44a6c] text-white text-sm">Todos</button>
+        <button onclick="filterByTag('floral')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#fdf8f5] text-sm">Floral</button>
+        <button onclick="filterByTag('frutal')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#fdf8f5] text-sm">Frutal</button>
+        <button onclick="filterByTag('oriental')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#fdf8f5] text-sm">Oriental</button>
+        <button onclick="filterByTag('citrico')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#fdf8f5] text-sm">Cítrico</button>
+        <button onclick="filterByTag('gourmand')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#fdf8f5] text-sm">Gourmand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catalog Grid -->
+  <div id="catalogo" class="max-w-7xl mx-auto px-6 pb-16">
+    <div class="flex items-end justify-between mb-6 px-1">
+      <div>
+        <span class="text-xs tracking-[2px] text-[#7c7668]">ESSÊNCIAS DE PERFUMARIA FINA</span>
+        <h2 class="section-header text-4xl font-semibold tracking-tight">Perfumaria Feminina</h2>
+      </div>
+      <div class="text-xs text-[#7c7668] hidden md:block">
+        Inspirado nos grandes clássicos da perfumaria mundial
+      </div>
+    </div>
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#e8d5cd] py-8 text-center text-xs text-[#7c7668]">
+    <div class="max-w-5xl mx-auto px-6">
+      Catálogo de Perfumaria Feminina - TULIPA ESSÊNCIAS<br>
+      Essências inspiradas nos grandes clássicos. Para uso de vendedoras.
+    </div>
+  </footer>
+
+  <!-- Fullscreen Viewer -->
+  <div id="viewer">
+    <button class="viewer-close" onclick="closeViewer()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="viewer-container">
+      <div class="viewer-image-area">
+        <button class="nav-arrow prev" onclick="navigatePerfume(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="viewer-img" src="" alt="">
+        <button class="nav-arrow next" onclick="navigatePerfume(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="viewer-counter" id="viewer-counter"></div>
+      </div>
+      <div class="viewer-sidebar">
+        <div id="viewer-tag" class="text-xs tracking-[2px] text-[#c44a6c] font-medium mb-2"></div>
+        <div id="viewer-marca" class="text-xs text-[#a39d8f] mb-1 font-medium"></div>
+        <div id="viewer-name" class="heading-serif text-3xl font-bold tracking-tight text-[#2c2a25] mb-3"></div>
+        <div class="w-12 h-0.5 bg-[#c44a6c] mb-4"></div>
+        <div id="viewer-desc" class="text-[#5c5a52] leading-relaxed text-sm mb-4"></div>
+        <div class="mb-3">
+          <div class="text-xs font-semibold text-[#7c7668] mb-2 tracking-wide">NOTAS OLFATIVAS</div>
+          <div id="viewer-notes" class="flex flex-wrap gap-1"></div>
+        </div>
+        <div class="mt-auto pt-6">
+          <button onclick="sharePerfume()" class="w-full py-3 text-sm font-medium bg-[#c44a6c] text-white rounded-2xl hover:bg-[#a63d5a] transition-colors">
+            <i class="fa-solid fa-share-nodes mr-2"></i>Compartilhar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const perfumes = [
+      {
+        name: "Allure",
+        marca: "Chanel",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_502.jpeg",
+        tag: "floral",
+        desc: "Floral elegante e sofisticado. Uma composição rica e complexa que combina frescor cítrico com um coração floral exuberante e base amadeirada.",
+        notes: ["Limão", "Mandarina", "Pêssego", "Jasmim", "Magnólia", "Baunilha", "Sândalo", "Âmbar"],
+        top: "Limão, Mandarina, Pêssego",
+        heart: "Jasmim, Magnólia, Flor de Laranjeira",
+        base: "Baunilha, Sândalo, Âmbar, Patchouli"
+      },
+      {
+        name: "Angel",
+        marca: "Thierry Mugler",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_2985.jpeg",
+        tag: "oriental",
+        desc: "Oriental gourmand icônico. Patchouli, caramelo e frutas vermelhas se combinam em uma fragrância doce e marcante que revolucionou a perfumaria.",
+        notes: ["Bergamota", "Algodão Doce", "Caramelo", "Patchouli", "Baunilha", "Chocolate"],
+        top: "Bergamota, Algodão Doce, Melão",
+        heart: "Caramelo, Frutas Vermelhas, Rosa",
+        base: "Patchouli, Baunilha, Chocolate, Âmbar"
+      },
+      {
+        name: "212 Sexy",
+        marca: "Carolina Herrera",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_306.jpeg",
+        tag: "oriental",
+        desc: "Oriental floral sensual. Pimenta rosa e algodão doce se encontram com baunilha e almíscar para uma fragrância magnética e envolvente.",
+        notes: ["Pimenta Rosa", "Bergamota", "Algodão Doce", "Gardenia", "Baunilha", "Almíscar", "Caramelo"],
+        top: "Pimenta Rosa, Mandarina, Bergamota",
+        heart: "Algodão Doce, Gardênia, Rosa",
+        base: "Baunilha, Almíscar, Sândalo, Caramelo"
+      },
+      {
+        name: "212 VIP",
+        marca: "Carolina Herrera",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_306.jpeg",
+        tag: "frutal",
+        desc: "Fragrância vibrante e glamourosa. Notas frutadas e champanhe se unem para criar uma experiência efervescente e cheia de personalidade.",
+        notes: ["Champanhe", "Framboesa", "Pêssego", "Jasmim", "Baunilha", "Almíscar"],
+        top: "Champanhe, Framboesa, Pêssego",
+        heart: "Jasmim, Flor de Laranjeira",
+        base: "Baunilha, Almíscar, Sândalo"
+      },
+      {
+        name: "Acqua di Gioia",
+        marca: "Giorgio Armani",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_26663.jpeg",
+        tag: "citrico",
+        desc: "Frescor aquático e cítrico. Uma fragrância revigorante que evoca a beleza do mar Mediterrâneo com notas aquáticas e florais.",
+        notes: ["Limão", "Menta", "Jasmim", "Lírio d'Água", "Açúcar", "Cedro"],
+        top: "Limão, Menta, Groselha",
+        heart: "Jasmim, Lírio d'Água, Frésia",
+        base: "Açúcar, Cedro, Almíscar"
+      },
+      {
+        name: "Black Opium",
+        marca: "Yves Saint Laurent",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_25324.jpeg",
+        tag: "oriental",
+        desc: "Oriental vanilla viciante. Café e baunilha se encontram em uma composição ousada e rock'n'roll para noites intermináveis.",
+        notes: ["Pera", "Pimenta Rosa", "Café", "Jasmim", "Baunilha", "Patchouli", "Cedro"],
+        top: "Pera, Pimenta Rosa, Flor de Laranjeira",
+        heart: "Café, Jasmim, Amêndoa",
+        base: "Baunilha, Patchouli, Cedro, Almíscar"
+      },
+      {
+        name: "L'Interdit",
+        marca: "Givenchy",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_48867.jpeg",
+        tag: "floral",
+        desc: "Floral amadeirado ousado. Tuberosa e laranja amarga se combinam com notas escuras de âmbar e patchouli em uma fragrância proibida e irresistível.",
+        notes: ["Laranja Amarga", "Gengibre", "Tuberosa", "Jasmim", "Âmbar", "Patchouli", "Vetiver"],
+        top: "Laranja Amarga, Gengibre, Pera",
+        heart: "Tuberosa, Jasmim, Flor de Laranjeira",
+        base: "Âmbar, Patchouli, Vetiver, Açúcar"
+      },
+      {
+        name: "English Pear & Freesia",
+        marca: "Jo Malone",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_10314.jpeg",
+        tag: "frutal",
+        desc: "Frutal floral fresco. A doçura suculenta da pera madura encontra a delicadeza das frésias brancas em uma composição britânica elegante.",
+        notes: ["Pera", "Melão", "Frésia", "Rosa", "Almíscar", "Patchouli", "Âmbar"],
+        top: "Pera, Melão",
+        heart: "Frésia, Rosa",
+        base: "Almíscar, Patchouli, Ruibarbo, Âmbar"
+      },
+      {
+        name: "Gabrielle Essence",
+        marca: "Chanel",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_502.jpeg",
+        tag: "floral",
+        desc: "Floral radiante e luminoso. Um buquê de flores brancas banhado por notas cítricas que celebra a liberdade e o brilho feminino.",
+        notes: ["Toranja", "Mandarina", "Jasmim", "Flor de Laranjeira", "Baunilha", "Sândalo"],
+        top: "Toranja, Mandarina, Groselha",
+        heart: "Jasmim, Flor de Laranjeira, Tuberosa",
+        base: "Baunilha, Sândalo, Almíscar"
+      },
+      {
+        name: "J'adore",
+        marca: "Dior",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_210.jpeg",
+        tag: "floral",
+        desc: "Floral frutado icônico. Um buquê opulento de flores brancas envolto em notas frutadas douradas que brilham como o sol.",
+        notes: ["Pera", "Melão", "Magnólia", "Jasmim", "Tuberosa", "Rosa", "Almíscar", "Baunilha"],
+        top: "Pera, Melão, Magnólia, Mandarina",
+        heart: "Jasmim, Tuberosa, Frésia, Rosa, Orquídea",
+        base: "Almíscar, Baunilha, Cedro, Amora"
+      },
+      {
+        name: "La Vie Est Belle",
+        marca: "Lancôme",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_14982.jpeg",
+        tag: "gourmand",
+        desc: "Gourmand floral elegante. Íris e patchouli se encontram com pralinê e baunilha em uma fragrância que celebra a felicidade e a beleza da vida.",
+        notes: ["Groselha", "Pera", "Íris", "Jasmim", "Pralinê", "Baunilha", "Patchouli", "Fava Tonka"],
+        top: "Groselha Preta, Pera",
+        heart: "Íris, Jasmim, Flor de Laranjeira",
+        base: "Pralinê, Baunilha, Patchouli, Fava Tonka"
+      },
+      {
+        name: "La Vie Est Belle En Rose",
+        marca: "Lancôme",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_14982.jpeg",
+        tag: "floral",
+        desc: "Edição floral radiante do clássico. A assinatura gourmand de La Vie Est Belle ganha um coração floral ainda mais vibrante.",
+        notes: ["Lichia", "Pera", "Rosa", "Íris", "Jasmim", "Baunilha", "Patchouli"],
+        top: "Lichia, Pera, Groselha",
+        heart: "Rosa, Íris, Jasmim",
+        base: "Baunilha, Patchouli, Almíscar"
+      },
+      {
+        name: "Light Blue",
+        marca: "Dolce & Gabbana",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_485.jpeg",
+        tag: "citrico",
+        desc: "Cítrico floral refrescante. O espírito do verão italiano capturado em uma fragrância que evoca o sol da Sicília e a brisa do mar.",
+        notes: ["Limão Siciliano", "Maçã", "Cedro", "Jasmim", "Rosa Branca", "Almíscar", "Âmbar"],
+        top: "Limão Siciliano, Maçã, Cedro, Campânula",
+        heart: "Bambu, Jasmim, Rosa Branca",
+        base: "Cedro, Almíscar, Âmbar"
+      },
+      {
+        name: "Miss Dior",
+        marca: "Dior",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_17796.jpeg",
+        tag: "floral",
+        desc: "Chypre floral romântico. Mandarina e rosa se encontram com patchouli em uma fragrância que personifica a elegância e o espírito livre.",
+        notes: ["Mandarina", "Rosa", "Jasmim", "Patchouli", "Almíscar"],
+        top: "Mandarina Italiana",
+        heart: "Rosa, Jasmim Egípcio",
+        base: "Patchouli, Almíscar"
+      },
+      {
+        name: "Miss Dior (New)",
+        marca: "Dior",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_17796.jpeg",
+        tag: "frutal",
+        desc: "Nova interpretação do clássico. Frutas vermelhas e rosa se unem em uma composição moderna e vibrante que homenageia o espírito Dior.",
+        notes: ["Morango", "Pêssego", "Rosa", "Jasmim", "Patchouli", "Cedro", "Âmbar"],
+        top: "Morango, Pêssego, Mandarina",
+        heart: "Rosa, Jasmim, Flor de Laranjeira",
+        base: "Patchouli, Cedro, Âmbar"
+      },
+      {
+        name: "My Way",
+        marca: "Giorgio Armani",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_62036.jpeg",
+        tag: "floral",
+        desc: "Floral branco radiante. Flor de laranjeira e tuberosa se encontram com baunilha de Madagascar em uma fragrância que celebra sua própria jornada.",
+        notes: ["Flor de Laranjeira", "Bergamota", "Tuberosa", "Jasmim", "Baunilha", "Almíscar", "Cedro"],
+        top: "Flor de Laranjeira, Bergamota",
+        heart: "Tuberosa, Jasmim Indiano",
+        base: "Baunilha de Madagascar, Almíscar, Cedro"
+      },
+      {
+        name: "Scandal",
+        marca: "Jean Paul Gaultier",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_39913.jpeg",
+        tag: "oriental",
+        desc: "Floral gourmand ousado. Mel e gardênia se combinam em uma fragrância escandalosa e viciante que não passa despercebida.",
+        notes: ["Mel", "Gardênia", "Laranja Sangue", "Jasmim", "Baunilha", "Patchouli"],
+        top: "Mel, Laranja Sangue",
+        heart: "Gardênia, Jasmim, Flor de Laranjeira",
+        base: "Baunilha, Patchouli, Almíscar"
+      },
+      {
+        name: "Scandal (Moulin Rouge)",
+        marca: "Jean Paul Gaultier",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_39913.jpeg",
+        tag: "oriental",
+        desc: "Edição inspirada no Moulin Rouge. A assinatura Scandal ganha um toque ainda mais provocante e glamouroso.",
+        notes: ["Framboesa", "Gardênia", "Mel", "Jasmim", "Patchouli", "Baunilha"],
+        top: "Framboesa, Mel, Laranja",
+        heart: "Gardênia, Jasmim, Rosa",
+        base: "Patchouli, Baunilha, Almíscar"
+      },
+      {
+        name: "Yes I Am",
+        marca: "Cacharel",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_51221.jpeg",
+        tag: "gourmand",
+        desc: "Gourmand picante e doce. Gengibre e leite de coco se encontram com framboesa e baunilha em uma fragrância ousada e deliciosa.",
+        notes: ["Gengibre", "Leite de Coco", "Framboesa", "Flor de Laranjeira", "Baunilha", "Caramelo"],
+        top: "Gengibre, Leite de Coco, Framboesa",
+        heart: "Flor de Laranjeira, Jasmim",
+        base: "Baunilha, Caramelo, Almíscar"
+      },
+      {
+        name: "Honeysuckle",
+        marca: "Jo Malone",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_10314.jpeg",
+        tag: "floral",
+        desc: "Floral fresco e delicado. A doçura suave da madressilva combinada com notas verdes e almíscar para uma fragrância elegante e atemporal.",
+        notes: ["Madressilva", "Folhas Verdes", "Jasmim", "Mel", "Almíscar", "Patchouli"],
+        top: "Madressilva, Folhas Verdes, Lima",
+        heart: "Jasmim, Mel, Gardênia",
+        base: "Almíscar, Patchouli, Sândalo"
+      },
+      {
+        name: "Wild Bluebell",
+        marca: "Jo Malone",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_10314.jpeg",
+        tag: "floral",
+        desc: "Floral fresco como uma manhã de primavera. O sino azul silvestre desabrocha com notas verdes e almíscar em uma fragrância etérea.",
+        notes: ["Campânula", "Pera", "Jasmim", "Lírio do Vale", "Almíscar", "Âmbar"],
+        top: "Campânula, Pera, Notas Verdes",
+        heart: "Jasmim, Lírio do Vale, Rosa",
+        base: "Almíscar, Âmbar, Patchouli"
+      },
+      {
+        name: "Hot Petals",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Notas florais quentes e envolventes. Uma combinação única de pétalas aveludadas que evoca um jardim ao entardecer.",
+        notes: ["Pétalas Vermelhas", "Rosa", "Jasmim", "Âmbar", "Almíscar"],
+        top: "Notas Florais, Pêssego",
+        heart: "Rosa, Jasmim, Violeta",
+        base: "Âmbar, Almíscar, Sândalo"
+      },
+      {
+        name: "Velvet Kiss",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental aveludado e sensual. Toques de baunilha e almíscar envoltos em um abraço quente de âmbar e especiarias.",
+        notes: ["Amêndoa", "Baunilha", "Âmbar", "Almíscar", "Patchouli"],
+        top: "Amêndoa, Canela, Bergamota",
+        heart: "Rosa, Jasmim, Íris",
+        base: "Baunilha, Âmbar, Patchouli, Almíscar"
+      },
+      {
+        name: "Red Flowers",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Flores vermelhas em uma explosão de paixão. Uma fragrância vibrante e romântica com notas florais intensas.",
+        notes: ["Flor Vermelha", "Rosa", "Jasmim", "Fruta Vermelha", "Almíscar"],
+        top: "Fruta Vermelha, Bergamota",
+        heart: "Rosa Vermelha, Jasmim, Peônia",
+        base: "Almíscar, Âmbar, Sândalo"
+      },
+      {
+        name: "Pink Coconut",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "frutal",
+        desc: "Frutal tropical sonhador. Coco cremoso e frutas rosadas se combinam em uma fragrância doce e envolvente.",
+        notes: ["Coco", "Fruta Rosa", "Baunilha", "Almíscar", "Âmbar"],
+        top: "Coco, Fruta Rosa, Lima",
+        heart: "Flor de Coco, Jasmim, Frésia",
+        base: "Baunilha, Almíscar, Âmbar, Sândalo"
+      },
+      {
+        name: "Nativa Lemon",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "citrico",
+        desc: "Cítrico refrescante e vibrante. Limão siciliano e notas verdes se unem em uma fragrância energizante e pura.",
+        notes: ["Limão", "Notas Verdes", "Jasmim", "Almíscar", "Cedro"],
+        top: "Limão, Lima, Bergamota",
+        heart: "Jasmim, Ervas Aromáticas",
+        base: "Almíscar, Cedro, Almíscar Branco"
+      },
+      {
+        name: "Essentially Love",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Floral romântico e delicado. Um buquê de flores brancas com toques doces que celebram o amor em sua essência.",
+        notes: ["Flor Branca", "Pêssego", "Baunilha", "Almíscar", "Âmbar"],
+        top: "Pêssego, Bergamota, Pera",
+        heart: "Rosa, Jasmim, Lírio do Vale",
+        base: "Baunilha, Almíscar, Âmbar"
+      },
+      {
+        name: "Lili",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Floral fresco e feminino. Lírios e notas verdes se encontram em uma composição suave e elegante para o dia a dia.",
+        notes: ["Lírio", "Notas Verdes", "Jasmim", "Almíscar", "Sândalo"],
+        top: "Lírio, Folhas Verdes, Bergamota",
+        heart: "Jasmim, Frésia, Lírio do Vale",
+        base: "Almíscar, Sândalo, Âmbar"
+      },
+      {
+        name: "Marina de Bourbon",
+        marca: "Marina de Bourbon",
+        file: "",
+        tag: "floral",
+        desc: "Floral elegante com assinatura francesa. Notos amadeirados e florais se combinam em uma fragrância sofisticada e atemporal.",
+        notes: ["Bergamota", "Rosa", "Jasmim", "Íris", "Sândalo", "Âmbar"],
+        top: "Bergamota, Tangerina, Pêssego",
+        heart: "Rosa, Jasmim, Íris, Violeta",
+        base: "Sândalo, Âmbar, Almíscar, Cedro"
+      },
+      {
+        name: "Gabriela Sabatine",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Homenagem floral à feminilidade. Uma combinação sofisticada de flores nobres com um toque adocicado envolvente.",
+        notes: ["Flor Branca", "Baunilha", "Almíscar", "Âmbar", "Sândalo"],
+        top: "Tangerina, Bergamota, Pêssego",
+        heart: "Rosa, Jasmim, Flor de Laranjeira",
+        base: "Baunilha, Almíscar, Sândalo, Âmbar"
+      },
+      {
+        name: "Terracota",
+        marca: "Lancôme",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_14982.jpeg",
+        tag: "floral",
+        desc: "Floral quente e terroso. Notas de flor de laranjeira e âmbar se encontram em uma fragrância que evoca o calor do sol mediterrâneo.",
+        notes: ["Flor de Laranjeira", "Âmbar", "Jasmim", "Patchouli", "Baunilha"],
+        top: "Flor de Laranjeira, Bergamota",
+        heart: "Jasmim, Rosa, Íris",
+        base: "Âmbar, Patchouli, Baunilha, Cedro"
+      },
+      {
+        name: "Caprichosa Noite Femme",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental noturno e sedutor. Notas escuras e envolventes para uma mulher que sabe o que quer.",
+        notes: ["Âmbar", "Baunilha", "Almíscar", "Patchouli", "Especiarias"],
+        top: "Bergamota, Laranja, Especiarias",
+        heart: "Rosa, Jasmim, Ylang-Ylang",
+        base: "Âmbar, Baunilha, Patchouli, Almíscar"
+      },
+      {
+        name: "Castanhita",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "gourmand",
+        desc: "Gourmand aconchegante. Castanhas e baunilha se combinam em uma fragrância doce e envolvente como um abraço quente.",
+        notes: ["Castanha", "Baunilha", "Caramelo", "Almíscar", "Âmbar"],
+        top: "Castanha, Amêndoa, Laranja",
+        heart: "Jasmim, Rosa, Baunilha",
+        base: "Caramelo, Âmbar, Almíscar, Patchouli"
+      },
+      {
+        name: "Elisee Blanc",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Floral branco puro e radiante. Um buquê de flores brancas que evoca elegância e sofisticação parisiense.",
+        notes: ["Flor Branca", "Musk", "Jasmim", "Sândalo", "Âmbar"],
+        top: "Bergamota, Tangerina, Notas Verdes",
+        heart: "Jasmim, Rosa Branca, Lírio do Vale",
+        base: "Almíscar, Sândalo, Âmbar, Baunilha"
+      },
+      {
+        name: "Sofy Teens",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "frutal",
+        desc: "Frutal jovem e descolado. Frutas vermelhas e notas doces se combinam em uma fragrância divertida e cheia de energia.",
+        notes: ["Fruta Vermelha", "Baunilha", "Almíscar", "Flor", "Âmbar"],
+        top: "Morango, Framboesa, Tangerina",
+        heart: "Jasmim, Flor de Laranjeira, Violeta",
+        base: "Baunilha, Almíscar, Âmbar"
+      },
+      {
+        name: "Tendances Cosm",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "floral",
+        desc: "Floral cosmopolita moderno. Uma fragrância versátil e elegante para a mulher que acompanha as tendências.",
+        notes: ["Floral", "Almíscar", "Âmbar", "Baunilha", "Cedro"],
+        top: "Bergamota, Tangerina, Frésia",
+        heart: "Jasmim, Rosa, Lírio do Vale",
+        base: "Almíscar, Âmbar, Cedro, Baunilha"
+      },
+      {
+        name: "Folhas Azuis",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "citrico",
+        desc: "Aromático fresco e vibrante. Notas verdes e cítricas se encontram em uma fragrância revigorante e cheia de personalidade.",
+        notes: ["Notas Verdes", "Limão", "Jasmim", "Almíscar", "Cedro"],
+        top: "Notas Verdes, Lima, Bergamota",
+        heart: "Jasmim, Hortelã, Ervas",
+        base: "Almíscar, Cedro, Âmbar"
+      },
+      {
+        name: "Lima Brasil Mandarin",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "citrico",
+        desc: "Cítrico tropical brasileiro. Lima e mandarina se encontram com notas florais em uma fragrância refrescante e vibrante.",
+        notes: ["Lima", "Mandarina", "Jasmim", "Almíscar", "Cedro"],
+        top: "Lima, Mandarin, Bergamota",
+        heart: "Jasmim, Flor de Laranjeira",
+        base: "Almíscar, Cedro, Âmbar"
+      },
+      {
+        name: "Egeo Dolce",
+        marca: "O Boticário",
+        file: "",
+        tag: "frutal",
+        desc: "Frutal floral doce. Uma fragrância jovem e romântica com notas frutadas e florais que encantam.",
+        notes: ["Fruta Vermelha", "Flor", "Baunilha", "Almíscar", "Âmbar"],
+        top: "Morango, Framboesa, Tangerina",
+        heart: "Jasmim, Rosa, Flor de Laranjeira",
+        base: "Baunilha, Almíscar, Âmbar, Patchouli"
+      },
+      {
+        name: "Egeo Red",
+        marca: "O Boticário",
+        file: "",
+        tag: "frutal",
+        desc: "Frutal vibrante e jovem. Frutas vermelhas e um toque floral em uma fragrância cheia de atitude e personalidade.",
+        notes: ["Maçã Verde", "Fruta Vermelha", "Jasmim", "Almíscar", "Baunilha"],
+        top: "Maçã Verde, Fruta Vermelha, Tangerina",
+        heart: "Jasmim, Rosa, Flor de Laranjeira",
+        base: "Almíscar, Baunilha, Âmbar"
+      },
+      {
+        name: "Egeo Chocolate",
+        marca: "O Boticário",
+        file: "",
+        tag: "gourmand",
+        desc: "Gourmand delicioso. Chocolate e frutas se combinam em uma fragrância doce e envolvente que é puro prazer.",
+        notes: ["Chocolate", "Fruta Vermelha", "Baunilha", "Almíscar", "Âmbar"],
+        top: "Chocolate, Laranja, Fruta Vermelha",
+        heart: "Jasmim, Flor de Laranjeira, Rosa",
+        base: "Baunilha, Almíscar, Âmbar, Patchouli"
+      },
+      {
+        name: "Dark Secret",
+        marca: "Tulipa Essências",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental misterioso e sedutor. Notas escuras e profundas revelam segredos olfativos envolventes e marcantes.",
+        notes: ["Âmbar Escuro", "Patchouli", "Baunilha", "Almíscar", "Especiarias"],
+        top: "Bergamota, Pimenta, Especiarias",
+        heart: "Rosa Negra, Jasmim, Íris",
+        base: "Âmbar Escuro, Patchouli, Baunilha, Almíscar"
+      }
+    ];
+
+    let currentIndex = 0;
+    let filteredPerfumes = perfumes;
+
+    function createCard(p, index) {
+      const card = document.createElement('div');
+      card.className = 'perfume-card bg-white rounded-3xl overflow-hidden cursor-pointer group min-h-[520px] flex flex-col';
+      const imgSrc = p.file || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmNWYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+';
+      card.innerHTML = `
+        <div class="relative flex-1 aspect-[3/4] bg-[#fdf8f5]">
+          <img src="${imgSrc}" alt="${p.name}" class="perfume-img absolute inset-0 w-full h-full object-contain p-6" onerror="this.style.background='#fdf8f5'; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmRmOGY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+">
+          <div class="absolute top-3 right-3 flex flex-col gap-1 items-end">
+            <span class="meta px-2.5 py-0.5 bg-white/90 backdrop-blur rounded-full text-[#c44a6c] font-medium shadow-sm">${p.tag.toUpperCase()}</span>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="text-xs text-[#a39d8f] font-medium mb-0.5">${p.marca}</div>
+          <div class="font-semibold text-[#2c2a25] tracking-tight mb-1.5" style="font-size:1.05rem;line-height:1.1">${p.name}</div>
+          <div class="flex flex-wrap gap-1 mb-2">
+            ${p.top ? p.top.split(', ').slice(0,2).map(n => `<span class="note-badge bg-[#fdf8f5] text-[#a39d8f] border border-[#e8d5cd]">${n}</span>`).join('') : ''}
+          </div>
+          <p class="text-sm text-[#5c5a52] line-clamp-2">${p.desc}</p>
+          <div class="mt-3 flex items-center text-xs text-[#7c7668]">
+            <span class="flex-1">TULIPA ESSÊNCIAS</span>
+            <span class="group-hover:text-[#c44a6c] transition-colors flex items-center">Ampliar <i class="fa-solid fa-expand ml-1 text-[9px]"></i></span>
+          </div>
+        </div>
+      `;
+      card.onclick = () => openViewer(index);
+      return card;
+    }
+
+    function renderPerfumes(arr) {
+      filteredPerfumes = arr;
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      arr.forEach((p, i) => grid.appendChild(createCard(p, i)));
+    }
+
+    function filterPerfumes() {
+      const term = document.getElementById('search').value.toLowerCase().trim();
+      let filtered = perfumes;
+      if (currentTag !== 'all') filtered = filtered.filter(p => p.tag === currentTag);
+      if (term) filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.marca.toLowerCase().includes(term));
+      renderPerfumes(filtered);
+    }
+
+    let currentTag = 'all';
+    function filterByTag(tag) {
+      currentTag = tag;
+      document.querySelectorAll('.flex.gap-2 button').forEach(btn => {
+        btn.classList.remove('bg-[#c44a6c]', 'text-white');
+        btn.classList.add('border', 'border-[#c9a96e]');
+      });
+      const btnMap = { 'all': 'Todos', 'floral': 'Floral', 'frutal': 'Frutal', 'oriental': 'Oriental', 'citrico': 'Cítrico', 'gourmand': 'Gourmand' };
+      document.querySelectorAll('.flex.gap-2 button').forEach(btn => {
+        if (btn.textContent.trim() === btnMap[tag]) {
+          btn.classList.add('bg-[#c44a6c]', 'text-white');
+          btn.classList.remove('border', 'border-[#c9a96e]');
+        }
+      });
+      filterPerfumes();
+    }
+
+    function openViewer(index) {
+      currentIndex = index;
+      updateViewer();
+      document.getElementById('viewer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeViewer() {
+      document.getElementById('viewer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function navigatePerfume(dir) {
+      currentIndex = (currentIndex + dir + filteredPerfumes.length) % filteredPerfumes.length;
+      updateViewer();
+    }
+
+    function updateViewer() {
+      const p = filteredPerfumes[currentIndex];
+      document.getElementById('viewer-img').src = p.file || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmRmOGY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+';
+      document.getElementById('viewer-img').alt = p.name;
+      document.getElementById('viewer-name').textContent = p.name;
+      document.getElementById('viewer-marca').textContent = p.marca;
+      document.getElementById('viewer-desc').textContent = p.desc;
+      document.getElementById('viewer-tag').textContent = 'PERFUMARIA • ' + p.tag.toUpperCase();
+      document.getElementById('viewer-counter').textContent = (currentIndex + 1) + ' / ' + filteredPerfumes.length;
+
+      const notesContainer = document.getElementById('viewer-notes');
+      notesContainer.innerHTML = '';
+      const noteCategories = [];
+      if (p.top) noteCategories.push({ label: 'Topo', notes: p.top, color: 'bg-rose-100 text-rose-700 border-rose-200' });
+      if (p.heart) noteCategories.push({ label: 'Coração', notes: p.heart, color: 'bg-pink-100 text-pink-700 border-pink-200' });
+      if (p.base) noteCategories.push({ label: 'Fundo', notes: p.base, color: 'bg-purple-100 text-purple-700 border-purple-200' });
+
+      noteCategories.forEach(cat => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mb-3';
+        wrapper.innerHTML = `<div class="text-xs font-medium text-[#a39d8f] mb-1">${cat.label}</div><div class="flex flex-wrap gap-1">`;
+        cat.notes.split(', ').forEach(n => {
+          wrapper.innerHTML += `<span class="note-badge ${cat.color}">${n}</span>`;
+        });
+        wrapper.innerHTML += `</div>`;
+        notesContainer.appendChild(wrapper);
+      });
+    }
+
+    function sharePerfume() {
+      const p = filteredPerfumes[currentIndex];
+      if (!p) return;
+      const text = `✨ ${p.name} — ${p.marca}\n${p.desc}`;
+      if (navigator.share) {
+        navigator.share({ title: p.name, text });
+      } else {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.querySelector('.viewer-sidebar button');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Copiado!';
+          setTimeout(() => { btn.innerHTML = orig; }, 1400);
+        });
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+        e.preventDefault();
+        document.getElementById('search').focus();
+      }
+      if (e.key === 'Escape') {
+        if (document.getElementById('viewer').classList.contains('open')) closeViewer();
+      }
+      if (e.key === 'ArrowLeft') {
+        if (document.getElementById('viewer').classList.contains('open')) navigatePerfume(-1);
+      }
+      if (e.key === 'ArrowRight') {
+        if (document.getElementById('viewer').classList.contains('open')) navigatePerfume(1);
+      }
+    });
+
+    function initCatalog() {
+      renderPerfumes(perfumes);
+      const firstBtn = document.querySelector('.flex.gap-2 button');
+      if (firstBtn) firstBtn.classList.add('bg-[#c44a6c]', 'text-white');
+      console.log('%c[Catálogo Perfumaria Feminina] ' + perfumes.length + ' essências carregadas.', 'color:#c44a6c');
+    }
+
+    window.onload = initCatalog;
+  </script>
+</body>
+</html>

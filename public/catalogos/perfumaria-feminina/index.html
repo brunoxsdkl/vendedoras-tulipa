@@ -61,7 +61,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* Fullscreen Viewer */
     #viewer {
       display: none;
       position: fixed;
@@ -157,6 +156,16 @@
       margin: 2px;
     }
 
+    .price-badge {
+      background: linear-gradient(135deg, #c44a6c, #a63d5a);
+      color: white;
+      font-weight: 700;
+      padding: 2px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
     @media (max-width: 768px) {
       #viewer .viewer-container { flex-direction: column; }
       #viewer .viewer-sidebar { width: 100%; height: 50%; padding: 24px 20px; }
@@ -230,8 +239,10 @@
       </div>
       <div class="viewer-sidebar">
         <div id="viewer-tag" class="text-xs tracking-[2px] text-[#c44a6c] font-medium mb-2"></div>
+        <div id="viewer-price" class="text-lg font-bold text-[#c44a6c] mb-1"></div>
         <div id="viewer-marca" class="text-xs text-[#a39d8f] mb-1 font-medium"></div>
-        <div id="viewer-name" class="heading-serif text-3xl font-bold tracking-tight text-[#2c2a25] mb-3"></div>
+        <div id="viewer-name" class="heading-serif text-2xl font-bold tracking-tight text-[#2c2a25] mb-1"></div>
+        <div id="viewer-contratipo" class="text-xs text-[#7c7668] mb-3 italic"></div>
         <div class="w-12 h-0.5 bg-[#c44a6c] mb-4"></div>
         <div id="viewer-desc" class="text-[#5c5a52] leading-relaxed text-sm mb-4"></div>
         <div class="mb-3">
@@ -250,8 +261,10 @@
   <script>
     const perfumes = [
       {
-        name: "Allure",
+        name: "ESSÊNCIA ALLURE PERF. FEM. 50ML",
+        contratipo: "Contratipo (Chanel Allure)",
         marca: "Chanel",
+        price: "R$ 39,90",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_502.jpeg",
         tag: "floral",
         desc: "Floral elegante e sofisticado. Uma composição rica e complexa que combina frescor cítrico com um coração floral exuberante e base amadeirada.",
@@ -261,8 +274,10 @@
         base: "Baunilha, Sândalo, Âmbar, Patchouli"
       },
       {
-        name: "Angel",
+        name: "ESSÊNCIA ANGEL FEMININO PERM. FEM. 50ML",
+        contratipo: "Contratipo (Thierry Mugler Angel)",
         marca: "Thierry Mugler",
+        price: "R$ 70,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_2985.jpeg",
         tag: "oriental",
         desc: "Oriental gourmand icônico. Patchouli, caramelo e frutas vermelhas se combinam em uma fragrância doce e marcante que revolucionou a perfumaria.",
@@ -272,8 +287,10 @@
         base: "Patchouli, Baunilha, Chocolate, Âmbar"
       },
       {
-        name: "212 Sexy",
+        name: "ESSÊNCIA CAROLINA HER. 212 SEX FEM. PERF. 50ML",
+        contratipo: "Contratipo (Carolina Herrera 212 Sexy)",
         marca: "Carolina Herrera",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_306.jpeg",
         tag: "oriental",
         desc: "Oriental floral sensual. Pimenta rosa e algodão doce se encontram com baunilha e almíscar para uma fragrância magnética e envolvente.",
@@ -283,8 +300,10 @@
         base: "Baunilha, Almíscar, Sândalo, Caramelo"
       },
       {
-        name: "212 VIP",
+        name: "ESSÊNCIA CAROLINA HER. 212 VIP FEM. PERF. 50ML",
+        contratipo: "Contratipo (Carolina Herrera 212 VIP)",
         marca: "Carolina Herrera",
+        price: "R$ 39,50",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_306.jpeg",
         tag: "frutal",
         desc: "Fragrância vibrante e glamourosa. Notas frutadas e champanhe se unem para criar uma experiência efervescente e cheia de personalidade.",
@@ -294,8 +313,10 @@
         base: "Baunilha, Almíscar, Sândalo"
       },
       {
-        name: "Acqua di Gioia",
+        name: "ESSÊNCIA GIORGIA PERF. FEM. 50ML (ACQUA DI GIOIA)",
+        contratipo: "Contratipo (Giorgio Armani Acqua di Gioia)",
         marca: "Giorgio Armani",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_26663.jpeg",
         tag: "citrico",
         desc: "Frescor aquático e cítrico. Uma fragrância revigorante que evoca a beleza do mar Mediterrâneo com notas aquáticas e florais.",
@@ -305,8 +326,10 @@
         base: "Açúcar, Cedro, Almíscar"
       },
       {
-        name: "Black Opium",
+        name: "ESSÊNCIA DARK SY 50ML (INSPIRAÇÃO BLACK OPIUM)",
+        contratipo: "Contratipo (Yves Saint Laurent Black Opium)",
         marca: "Yves Saint Laurent",
+        price: "R$ 78,90",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_25324.jpeg",
         tag: "oriental",
         desc: "Oriental vanilla viciante. Café e baunilha se encontram em uma composição ousada e rock'n'roll para noites intermináveis.",
@@ -316,8 +339,10 @@
         base: "Baunilha, Patchouli, Cedro, Almíscar"
       },
       {
-        name: "L'Interdit",
+        name: "ESSÊNCIA DARK SECRET 50ML INSPIRAÇÃO (L INTERDICT)",
+        contratipo: "Contratipo (Givenchy L'Interdit)",
         marca: "Givenchy",
+        price: "R$ 70,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_48867.jpeg",
         tag: "floral",
         desc: "Floral amadeirado ousado. Tuberosa e laranja amarga se combinam com notas escuras de âmbar e patchouli em uma fragrância proibida e irresistível.",
@@ -327,8 +352,10 @@
         base: "Âmbar, Patchouli, Vetiver, Açúcar"
       },
       {
-        name: "English Pear & Freesia",
+        name: "ESSENCIA ENGLISH PEAR E FRESIA 50ML",
+        contratipo: "Contratipo (Jo Malone English Pear & Freesia)",
         marca: "Jo Malone",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_10314.jpeg",
         tag: "frutal",
         desc: "Frutal floral fresco. A doçura suculenta da pera madura encontra a delicadeza das frésias brancas em uma composição britânica elegante.",
@@ -338,8 +365,10 @@
         base: "Almíscar, Patchouli, Ruibarbo, Âmbar"
       },
       {
-        name: "Gabrielle Essence",
+        name: "ESSÊNCIA GABRIELLE ESSENCE CHANEL PERF. FEM. 50ML",
+        contratipo: "Contratipo (Chanel Gabrielle Essence)",
         marca: "Chanel",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_502.jpeg",
         tag: "floral",
         desc: "Floral radiante e luminoso. Um buquê de flores brancas banhado por notas cítricas que celebra a liberdade e o brilho feminino.",
@@ -349,8 +378,10 @@
         base: "Baunilha, Sândalo, Almíscar"
       },
       {
-        name: "J'adore",
+        name: "ESSÊNCIA JADORE FEM PERF 50ML",
+        contratipo: "Contratipo (Dior J'adore)",
         marca: "Dior",
+        price: "R$ 28,90",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_210.jpeg",
         tag: "floral",
         desc: "Floral frutado icônico. Um buquê opulento de flores brancas envolto em notas frutadas douradas que brilham como o sol.",
@@ -360,8 +391,10 @@
         base: "Almíscar, Baunilha, Cedro, Amora"
       },
       {
-        name: "La Vie Est Belle",
+        name: "ESSÊNCIA LA VIE BELLE PERF. FEM. 50ML",
+        contratipo: "Contratipo (Lancôme La Vie Est Belle)",
         marca: "Lancôme",
+        price: "R$ 70,60",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_14982.jpeg",
         tag: "gourmand",
         desc: "Gourmand floral elegante. Íris e patchouli se encontram com pralinê e baunilha em uma fragrância que celebra a felicidade e a beleza da vida.",
@@ -371,8 +404,10 @@
         base: "Pralinê, Baunilha, Patchouli, Fava Tonka"
       },
       {
-        name: "La Vie Est Belle En Rose",
+        name: "ESSÊNCIA LA VIE BELLE EN ROSE PERF. FEM. 50ML",
+        contratipo: "Contratipo (Lancôme La Vie Est Belle En Rose)",
         marca: "Lancôme",
+        price: "R$ 68,90",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_14982.jpeg",
         tag: "floral",
         desc: "Edição floral radiante do clássico. A assinatura gourmand de La Vie Est Belle ganha um coração floral ainda mais vibrante.",
@@ -382,8 +417,10 @@
         base: "Baunilha, Patchouli, Almíscar"
       },
       {
-        name: "Light Blue",
+        name: "ESSÊNCIA LIGHT BLUE PERF. FEM. 50ML",
+        contratipo: "Contratipo (Dolce & Gabbana Light Blue)",
         marca: "Dolce & Gabbana",
+        price: "R$ 69,50",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_485.jpeg",
         tag: "citrico",
         desc: "Cítrico floral refrescante. O espírito do verão italiano capturado em uma fragrância que evoca o sol da Sicília e a brisa do mar.",
@@ -393,8 +430,10 @@
         base: "Cedro, Almíscar, Âmbar"
       },
       {
-        name: "Miss Dior",
+        name: "ESSÊNCIA MISS DIOR PERF. FEM. 50ML",
+        contratipo: "Contratipo (Dior Miss Dior)",
         marca: "Dior",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_17796.jpeg",
         tag: "floral",
         desc: "Chypre floral romântico. Mandarina e rosa se encontram com patchouli em uma fragrância que personifica a elegância e o espírito livre.",
@@ -404,8 +443,10 @@
         base: "Patchouli, Almíscar"
       },
       {
-        name: "Miss Dior (New)",
+        name: "ESSÊNCIA MISS DIOR NEW PERF. FEM. 50ML",
+        contratipo: "Contratipo (Dior Miss Dior)",
         marca: "Dior",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_17796.jpeg",
         tag: "frutal",
         desc: "Nova interpretação do clássico. Frutas vermelhas e rosa se unem em uma composição moderna e vibrante que homenageia o espírito Dior.",
@@ -415,8 +456,10 @@
         base: "Patchouli, Cedro, Âmbar"
       },
       {
-        name: "My Way",
+        name: "ESSÊNCIA MY WAY 50ML",
+        contratipo: "Contratipo (Giorgio Armani My Way)",
         marca: "Giorgio Armani",
+        price: "R$ 37,30",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_62036.jpeg",
         tag: "floral",
         desc: "Floral branco radiante. Flor de laranjeira e tuberosa se encontram com baunilha de Madagascar em uma fragrância que celebra sua própria jornada.",
@@ -426,30 +469,23 @@
         base: "Baunilha de Madagascar, Almíscar, Cedro"
       },
       {
-        name: "Scandal",
+        name: "ESSENCIA SCANDALL FEM. 50ML (MOULIN ROUGE)",
+        contratipo: "Contratipo (Jean Paul Gaultier Scandal)",
         marca: "Jean Paul Gaultier",
+        price: "R$ 58,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_39913.jpeg",
         tag: "oriental",
-        desc: "Floral gourmand ousado. Mel e gardênia se combinam em uma fragrância escandalosa e viciante que não passa despercebida.",
-        notes: ["Mel", "Gardênia", "Laranja Sangue", "Jasmim", "Baunilha", "Patchouli"],
-        top: "Mel, Laranja Sangue",
-        heart: "Gardênia, Jasmim, Flor de Laranjeira",
-        base: "Baunilha, Patchouli, Almíscar"
-      },
-      {
-        name: "Scandal (Moulin Rouge)",
-        marca: "Jean Paul Gaultier",
-        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_39913.jpeg",
-        tag: "oriental",
-        desc: "Edição inspirada no Moulin Rouge. A assinatura Scandal ganha um toque ainda mais provocante e glamouroso.",
+        desc: "Edição inspirada no Moulin Rouge. A assinatura Scandal ganha um toque ainda mais provocante e glamouroso. Mel e gardênia se combinam em uma fragrância escandalosa.",
         notes: ["Framboesa", "Gardênia", "Mel", "Jasmim", "Patchouli", "Baunilha"],
         top: "Framboesa, Mel, Laranja",
         heart: "Gardênia, Jasmim, Rosa",
         base: "Patchouli, Baunilha, Almíscar"
       },
       {
-        name: "Yes I Am",
+        name: "ESSÊNCIA YES I AM FEMININO 50ML",
+        contratipo: "Contratipo (Cacharel Yes I Am)",
         marca: "Cacharel",
+        price: "R$ 39,50",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_51221.jpeg",
         tag: "gourmand",
         desc: "Gourmand picante e doce. Gengibre e leite de coco se encontram com framboesa e baunilha em uma fragrância ousada e deliciosa.",
@@ -459,8 +495,10 @@
         base: "Baunilha, Caramelo, Almíscar"
       },
       {
-        name: "Honeysuckle",
+        name: "ESSÊNCIA HONEY SUCKLE 50ML",
+        contratipo: "Contratipo (Jo Malone Honeysuckle & Davana)",
         marca: "Jo Malone",
+        price: "R$ 39,50",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_10314.jpeg",
         tag: "floral",
         desc: "Floral fresco e delicado. A doçura suave da madressilva combinada com notas verdes e almíscar para uma fragrância elegante e atemporal.",
@@ -470,8 +508,10 @@
         base: "Almíscar, Patchouli, Sândalo"
       },
       {
-        name: "Wild Bluebell",
+        name: "ESSÊNCIA WILD BLUEBELLE 50ML",
+        contratipo: "Contratipo (Jo Malone Wild Bluebell)",
         marca: "Jo Malone",
+        price: "R$ 25,00",
         file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_10314.jpeg",
         tag: "floral",
         desc: "Floral fresco como uma manhã de primavera. O sino azul silvestre desabrocha com notas verdes e almíscar em uma fragrância etérea.",
@@ -481,8 +521,10 @@
         base: "Almíscar, Âmbar, Patchouli"
       },
       {
-        name: "Hot Petals",
+        name: "ESSÊNCIA HOT PETALS PERM. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 54,50",
         file: "",
         tag: "floral",
         desc: "Notas florais quentes e envolventes. Uma combinação única de pétalas aveludadas que evoca um jardim ao entardecer.",
@@ -492,8 +534,10 @@
         base: "Âmbar, Almíscar, Sândalo"
       },
       {
-        name: "Velvet Kiss",
+        name: "ESSÊNCIA VELVET KISS PERF. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 39,50",
         file: "",
         tag: "oriental",
         desc: "Oriental aveludado e sensual. Toques de baunilha e almíscar envoltos em um abraço quente de âmbar e especiarias.",
@@ -503,8 +547,10 @@
         base: "Baunilha, Âmbar, Patchouli, Almíscar"
       },
       {
-        name: "Red Flowers",
+        name: "ESSÊNCIA RED FLOWERS 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 39,50",
         file: "",
         tag: "floral",
         desc: "Flores vermelhas em uma explosão de paixão. Uma fragrância vibrante e romântica com notas florais intensas.",
@@ -514,8 +560,10 @@
         base: "Almíscar, Âmbar, Sândalo"
       },
       {
-        name: "Pink Coconut",
+        name: "ESSÊNCIA PINK COCONUT PERF. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 43,50",
         file: "",
         tag: "frutal",
         desc: "Frutal tropical sonhador. Coco cremoso e frutas rosadas se combinam em uma fragrância doce e envolvente.",
@@ -525,8 +573,10 @@
         base: "Baunilha, Almíscar, Âmbar, Sândalo"
       },
       {
-        name: "Nativa Lemon",
+        name: "ESSENCIA NATIVA LEMON PERM. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 39,50",
         file: "",
         tag: "citrico",
         desc: "Cítrico refrescante e vibrante. Limão siciliano e notas verdes se unem em uma fragrância energizante e pura.",
@@ -536,8 +586,10 @@
         base: "Almíscar, Cedro, Almíscar Branco"
       },
       {
-        name: "Essentially Love",
+        name: "ESSÊNCIA ESSENCIALY LOVE PERF. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 25,00",
         file: "",
         tag: "floral",
         desc: "Floral romântico e delicado. Um buquê de flores brancas com toques doces que celebram o amor em sua essência.",
@@ -547,8 +599,10 @@
         base: "Baunilha, Almíscar, Âmbar"
       },
       {
-        name: "Lili",
+        name: "ESSÊNCIA LILI FEM PER. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 35,00",
         file: "",
         tag: "floral",
         desc: "Floral fresco e feminino. Lírios e notas verdes se encontram em uma composição suave e elegante para o dia a dia.",
@@ -558,19 +612,23 @@
         base: "Almíscar, Sândalo, Âmbar"
       },
       {
-        name: "Marina de Bourbon",
+        name: "ESSÊNCIA MARINA DE BOURBON 50ML",
+        contratipo: "",
         marca: "Marina de Bourbon",
+        price: "R$ 25,00",
         file: "",
         tag: "floral",
-        desc: "Floral elegante com assinatura francesa. Notos amadeirados e florais se combinam em uma fragrância sofisticada e atemporal.",
+        desc: "Floral elegante com assinatura francesa. Notas amadeiradas e florais se combinam em uma fragrância sofisticada e atemporal.",
         notes: ["Bergamota", "Rosa", "Jasmim", "Íris", "Sândalo", "Âmbar"],
         top: "Bergamota, Tangerina, Pêssego",
         heart: "Rosa, Jasmim, Íris, Violeta",
         base: "Sândalo, Âmbar, Almíscar, Cedro"
       },
       {
-        name: "Gabriela Sabatine",
+        name: "ESSENCIA GABRIELA SABATINE PERM. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 50,00",
         file: "",
         tag: "floral",
         desc: "Homenagem floral à feminilidade. Uma combinação sofisticada de flores nobres com um toque adocicado envolvente.",
@@ -580,9 +638,11 @@
         base: "Baunilha, Almíscar, Sândalo, Âmbar"
       },
       {
-        name: "Terracota",
+        name: "ESSÊNCIA TERRACOTA LANCOME PERF. FEM. 50ML",
+        contratipo: "Contratipo (Lancôme Terracota)",
         marca: "Lancôme",
-        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_14982.jpeg",
+        price: "R$ 45,00",
+        file: "",
         tag: "floral",
         desc: "Floral quente e terroso. Notas de flor de laranjeira e âmbar se encontram em uma fragrância que evoca o calor do sol mediterrâneo.",
         notes: ["Flor de Laranjeira", "Âmbar", "Jasmim", "Patchouli", "Baunilha"],
@@ -591,8 +651,10 @@
         base: "Âmbar, Patchouli, Baunilha, Cedro"
       },
       {
-        name: "Caprichosa Noite Femme",
+        name: "ESSÊNCIA CAPRICHOSA NOITE FEMME PERF. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 25,00",
         file: "",
         tag: "oriental",
         desc: "Oriental noturno e sedutor. Notas escuras e envolventes para uma mulher que sabe o que quer.",
@@ -602,8 +664,10 @@
         base: "Âmbar, Baunilha, Patchouli, Almíscar"
       },
       {
-        name: "Castanhita",
+        name: "ESSÊNCIA CASTANHITA PERM. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 39,50",
         file: "",
         tag: "gourmand",
         desc: "Gourmand aconchegante. Castanhas e baunilha se combinam em uma fragrância doce e envolvente como um abraço quente.",
@@ -613,8 +677,10 @@
         base: "Caramelo, Âmbar, Almíscar, Patchouli"
       },
       {
-        name: "Elisee Blanc",
+        name: "ESSENCIA ELISEE BLANC PERM. FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 39,50",
         file: "",
         tag: "floral",
         desc: "Floral branco puro e radiante. Um buquê de flores brancas que evoca elegância e sofisticação parisiense.",
@@ -624,8 +690,10 @@
         base: "Almíscar, Sândalo, Âmbar, Baunilha"
       },
       {
-        name: "Sofy Teens",
+        name: "ESSÊNCIA SOFY TEENS 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 25,70",
         file: "",
         tag: "frutal",
         desc: "Frutal jovem e descolado. Frutas vermelhas e notas doces se combinam em uma fragrância divertida e cheia de energia.",
@@ -635,8 +703,10 @@
         base: "Baunilha, Almíscar, Âmbar"
       },
       {
-        name: "Tendances Cosm",
+        name: "ESSÊNCIA TENDANCES COSM FEM. 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 25,00",
         file: "",
         tag: "floral",
         desc: "Floral cosmopolita moderno. Uma fragrância versátil e elegante para a mulher que acompanha as tendências.",
@@ -646,8 +716,10 @@
         base: "Almíscar, Âmbar, Cedro, Baunilha"
       },
       {
-        name: "Folhas Azuis",
+        name: "ESSÊNCIA FOLHATAS AZUL PERF FEM 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 25,00",
         file: "",
         tag: "citrico",
         desc: "Aromático fresco e vibrante. Notas verdes e cítricas se encontram em uma fragrância revigorante e cheia de personalidade.",
@@ -657,8 +729,10 @@
         base: "Almíscar, Cedro, Âmbar"
       },
       {
-        name: "Lima Brasil Mandarin",
+        name: "ESSENCIA LIMA BRASIL MANDARIN 50ML",
+        contratipo: "",
         marca: "Tulipa Essências",
+        price: "R$ 25,00",
         file: "",
         tag: "citrico",
         desc: "Cítrico tropical brasileiro. Lima e mandarina se encontram com notas florais em uma fragrância refrescante e vibrante.",
@@ -668,8 +742,10 @@
         base: "Almíscar, Cedro, Âmbar"
       },
       {
-        name: "Egeo Dolce",
+        name: "ESSÊNCIA EGELIS DOLCE PERF FEM 50ML",
+        contratipo: "",
         marca: "O Boticário",
+        price: "R$ 25,00",
         file: "",
         tag: "frutal",
         desc: "Frutal floral doce. Uma fragrância jovem e romântica com notas frutadas e florais que encantam.",
@@ -679,8 +755,10 @@
         base: "Baunilha, Almíscar, Âmbar, Patchouli"
       },
       {
-        name: "Egeo Red",
+        name: "ESSENCIA EGEO RED 50ML",
+        contratipo: "",
         marca: "O Boticário",
+        price: "R$ 25,00",
         file: "",
         tag: "frutal",
         desc: "Frutal vibrante e jovem. Frutas vermelhas e um toque floral em uma fragrância cheia de atitude e personalidade.",
@@ -690,8 +768,10 @@
         base: "Almíscar, Baunilha, Âmbar"
       },
       {
-        name: "Egeo Chocolate",
+        name: "ESSENCIA EGELISA CHOC (EGEO CHOCOLATE) PERF. FEM. 50ML",
+        contratipo: "",
         marca: "O Boticário",
+        price: "R$ 25,00",
         file: "",
         tag: "gourmand",
         desc: "Gourmand delicioso. Chocolate e frutas se combinam em uma fragrância doce e envolvente que é puro prazer.",
@@ -699,17 +779,6 @@
         top: "Chocolate, Laranja, Fruta Vermelha",
         heart: "Jasmim, Flor de Laranjeira, Rosa",
         base: "Baunilha, Almíscar, Âmbar, Patchouli"
-      },
-      {
-        name: "Dark Secret",
-        marca: "Tulipa Essências",
-        file: "",
-        tag: "oriental",
-        desc: "Oriental misterioso e sedutor. Notas escuras e profundas revelam segredos olfativos envolventes e marcantes.",
-        notes: ["Âmbar Escuro", "Patchouli", "Baunilha", "Almíscar", "Especiarias"],
-        top: "Bergamota, Pimenta, Especiarias",
-        heart: "Rosa Negra, Jasmim, Íris",
-        base: "Âmbar Escuro, Patchouli, Baunilha, Almíscar"
       }
     ];
 
@@ -727,13 +796,17 @@
             <span class="meta px-2.5 py-0.5 bg-white/90 backdrop-blur rounded-full text-[#c44a6c] font-medium shadow-sm">${p.tag.toUpperCase()}</span>
           </div>
         </div>
-        <div class="p-4">
-          <div class="text-xs text-[#a39d8f] font-medium mb-0.5">${p.marca}</div>
-          <div class="font-semibold text-[#2c2a25] tracking-tight mb-1.5" style="font-size:1.05rem;line-height:1.1">${p.name}</div>
+        <div class="p-4 flex flex-col flex-1">
+          <div class="flex items-center justify-between mb-1">
+            <div class="text-xs text-[#a39d8f] font-medium">${p.marca}</div>
+            <span class="price-badge">${p.price}</span>
+          </div>
+          <div class="font-semibold text-[#2c2a25] tracking-tight leading-tight" style="font-size:0.82rem">${p.name}</div>
+          ${p.contratipo ? `<div class="text-[10px] text-[#7c7668] italic mt-0.5 mb-1.5">${p.contratipo}</div>` : '<div class="mb-2"></div>'}
           <div class="flex flex-wrap gap-1 mb-2">
             ${p.top ? p.top.split(', ').slice(0,2).map(n => `<span class="note-badge bg-[#fdf8f5] text-[#a39d8f] border border-[#e8d5cd]">${n}</span>`).join('') : ''}
           </div>
-          <p class="text-sm text-[#5c5a52] line-clamp-2">${p.desc}</p>
+          <p class="text-sm text-[#5c5a52] line-clamp-2 flex-1">${p.desc}</p>
           <div class="mt-3 flex items-center text-xs text-[#7c7668]">
             <span class="flex-1">TULIPA ESSÊNCIAS</span>
             <span class="group-hover:text-[#c44a6c] transition-colors flex items-center">Ampliar <i class="fa-solid fa-expand ml-1 text-[9px]"></i></span>
@@ -755,7 +828,7 @@
       const term = document.getElementById('search').value.toLowerCase().trim();
       let filtered = perfumes;
       if (currentTag !== 'all') filtered = filtered.filter(p => p.tag === currentTag);
-      if (term) filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.marca.toLowerCase().includes(term));
+      if (term) filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.marca.toLowerCase().includes(term) || p.contratipo.toLowerCase().includes(term));
       renderPerfumes(filtered);
     }
 
@@ -798,7 +871,9 @@
       document.getElementById('viewer-img').src = p.file || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmRmOGY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+';
       document.getElementById('viewer-img').alt = p.name;
       document.getElementById('viewer-name').textContent = p.name;
+      document.getElementById('viewer-contratipo').textContent = p.contratipo || '';
       document.getElementById('viewer-marca').textContent = p.marca;
+      document.getElementById('viewer-price').textContent = p.price;
       document.getElementById('viewer-desc').textContent = p.desc;
       document.getElementById('viewer-tag').textContent = 'PERFUMARIA • ' + p.tag.toUpperCase();
       document.getElementById('viewer-counter').textContent = (currentIndex + 1) + ' / ' + filteredPerfumes.length;
@@ -825,7 +900,7 @@
     function sharePerfume() {
       const p = filteredPerfumes[currentIndex];
       if (!p) return;
-      const text = `✨ ${p.name} — ${p.marca}\n${p.desc}`;
+      const text = `✨ ${p.name} — ${p.marca}\n${p.price}\n${p.desc}`;
       if (navigator.share) {
         navigator.share({ title: p.name, text });
       } else {

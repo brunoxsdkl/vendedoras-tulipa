@@ -32,6 +32,13 @@ const catalogos: Catalogo[] = [
     icone: "🌸",
     pdf: "/catalogos/perfumaria-feminina/index.html",
   },
+  {
+    id: "perfumaria-masculina",
+    nome: "Perfumaria Masculina",
+    descricao: "Catálogo completo com descrições e filtros — TULIPA ESSÊNCIAS",
+    icone: "💙",
+    pdf: "/catalogos/perfumaria-masculina/index.html",
+  },
 
 ];
 
@@ -106,7 +113,7 @@ export default function CatalogosPage() {
                   </p>
                 </div>
                 <div style={{ display: "flex", gap: 8, padding: "0 24px 20px" }}>
-                  {c.id === "oleos-essenciais" || c.id === "perfumaria-feminina" ? (
+                  {c.id === "oleos-essenciais" || c.id === "perfumaria-feminina" || c.id === "perfumaria-masculina" ? (
                     <a href={`/catalogos/${c.id}`}
                       style={{
                         flex: 1, padding: "10px 0", borderRadius: 10, border: "none",

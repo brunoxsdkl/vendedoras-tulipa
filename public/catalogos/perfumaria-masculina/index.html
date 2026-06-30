@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PERFUMARIA MASCULINA - TULIPA ESSÊNCIAS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500&display=swap');
+
+    :root {
+      --navy: #2c3e6b;
+      --cream: #f5f6fa;
+      --gold: #c9a96e;
+    }
+
+    body {
+      font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    .heading-serif {
+      font-family: 'Playfair Display', Georgia, serif;
+      letter-spacing: -0.02em;
+    }
+
+    .perfume-card {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid #d5d8e0;
+    }
+
+    .perfume-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      border-color: var(--gold);
+    }
+
+    .perfume-img {
+      background: #f5f6fa;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .perfume-card:hover .perfume-img {
+      transform: scale(1.03);
+    }
+
+    .section-header {
+      letter-spacing: -0.03em;
+    }
+
+    .navy-color {
+      color: var(--navy);
+    }
+
+    .catalog-container {
+      background: var(--cream);
+    }
+
+    .meta {
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    #viewer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+    }
+    #viewer.open { display: flex; }
+    #viewer .viewer-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    #viewer .viewer-image-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-width: 0;
+    }
+    #viewer .viewer-image-area img {
+      max-width: 85%;
+      max-height: 85%;
+      object-fit: contain;
+    }
+    #viewer .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    #viewer .nav-arrow:hover { background: rgba(255,255,255,0.3); }
+    #viewer .nav-arrow.prev { left: 20px; }
+    #viewer .nav-arrow.next { right: 20px; }
+    #viewer .viewer-sidebar {
+      width: 420px;
+      background: white;
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    #viewer .viewer-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      z-index: 10;
+    }
+    #viewer .viewer-close:hover { background: rgba(255,255,255,0.3); }
+    #viewer .viewer-counter {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      letter-spacing: 2px;
+    }
+
+    .note-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      margin: 2px;
+    }
+
+    .price-badge {
+      background: linear-gradient(135deg, #2c3e6b, #1a2a4a);
+      color: white;
+      font-weight: 700;
+      padding: 2px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      #viewer .viewer-container { flex-direction: column; }
+      #viewer .viewer-sidebar { width: 100%; height: 50%; padding: 24px 20px; }
+      #viewer .viewer-image-area { height: 50%; }
+      #viewer .nav-arrow { width: 36px; height: 36px; font-size: 16px; }
+      #viewer .nav-arrow.prev { left: 10px; }
+      #viewer .nav-arrow.next { right: 10px; }
+    }
+  </style>
+</head>
+<body class="bg-[#f5f6fa] text-[#2c2a25]">
+
+  <!-- Header -->
+  <div class="max-w-7xl mx-auto px-6 pt-8 pb-6">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-full bg-[#2c3e6b] flex items-center justify-center text-white font-bold text-lg">T</div>
+      <div>
+        <span class="font-semibold text-lg tracking-tight">TULIPA ESSÊNCIAS</span>
+        <div class="text-xs text-[#5a6a8a] tracking-[1px]">CATÁLOGO DE PERFUMARIA MASCULINA</div>
+      </div>
+    </div>
+    <div class="flex flex-col md:flex-row gap-3 items-center bg-white border border-[#d5d8e0] rounded-3xl px-5 py-4">
+      <div class="flex-1 relative w-full">
+        <i class="fa-solid fa-search absolute left-5 top-3.5 text-[#8a9ab0]"></i>
+        <input id="search" type="text" placeholder="Buscar perfume (ex: Sauvage, One Million, Eros...)"
+               class="w-full bg-transparent pl-12 pr-4 py-3 text-base outline-none placeholder:text-[#8a9ab0]"
+               onkeyup="filterPerfumes()">
+      </div>
+      <div class="flex gap-2 text-xs flex-wrap">
+        <button onclick="filterByTag('all')" class="active-tag px-4 py-2 rounded-2xl bg-[#2c3e6b] text-white text-sm">Todos</button>
+        <button onclick="filterByTag('amadeirado')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#f5f6fa] text-sm">Amadeirado</button>
+        <button onclick="filterByTag('aromatico')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#f5f6fa] text-sm">Aromático</button>
+        <button onclick="filterByTag('citrico')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#f5f6fa] text-sm">Cítrico</button>
+        <button onclick="filterByTag('oriental')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#f5f6fa] text-sm">Oriental</button>
+        <button onclick="filterByTag('fresco')" class="px-4 py-2 rounded-2xl border border-[#c9a96e] hover:bg-[#f5f6fa] text-sm">Fresco</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Catalog Grid -->
+  <div id="catalogo" class="max-w-7xl mx-auto px-6 pb-16">
+    <div class="flex items-end justify-between mb-6 px-1">
+      <div>
+        <span class="text-xs tracking-[2px] text-[#5a6a8a]">ESSÊNCIAS DE PERFUMARIA FINA</span>
+        <h2 class="section-header text-4xl font-semibold tracking-tight">Perfumaria Masculina</h2>
+      </div>
+      <div class="text-xs text-[#5a6a8a] hidden md:block">
+        Inspirado nos grandes clássicos da perfumaria mundial
+      </div>
+    </div>
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#d5d8e0] py-8 text-center text-xs text-[#5a6a8a]">
+    <div class="max-w-5xl mx-auto px-6">
+      Catálogo de Perfumaria Masculina - TULIPA ESSÊNCIAS<br>
+      Essências inspiradas nos grandes clássicos. Para uso de vendedoras.
+    </div>
+  </footer>
+
+  <!-- Fullscreen Viewer -->
+  <div id="viewer">
+    <button class="viewer-close" onclick="closeViewer()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="viewer-container">
+      <div class="viewer-image-area">
+        <button class="nav-arrow prev" onclick="navigatePerfume(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <img id="viewer-img" src="" alt="">
+        <button class="nav-arrow next" onclick="navigatePerfume(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="viewer-counter" id="viewer-counter"></div>
+      </div>
+      <div class="viewer-sidebar">
+        <div id="viewer-tag" class="text-xs tracking-[2px] text-[#2c3e6b] font-medium mb-2"></div>
+        <div id="viewer-price" class="text-lg font-bold text-[#2c3e6b] mb-1"></div>
+        <div id="viewer-marca" class="text-xs text-[#8a9ab0] mb-1 font-medium"></div>
+        <div id="viewer-name" class="heading-serif text-2xl font-bold tracking-tight text-[#2c2a25] mb-1"></div>
+        <div id="viewer-contratipo" class="text-xs text-[#5a6a8a] mb-3 italic"></div>
+        <div class="w-12 h-0.5 bg-[#2c3e6b] mb-4"></div>
+        <div id="viewer-desc" class="text-[#5c5a52] leading-relaxed text-sm mb-4"></div>
+        <div class="mb-3">
+          <div class="text-xs font-semibold text-[#5a6a8a] mb-2 tracking-wide">NOTAS OLFATIVAS</div>
+          <div id="viewer-notes" class="flex flex-wrap gap-1"></div>
+        </div>
+        <div class="mt-auto pt-6">
+          <button onclick="sharePerfume()" class="w-full py-3 text-sm font-medium bg-[#2c3e6b] text-white rounded-2xl hover:bg-[#1a2a4a] transition-colors">
+            <i class="fa-solid fa-share-nodes mr-2"></i>Compartilhar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const perfumes = [
+      {
+        name: "ESSÊNCIA ALLURE PERF. MASC. 50ML",
+        contratipo: "Contratipo (Chanel Allure Homme)",
+        marca: "Chanel",
+        price: "R$ 39,50",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado aromático sofisticado. Uma fragrância elegante e versátil que combina notas cítricas frescas com um coração floral e base amadeirada.",
+        notes: ["Bergamota", "Pimenta", "Lavanda", "Cedro", "Vetiver", "Almíscar"],
+        top: "Bergamota, Pimenta, Limão",
+        heart: "Lavanda, Gerânio, Rosa",
+        base: "Cedro, Vetiver, Almíscar, Âmbar"
+      },
+      {
+        name: "ESSENCIA ANGEL 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 70,00",
+        file: "",
+        tag: "oriental",
+        desc: "Notas envolventes e marcantes. Uma composição misteriosa com toques adocicados e amadeirados que criam uma presença inesquecível.",
+        notes: ["Bergamota", "Patchouli", "Baunilha", "Âmbar", "Almíscar"],
+        top: "Bergamota, Notas Verdes",
+        heart: "Patchouli, Jasmim",
+        base: "Baunilha, Âmbar, Almíscar"
+      },
+      {
+        name: "ESSÊNCIA AVENTUS CREED 50ML PERF. MASC",
+        contratipo: "Contratipo (Creed Aventus)",
+        marca: "Creed",
+        price: "R$ 25,00",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_9828.jpeg",
+        tag: "aromatico",
+        desc: "Frutado amadeirado icônico. Abacaxi, bergamota e groselha negra se encontram com patchouli e musgo de carvalho em uma fragrância poderosa.",
+        notes: ["Abacaxi", "Bergamota", "Groselha Negra", "Patchouli", "Musgo", "Almíscar"],
+        top: "Abacaxi, Bergamota, Groselha Negra, Maçã",
+        heart: "Patchouli, Jasmim, Rosa",
+        base: "Musgo de Carvalho, Almíscar, Âmbar, Baunilha"
+      },
+      {
+        name: "ESSÊNCIA AZARRO WANTED PERF. MASC. 50ML",
+        contratipo: "Contratipo (Azzaro Wanted)",
+        marca: "Azzaro",
+        price: "R$ 71,40",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático picante e vibrante. Gengibre e limão se combinam com notas amadeiradas para uma fragrância magnética e cheia de atitude.",
+        notes: ["Limão", "Gengibre", "Pimenta", "Cedro", "Vetiver", "Almíscar"],
+        top: "Limão, Gengibre, Hortelã",
+        heart: "Pimenta, Lavanda, Junípero",
+        base: "Cedro, Vetiver, Âmbar, Almíscar"
+      },
+      {
+        name: "ESSÊNCIA BAD SY 50ML (INSPIRAÇÃO BAD BOY)",
+        contratipo: "Contratipo (Carolina Herrera Bad Boy)",
+        marca: "Carolina Herrera",
+        price: "R$ 70,00",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_55449.jpeg",
+        tag: "oriental",
+        desc: "Oriental especiado ousado. Pimenta branca e bergamota abrem caminho para um coração de cedro e sálvia, com base de cacau e fava tonka.",
+        notes: ["Pimenta Branca", "Bergamota", "Cedro", "Sálvia", "Cacau", "Fava Tonka"],
+        top: "Pimenta Branca, Bergamota, Pimenta Rosa",
+        heart: "Cedro, Sálvia Esclaréia",
+        base: "Cacau, Fava Tonka, Âmbar"
+      },
+      {
+        name: "ESSÊNCIA BLACK XS PERF. MASC. 50ML",
+        contratipo: "Contratipo (Paco Rabanne Black XS)",
+        marca: "Paco Rabanne",
+        price: "R$ 39,50",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental amadeirado rebelde. Notas escuras e intensas de couro e âmbar se combinam com frutas vermelhas para uma fragrância provocante.",
+        notes: ["Cranberry", "Canela", "Couro", "Âmbar", "Patchouli", "Almíscar"],
+        top: "Cranberry, Canela, Limão",
+        heart: "Couro, Violeta, Gerânio",
+        base: "Âmbar, Patchouli, Almíscar, Cedro"
+      },
+      {
+        name: "ESSÊNCIA CAROLINA HERRERA 212 VIP MASC PERF. 50ML",
+        contratipo: "Contratipo (Carolina Herrera 212 VIP Men)",
+        marca: "Carolina Herrera",
+        price: "R$ 59,50",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco aromático vibrante. Notas aquáticas e cítricas se unem a um coração picante para criar uma fragrância contemporânea e sofisticada.",
+        notes: ["Toranja", "Pimenta", "Lavanda", "Cedro", "Almíscar", "Âmbar"],
+        top: "Toranja, Lima, Coentro",
+        heart: "Lavanda, Pimenta, Gerânio",
+        base: "Cedro, Almíscar, Âmbar, Vetiver"
+      },
+      {
+        name: "ESSÊNCIA CLONE SY 50ML (INSPIRAÇÃO CK ONE)",
+        contratipo: "Contratipo (Calvin Klein CK One)",
+        marca: "Calvin Klein",
+        price: "R$ 70,00",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco cítrico aromático icônico. Uma fragrância limpa e versátil que combina notas verdes e cítricas com almíscar suave.",
+        notes: ["Bergamota", "Limão", "Chá Verde", "Jasmim", "Almíscar", "Âmbar"],
+        top: "Bergamota, Limão, Cardamomo",
+        heart: "Chá Verde, Jasmim, Violeta",
+        base: "Almíscar, Âmbar, Cedro"
+      },
+      {
+        name: "ESSÊNCIA EGELIS CARAMEL PERF. MASC 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental gourmand adocicado. Caramelo e baunilha se encontram com notas amadeiradas para uma fragrância doce e envolvente.",
+        notes: ["Caramelo", "Baunilha", "Âmbar", "Almíscar", "Cedro"],
+        top: "Caramelo, Laranja, Especiarias",
+        heart: "Jasmim, Gerânio",
+        base: "Baunilha, Âmbar, Almíscar, Cedro"
+      },
+      {
+        name: "ESSÊNCIA EROS PERF. MASC. 50ML",
+        contratipo: "Contratipo (Versace Eros)",
+        marca: "Versace",
+        price: "R$ 64,00",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_16657.jpeg",
+        tag: "aromatico",
+        desc: "Aromático fougère vibrante. Hortelã, maçã verde e limão se abrem para um coração de fava tonka e ambroxan com base de baunilha e cedro.",
+        notes: ["Hortelã", "Maçã Verde", "Limão", "Fava Tonka", "Baunilha", "Cedro"],
+        top: "Hortelã, Maçã Verde, Limão",
+        heart: "Fava Tonka, Ambroxan, Gerânio",
+        base: "Baunilha, Cedro, Vetiver, Musgo"
+      },
+      {
+        name: "ESSÊNCIA ESGRIMA MASC 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco esportivo e energético. Notas aquáticas e cítricas se combinam para uma fragrância revigorante ideal para o dia a dia.",
+        notes: ["Notas Aquáticas", "Limão", "Almíscar", "Cedro", "Âmbar"],
+        top: "Limão, Bergamota, Notas Aquáticas",
+        heart: "Lavanda, Gerânio, Alecrim",
+        base: "Almíscar, Cedro, Âmbar"
+      },
+      {
+        name: "ESSENCIA EUPHORIA CALVIN KLEIN PERF. MASC. 50ML",
+        contratipo: "Contratipo (Calvin Klein Euphoria)",
+        marca: "Calvin Klein",
+        price: "R$ 39,50",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental amadeirado sensual. Groselha negra e pimenta se abrem para um coração de orquídea com base quente de âmbar e mogno.",
+        notes: ["Groselha Negra", "Pimenta", "Orquídea", "Âmbar", "Mogno", "Almíscar"],
+        top: "Groselha Negra, Pimenta, Limão",
+        heart: "Orquídea, Jasmim, Sálvia",
+        base: "Âmbar, Mogno, Almíscar, Patchouli"
+      },
+      {
+        name: "ESSÊNCIA EXPLORER MON BLANC PERF. MASC. 50ML",
+        contratipo: "Contratipo (Montblanc Explorer)",
+        marca: "Montblanc",
+        price: "R$ 69,80",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado aromático aventureiro. Notas frescas de bergamota e violeta se encontram com couro e patchouli para uma fragrância marcante.",
+        notes: ["Bergamota", "Violeta", "Couro", "Patchouli", "Cedro", "Almíscar"],
+        top: "Bergamota, Violeta, Pimenta Rosa",
+        heart: "Couro, Gerânio, Akigalawood",
+        base: "Patchouli, Cedro, Almíscar, Âmbar"
+      },
+      {
+        name: "ESSÊNCIA FOLHATAS ROSA 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "fresco",
+        desc: "Aromático floral fresco. Notas verdes e florais se combinam com almíscar para uma fragrância leve e agradável.",
+        notes: ["Notas Verdes", "Rosa", "Almíscar", "Âmbar", "Cedro"],
+        top: "Folhas Verdes, Bergamota, Limão",
+        heart: "Rosa, Gerânio, Lavanda",
+        base: "Almíscar, Âmbar, Cedro"
+      },
+      {
+        name: "ESSÊNCIA GENTLEMAN 50ML",
+        contratipo: "Contratipo (Givenchy Gentleman)",
+        marca: "Givenchy",
+        price: "R$ 74,80",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental amadeirado clássico. Lavanda e patchouli se encontram com baunilha e âmbar em uma fragrância elegante e atemporal.",
+        notes: ["Lavanda", "Patchouli", "Baunilha", "Âmbar", "Cedro", "Almíscar"],
+        top: "Lavanda, Bergamota, Pimenta",
+        heart: "Patchouli, Orquídea, Íris",
+        base: "Baunilha, Âmbar, Cedro, Almíscar"
+      },
+      {
+        name: "ESSÊNCIA HIPNOSE HOMME MASCULINO PERF. MASC. 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental hipnótico e sedutor. Notas escuras e envolventes criam uma fragrância magnética ideal para a noite.",
+        notes: ["Âmbar", "Baunilha", "Patchouli", "Almíscar", "Especiarias"],
+        top: "Bergamota, Lavanda, Especiarias",
+        heart: "Patchouli, Jasmim, Cedro",
+        base: "Âmbar, Baunilha, Almíscar"
+      },
+      {
+        name: "ESSÊNCIA HUGO BOSS INTENSE PERF. MASC. 50ML",
+        contratipo: "Contratipo (Hugo Boss Boss Intense)",
+        marca: "Hugo Boss",
+        price: "R$ 57,50",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado aromático intenso. Notas de maçã e canela se abrem para um coração de cravinho e cedro com base quente de âmbar.",
+        notes: ["Maçã", "Canela", "Cedro", "Âmbar", "Almíscar", "Patchouli"],
+        top: "Maçã, Canela, Bergamota",
+        heart: "Cravinho, Cedro, Gerânio",
+        base: "Âmbar, Almíscar, Patchouli, Baunilha"
+      },
+      {
+        name: "ESSENCIA HUGO BOSS MAS PERF 50ML",
+        contratipo: "Contratipo (Hugo Boss Bottled)",
+        marca: "Hugo Boss",
+        price: "R$ 25,00",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático amadeirado clássico. Maçã e notas cítricas se encontram com cedro e almíscar em uma fragrância elegante e profissional.",
+        notes: ["Maçã", "Bergamota", "Cedro", "Almíscar", "Âmbar"],
+        top: "Maçã, Bergamota, Limão",
+        heart: "Cedro, Gerânio, Lavanda",
+        base: "Almíscar, Âmbar, Baunilha"
+      },
+      {
+        name: "ESSÊNCIA INVICTUS PACCO RABANE 50ML",
+        contratipo: "Contratipo (Paco Rabanne Invictus)",
+        marca: "Paco Rabanne",
+        price: "R$ 33,40",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco aquático esportivo. Toranja e notas marinhas se combinam com louro e almíscar para uma fragrância vitoriosa e energética.",
+        notes: ["Toranja", "Notas Marinhas", "Louro", "Almíscar", "Cedro", "Âmbar"],
+        top: "Toranja, Mandarina, Notas Marinhas",
+        heart: "Louro, Jasmim, Gardênia",
+        base: "Almíscar, Cedro, Âmbar, Patchouli"
+      },
+      {
+        name: "ESSÊNCIA KAIAK MASC. PERF. 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 24,90",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco aquático revigorante. Notas marinhas e cítricas se combinam para uma fragrância refrescante ideal para o dia.",
+        notes: ["Notas Marinhas", "Limão", "Almíscar", "Cedro", "Âmbar"],
+        top: "Notas Marinhas, Limão, Bergamota",
+        heart: "Lavanda, Gerânio, Alecrim",
+        base: "Almíscar, Cedro, Âmbar"
+      },
+      {
+        name: "ESSÊNCIA LAGUNA 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco tropical vibrante. Notas aquáticas e frutadas se encontram com almíscar para uma fragrância leve e refrescante.",
+        notes: ["Notas Aquáticas", "Coco", "Almíscar", "Âmbar", "Cedro"],
+        top: "Notas Aquáticas, Lima, Bergamota",
+        heart: "Jasmim, Gerânio, Lavanda",
+        base: "Almíscar, Âmbar, Cedro, Sândalo"
+      },
+      {
+        name: "ESSÊNCIA LEGEND PERF. MASC. 50ML",
+        contratipo: "Contratipo (Montblanc Legend)",
+        marca: "Montblanc",
+        price: "R$ 65,00",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático fougère lendário. Lavanda e bergamota se abrem para um coração de gerânio e musgo com base amadeirada.",
+        notes: ["Lavanda", "Bergamota", "Gerânio", "Musgo", "Cedro", "Almíscar"],
+        top: "Lavanda, Bergamota, Maçã Vermelha",
+        heart: "Gerânio, Musgo de Carvalho, Jasmim",
+        base: "Cedro, Almíscar, Âmbar, Sândalo"
+      },
+      {
+        name: "ESSÊNCIA MALBELISE 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado elegante e discreto. Notas suaves de madeira e almíscar se combinam para uma fragrância versátil.",
+        notes: ["Cedro", "Almíscar", "Âmbar", "Baunilha", "Sândalo"],
+        top: "Bergamota, Lavanda, Notas Verdes",
+        heart: "Cedro, Gerânio, Jasmim",
+        base: "Almíscar, Âmbar, Baunilha, Sândalo"
+      },
+      {
+        name: "ESSÊNCIA MARANELO BLACK (FERRARI BLACK) 50ML",
+        contratipo: "Contratipo (Ferrari Black)",
+        marca: "Ferrari",
+        price: "R$ 25,00",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado picante e elegante. Notas de couro e âmbar se encontram com especiarias para uma fragrância sofisticada e marcante.",
+        notes: ["Couro", "Âmbar", "Pimenta", "Cedro", "Almíscar", "Patchouli"],
+        top: "Pimenta, Bergamota, Limão",
+        heart: "Couro, Cedro, Gerânio",
+        base: "Âmbar, Patchouli, Almíscar, Baunilha"
+      },
+      {
+        name: "ESSÊNCIA MONT BLANC MASC PERFM. 50ML",
+        contratipo: "Contratipo (Montblanc)",
+        marca: "Montblanc",
+        price: "R$ 33,80",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático amadeirado refinado. Notas de bergamota e lavanda se combinam com cedro e almíscar para uma fragrância elegante.",
+        notes: ["Bergamota", "Lavanda", "Cedro", "Almíscar", "Âmbar"],
+        top: "Bergamota, Lavanda, Limão",
+        heart: "Cedro, Gerânio, Sálvia",
+        base: "Almíscar, Âmbar, Baunilha"
+      },
+      {
+        name: "ESSÊNCIA OLIMPEA 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco aquático vibrante. Notas marinhas e cítricas se unem para uma fragrância revigorante e cheia de energia.",
+        notes: ["Notas Marinhas", "Limão", "Almíscar", "Cedro", "Âmbar"],
+        top: "Notas Marinhas, Bergamota, Lima",
+        heart: "Jasmim, Gerânio, Lavanda",
+        base: "Almíscar, Cedro, Âmbar"
+      },
+      {
+        name: "ESSÊNCIA ONE MILLION 50ML",
+        contratipo: "Contratipo (Paco Rabanne One Million)",
+        marca: "Paco Rabanne",
+        price: "R$ 70,70",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_3747.jpeg",
+        tag: "oriental",
+        desc: "Oriental especiado icônico. Mandarina e hortelã se abrem para canela e rosa, com base dourada de couro e âmbar.",
+        notes: ["Mandarina", "Hortelã", "Canela", "Rosa", "Couro", "Âmbar"],
+        top: "Mandarina, Toranja, Hortelã",
+        heart: "Canela, Rosa, Especiarias",
+        base: "Couro, Âmbar, Patchouli, Cedro"
+      },
+      {
+        name: "ESSÊNCIA ONE MILLION HOMME PERF. MASC 50ML",
+        contratipo: "Contratipo (Paco Rabanne One Million Homme)",
+        marca: "Paco Rabanne",
+        price: "R$ 42,00",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental especiado radiante. Uma interpretação fresca do clássico com notas cítricas e especiadas em equilíbrio perfeito.",
+        notes: ["Tangerina", "Pimenta", "Canela", "Couro", "Âmbar", "Patchouli"],
+        top: "Tangerina, Toranja, Hortelã",
+        heart: "Canela, Rosa, Gerânio",
+        base: "Couro, Âmbar, Patchouli, Cedro"
+      },
+      {
+        name: "ESSENCIA ONE MILLION PRIVE PERF. MASC. 50ML",
+        contratipo: "Contratipo (Paco Rabanne One Million Privé)",
+        marca: "Paco Rabanne",
+        price: "R$ 59,90",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental amadeirado sofisticado. A assinatura One Million ganha notas mais escuras de couro e tabaco para uma experiência noturna.",
+        notes: ["Ameixa", "Canela", "Couro", "Tabaco", "Âmbar", "Baunilha"],
+        top: "Ameixa, Tangerina, Especiarias",
+        heart: "Canela, Couro, Cedro",
+        base: "Tabaco, Âmbar, Baunilha, Patchouli"
+      },
+      {
+        name: "ESSÊNCIA POLO ULTRA BLUE PERF. MASC. 50ML (POLO BLUE)",
+        contratipo: "Contratipo (Ralph Lauren Polo Ultra Blue)",
+        marca: "Ralph Lauren",
+        price: "R$ 73,00",
+        file: "",
+        tag: "fresco",
+        desc: "Fresco aquático vibrante. Notas marinhas e cítricas se combinam com almíscar para uma fragrância revigorante e elegante.",
+        notes: ["Notas Marinhas", "Toranja", "Lavanda", "Almíscar", "Âmbar", "Cedro"],
+        top: "Toranja, Notas Marinhas, Bergamota",
+        heart: "Lavanda, Gerânio, Sálvia",
+        base: "Almíscar, Âmbar, Cedro, Patchouli"
+      },
+      {
+        name: "ESSÊNCIA PRIVATY PARTY MEN 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 64,00",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental festivo e envolvente. Notas doces e amadeiradas se combinam para uma fragrância marcante e cheia de personalidade.",
+        notes: ["Baunilha", "Âmbar", "Patchouli", "Almíscar", "Cedro"],
+        top: "Bergamota, Tangerina, Especiarias",
+        heart: "Jasmim, Gerânio, Cedro",
+        base: "Baunilha, Âmbar, Patchouli, Almíscar"
+      },
+      {
+        name: "ESSENCIA PURE XS PACO RABANE-MASC 50ML",
+        contratipo: "Contratipo (Paco Rabanne Pure XS)",
+        marca: "Paco Rabanne",
+        price: "R$ 45,50",
+        file: "",
+        tag: "oriental",
+        desc: "Oriental floral picante. Pimenta e flor de laranjeira se encontram com baunilha e âmbar para uma fragrância ultramoderna.",
+        notes: ["Pimenta", "Flor de Laranjeira", "Baunilha", "Âmbar", "Cedro", "Almíscar"],
+        top: "Pimenta, Gengibre, Limão",
+        heart: "Flor de Laranjeira, Lavanda, Gerânio",
+        base: "Baunilha, Âmbar, Cedro, Almíscar"
+      },
+      {
+        name: "ESSÊNCIA REBRANTI HOMME MASC 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 29,90",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado elegante e marcante. Notas de cedro e âmbar se combinam com almíscar para uma fragrância versátil.",
+        notes: ["Cedro", "Âmbar", "Almíscar", "Patchouli", "Baunilha"],
+        top: "Bergamota, Lavanda, Pimenta",
+        heart: "Cedro, Gerânio, Patchouli",
+        base: "Âmbar, Almíscar, Baunilha"
+      },
+      {
+        name: "ESSÊNCIA SAUVAGE PERF. MASC. 50ML",
+        contratipo: "Contratipo (Dior Sauvage)",
+        marca: "Dior",
+        price: "R$ 72,60",
+        file: "https://fimgs.net/mdimg/perfume-social-cards/en-p_c_31861.jpeg",
+        tag: "aromatico",
+        desc: "Aromático fougère selvagem. Bergamota da Calábria e pimenta se abrem para lavanda e ambroxan em uma fragrância radicalmente fresca.",
+        notes: ["Bergamota", "Pimenta", "Lavanda", "Ambroxan", "Cedro", "Ládano"],
+        top: "Bergamota da Calábria, Pimenta",
+        heart: "Pimenta Sichuan, Lavanda, Vetiver",
+        base: "Ambroxan, Cedro, Ládano"
+      },
+      {
+        name: "ESSÊNCIA SUPREME BLEND PERF. MASC. 50ML INSPIRACAO THE BLEND",
+        contratipo: "Contratipo (The Blend)",
+        marca: "O Boticário",
+        price: "R$ 77,00",
+        file: "",
+        tag: "amadeirado",
+        desc: "Amadeirado elegante e sofisticado. Notas nobres de madeira e especiarias se combinam para uma fragrância premium e marcante.",
+        notes: ["Bergamota", "Açafrão", "Cedro", "Couro", "Âmbar", "Patchouli"],
+        top: "Bergamota, Açafrão, Cardamomo",
+        heart: "Cedro, Couro, Gerânio",
+        base: "Âmbar, Patchouli, Almíscar, Baunilha"
+      },
+      {
+        name: "ESSÊNCIA UOMINI 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 25,00",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático clássico italiano. Notas de ervas e madeiras se combinam com almíscar para uma fragrância elegante e atemporal.",
+        notes: ["Ervas", "Cedro", "Almíscar", "Âmbar", "Patchouli"],
+        top: "Bergamota, Lavanda, Alecrim",
+        heart: "Cedro, Gerânio, Sálvia",
+        base: "Almíscar, Âmbar, Patchouli"
+      },
+      {
+        name: "ESSÊNCIA ZAD MUNDO MASC 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 70,40",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático contemporâneo. Uma composição global que combina frescor cítrico com notas amadeiradas e almiscaradas.",
+        notes: ["Bergamota", "Notas Verdes", "Cedro", "Almíscar", "Âmbar"],
+        top: "Bergamota, Limão, Notas Verdes",
+        heart: "Lavanda, Gerânio, Jasmim",
+        base: "Cedro, Almíscar, Âmbar, Sândalo"
+      },
+      {
+        name: "ESSÊNCIA ZAD TRADICIONAL MASC 50ML",
+        contratipo: "",
+        marca: "Tulipa Essências",
+        price: "R$ 70,40",
+        file: "",
+        tag: "aromatico",
+        desc: "Aromático clássico refinado. Notas tradicionais de lavanda e musgo se combinam com madeiras nobres para uma fragrância atemporal.",
+        notes: ["Lavanda", "Musgo", "Cedro", "Almíscar", "Âmbar", "Patchouli"],
+        top: "Lavanda, Bergamota, Limão",
+        heart: "Musgo de Carvalho, Gerânio, Cedro",
+        base: "Almíscar, Âmbar, Patchouli, Baunilha"
+      }
+    ];
+
+    let currentIndex = 0;
+    let filteredPerfumes = perfumes;
+
+    function createCard(p, index) {
+      const card = document.createElement('div');
+      card.className = 'perfume-card bg-white rounded-3xl overflow-hidden cursor-pointer group min-h-[520px] flex flex-col';
+      const imgSrc = p.file || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNmZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM4YjlhYjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+';
+      card.innerHTML = `
+        <div class="relative flex-1 aspect-[3/4] bg-[#f5f6fa]">
+          <img src="${imgSrc}" alt="${p.name}" class="perfume-img absolute inset-0 w-full h-full object-contain p-6" onerror="this.style.background='#f5f6fa'; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNmZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM4YjlhYjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+">
+          <div class="absolute top-3 right-3 flex flex-col gap-1 items-end">
+            <span class="meta px-2.5 py-0.5 bg-white/90 backdrop-blur rounded-full text-[#2c3e6b] font-medium shadow-sm">${p.tag.toUpperCase()}</span>
+          </div>
+        </div>
+        <div class="p-4 flex flex-col flex-1">
+          <div class="flex items-center justify-between mb-1">
+            <div class="text-xs text-[#8a9ab0] font-medium">${p.marca}</div>
+            <span class="price-badge">${p.price}</span>
+          </div>
+          <div class="font-semibold text-[#2c2a25] tracking-tight leading-tight" style="font-size:0.82rem">${p.name}</div>
+          ${p.contratipo ? `<div class="text-[10px] text-[#5a6a8a] italic mt-0.5 mb-1.5">${p.contratipo}</div>` : '<div class="mb-2"></div>'}
+          <div class="flex flex-wrap gap-1 mb-2">
+            ${p.top ? p.top.split(', ').slice(0,2).map(n => `<span class="note-badge bg-[#f5f6fa] text-[#8a9ab0] border border-[#d5d8e0]">${n}</span>`).join('') : ''}
+          </div>
+          <p class="text-sm text-[#5c5a52] line-clamp-2 flex-1">${p.desc}</p>
+          <div class="mt-3 flex items-center text-xs text-[#5a6a8a]">
+            <span class="flex-1">TULIPA ESSÊNCIAS</span>
+            <span class="group-hover:text-[#2c3e6b] transition-colors flex items-center">Ampliar <i class="fa-solid fa-expand ml-1 text-[9px]"></i></span>
+          </div>
+        </div>
+      `;
+      card.onclick = () => openViewer(index);
+      return card;
+    }
+
+    function renderPerfumes(arr) {
+      filteredPerfumes = arr;
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      arr.forEach((p, i) => grid.appendChild(createCard(p, i)));
+    }
+
+    function filterPerfumes() {
+      const term = document.getElementById('search').value.toLowerCase().trim();
+      let filtered = perfumes;
+      if (currentTag !== 'all') filtered = filtered.filter(p => p.tag === currentTag);
+      if (term) filtered = filtered.filter(p => p.name.toLowerCase().includes(term) || p.marca.toLowerCase().includes(term) || p.contratipo.toLowerCase().includes(term));
+      renderPerfumes(filtered);
+    }
+
+    let currentTag = 'all';
+    function filterByTag(tag) {
+      currentTag = tag;
+      document.querySelectorAll('.flex.gap-2 button').forEach(btn => {
+        btn.classList.remove('bg-[#2c3e6b]', 'text-white');
+        btn.classList.add('border', 'border-[#c9a96e]');
+      });
+      const btnMap = { 'all': 'Todos', 'amadeirado': 'Amadeirado', 'aromatico': 'Aromático', 'citrico': 'Cítrico', 'oriental': 'Oriental', 'fresco': 'Fresco' };
+      document.querySelectorAll('.flex.gap-2 button').forEach(btn => {
+        if (btn.textContent.trim() === btnMap[tag]) {
+          btn.classList.add('bg-[#2c3e6b]', 'text-white');
+          btn.classList.remove('border', 'border-[#c9a96e]');
+        }
+      });
+      filterPerfumes();
+    }
+
+    function openViewer(index) {
+      currentIndex = index;
+      updateViewer();
+      document.getElementById('viewer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeViewer() {
+      document.getElementById('viewer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function navigatePerfume(dir) {
+      currentIndex = (currentIndex + dir + filteredPerfumes.length) % filteredPerfumes.length;
+      updateViewer();
+    }
+
+    function updateViewer() {
+      const p = filteredPerfumes[currentIndex];
+      document.getElementById('viewer-img').src = p.file || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNmZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM4YjlhYjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZW0gZGEgRnJhZ3JhbmNpY2E8L3RleHQ+PC9zdmc+';
+      document.getElementById('viewer-img').alt = p.name;
+      document.getElementById('viewer-name').textContent = p.name;
+      document.getElementById('viewer-contratipo').textContent = p.contratipo || '';
+      document.getElementById('viewer-marca').textContent = p.marca;
+      document.getElementById('viewer-price').textContent = p.price;
+      document.getElementById('viewer-desc').textContent = p.desc;
+      document.getElementById('viewer-tag').textContent = 'PERFUMARIA • ' + p.tag.toUpperCase();
+      document.getElementById('viewer-counter').textContent = (currentIndex + 1) + ' / ' + filteredPerfumes.length;
+
+      const notesContainer = document.getElementById('viewer-notes');
+      notesContainer.innerHTML = '';
+      const noteCategories = [];
+      if (p.top) noteCategories.push({ label: 'Topo', notes: p.top, color: 'bg-blue-100 text-blue-700 border-blue-200' });
+      if (p.heart) noteCategories.push({ label: 'Coração', notes: p.heart, color: 'bg-indigo-100 text-indigo-700 border-indigo-200' });
+      if (p.base) noteCategories.push({ label: 'Fundo', notes: p.base, color: 'bg-purple-100 text-purple-700 border-purple-200' });
+
+      noteCategories.forEach(cat => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mb-3';
+        wrapper.innerHTML = `<div class="text-xs font-medium text-[#8a9ab0] mb-1">${cat.label}</div><div class="flex flex-wrap gap-1">`;
+        cat.notes.split(', ').forEach(n => {
+          wrapper.innerHTML += `<span class="note-badge ${cat.color}">${n}</span>`;
+        });
+        wrapper.innerHTML += `</div>`;
+        notesContainer.appendChild(wrapper);
+      });
+    }
+
+    function sharePerfume() {
+      const p = filteredPerfumes[currentIndex];
+      if (!p) return;
+      const text = `✨ ${p.name} — ${p.marca}\n${p.price}\n${p.desc}`;
+      if (navigator.share) {
+        navigator.share({ title: p.name, text });
+      } else {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.querySelector('.viewer-sidebar button');
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Copiado!';
+          setTimeout(() => { btn.innerHTML = orig; }, 1400);
+        });
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+        e.preventDefault();
+        document.getElementById('search').focus();
+      }
+      if (e.key === 'Escape') {
+        if (document.getElementById('viewer').classList.contains('open')) closeViewer();
+      }
+      if (e.key === 'ArrowLeft') {
+        if (document.getElementById('viewer').classList.contains('open')) navigatePerfume(-1);
+      }
+      if (e.key === 'ArrowRight') {
+        if (document.getElementById('viewer').classList.contains('open')) navigatePerfume(1);
+      }
+    });
+
+    function initCatalog() {
+      renderPerfumes(perfumes);
+      const firstBtn = document.querySelector('.flex.gap-2 button');
+      if (firstBtn) firstBtn.classList.add('bg-[#2c3e6b]', 'text-white');
+      console.log('%c[Catálogo Perfumaria Masculina] ' + perfumes.length + ' essências carregadas.', 'color:#2c3e6b');
+    }
+
+    window.onload = initCatalog;
+  </script>
+</body>
+</html>

@@ -108,6 +108,7 @@ export default function CursosPage() {
   }, [carregar]);
 
   const selected = cursos.find((c) => c.id === selectedId) || null;
+  const ocupadasDe = (c: Curso) => c.alunos.filter((a) => a.status_pagamento === "Pago").length;
 
   const openNewCurso = () => {
     setEditingCurso(null);
@@ -201,7 +202,7 @@ export default function CursosPage() {
     c.alunos.forEach((a, i) => {
       rows += '<tr><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b;font-size:11px;">' + (i + 1) + '</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#1a202c;font-size:12px;">' + a.nome + '</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:11px;">' + (a.telefone || "-") + '</td><td style="padding:8px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:11px;">' + a.data_inscricao + '</td></tr>';
     });
-    const html = '<div id="pdf-content"><div style="text-align:center;margin-bottom:24px;"><div style="font-size:11px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">TULIPA VENDEDORAS</div><div style="font-size:22px;font-weight:900;color:#0d5e35;margin-bottom:2px;">' + c.nome + '</div><div style="font-size:12px;color:#64748b;">' + c.descricao + '</div></div><div style="display:flex;justify-content:space-between;margin-bottom:20px;font-size:11px;color:#64748b;"><span>Data: ' + today() + '</span><span>Carga: ' + c.horario + '</span><span>Vagas: ' + c.alunos.length + '/' + c.vagas + '</span></div><table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;"><thead><tr style="background:#0d5e35;color:#fff;"><th style="padding:10px 12px;text-align:center;font-size:11px;font-weight:700;width:40px;">N&#186;</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;">NOME DO ALUNO</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;width:140px;">TELEFONE</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;width:100px;">INSCRICAO</th></tr></thead><tbody>' + rows + '</tbody></table><div style="margin-top:30px;text-align:center;font-size:10px;color:#94a3b8;"><p>Gerado em ' + today() + ' - Tulipa Vendedoras</p></div></div>';
+    const html = '<div id="pdf-content"><div style="text-align:center;margin-bottom:24px;"><div style="font-size:11px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">TULIPA VENDEDORAS</div><div style="font-size:22px;font-weight:900;color:#0d5e35;margin-bottom:2px;">' + c.nome + '</div><div style="font-size:12px;color:#64748b;">' + c.descricao + '</div></div><div style="display:flex;justify-content:space-between;margin-bottom:20px;font-size:11px;color:#64748b;"><span>Data: ' + today() + '</span><span>Carga: ' + c.horario + '</span><span>Vagas: ' + c.alunos.filter(a => a.status_pagamento === "Pago").length + '/' + c.vagas + '</span></div><table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;"><thead><tr style="background:#0d5e35;color:#fff;"><th style="padding:10px 12px;text-align:center;font-size:11px;font-weight:700;width:40px;">N&#186;</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;">NOME DO ALUNO</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;width:140px;">TELEFONE</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;width:100px;">INSCRICAO</th></tr></thead><tbody>' + rows + '</tbody></table><div style="margin-top:30px;text-align:center;font-size:10px;color:#94a3b8;"><p>Gerado em ' + today() + ' - Tulipa Vendedoras</p></div></div>';
     const fileName = "lista-" + c.nome.toLowerCase().replace(/\s+/g, "-") + ".pdf";
     const win = window.open("", "_blank");
     if (!win) return;
@@ -219,7 +220,7 @@ export default function CursosPage() {
   const whatsCurso = (c: Curso) => {
     let texto = "*Lista de Alunos - " + c.nome + "*\n";
     texto += "Descricao: " + c.descricao + "\n";
-    texto += "Carga: " + c.horario + " | Vagas: " + c.alunos.length + "/" + c.vagas + "\n\n";
+    texto += "Carga: " + c.horario + " | Vagas: " + c.alunos.filter(a => a.status_pagamento === "Pago").length + "/" + c.vagas + "\n\n";
     texto += "*Alunos:*\n";
     c.alunos.forEach((a, i) => { texto += (i + 1) + ". " + a.nome + (a.telefone ? " - " + a.telefone : "") + "\n"; });
     texto += "\nGerado em " + today() + " - Tulipa Vendedoras";
@@ -282,7 +283,7 @@ export default function CursosPage() {
             ) : (
               <div className="cursos-dashboard">
                 {cursos.map((c) => {
-                  const ocupadas = c.alunos.length;
+                  const ocupadas = ocupadasDe(c);
                   const livres = Math.max(0, c.vagas - ocupadas);
                   const pct = c.vagas > 0 ? (ocupadas / c.vagas) * 100 : 0;
                   const statusClass = pct >= 100 ? "lotado" : pct >= 70 ? "quase" : "ok";
@@ -340,12 +341,12 @@ export default function CursosPage() {
                   <div className="label">Vagas</div>
                 </div>
                 <div className="stat-box">
-                  <div className="num">{selected.alunos.length}</div>
+                  <div className="num">{ocupadasDe(selected)}</div>
                   <div className="label">Preenchidas</div>
                 </div>
                 <div className="stat-box">
-                  <div className="num" style={{ color: selected.alunos.length >= selected.vagas ? "#dc2626" : "#16a34a" }}>
-                    {Math.max(0, selected.vagas - selected.alunos.length)}
+                  <div className="num" style={{ color: ocupadasDe(selected) >= selected.vagas ? "#dc2626" : "#16a34a" }}>
+                    {Math.max(0, selected.vagas - ocupadasDe(selected))}
                   </div>
                   <div className="label">Livres</div>
                 </div>
@@ -353,7 +354,7 @@ export default function CursosPage() {
             </div>
 
             <div className="top-actions">
-              <button className="btn btn-primary" onClick={openNewAluno} disabled={selected.alunos.length >= selected.vagas}>+ Novo Aluno</button>
+              <button className="btn btn-primary" onClick={openNewAluno} disabled={ocupadasDe(selected) >= selected.vagas}>+ Novo Aluno</button>
               {selected.alunos.length > 0 && (
                 <>
                   <button className="btn btn-primary" onClick={() => gerarPDF(selected)}>&#128196; Gerar PDF</button>
@@ -367,17 +368,17 @@ export default function CursosPage() {
             </div>
 
             <div className="aluno-form-card">
-              <h3>{editingAluno ? "Editar Aluno" : "+ Adicionar Aluno"} {selected.alunos.length >= selected.vagas && !editingAluno ? "(Vagas esgotadas)" : ""}</h3>
+              <h3>{editingAluno ? "Editar Aluno" : "+ Adicionar Aluno"} {ocupadasDe(selected) >= selected.vagas && !editingAluno ? "(Vagas esgotadas)" : ""}</h3>
               <div className="aluno-form-row">
-                <input className="aluno-input" placeholder="Nome completo" value={aNome} onChange={(e) => setANome(e.target.value)} disabled={selected.alunos.length >= selected.vagas && !editingAluno} />
-                <input className="aluno-input phone" placeholder="Telefone" value={aTel} onChange={(e) => setATel(e.target.value)} disabled={selected.alunos.length >= selected.vagas && !editingAluno} />
+                <input className="aluno-input" placeholder="Nome completo" value={aNome} onChange={(e) => setANome(e.target.value)} disabled={ocupadasDe(selected) >= selected.vagas && !editingAluno} />
+                <input className="aluno-input phone" placeholder="Telefone" value={aTel} onChange={(e) => setATel(e.target.value)} disabled={ocupadasDe(selected) >= selected.vagas && !editingAluno} />
                 {editingAluno ? (
                   <>
                     <button className="btn btn-primary" onClick={saveAluno}>Salvar</button>
                     <button className="btn btn-secondary" onClick={() => { setEditingAluno(null); setANome(""); setATel(""); }}>Cancelar</button>
                   </>
                 ) : (
-                  <button className="btn btn-primary" onClick={saveAluno} disabled={selected.alunos.length >= selected.vagas}>Adicionar</button>
+                  <button className="btn btn-primary" onClick={saveAluno} disabled={ocupadasDe(selected) >= selected.vagas}>Adicionar</button>
                 )}
               </div>
             </div>
@@ -390,7 +391,7 @@ export default function CursosPage() {
             ) : (
               <div className="alunos-table-card">
                 <div className="alunos-table-header">
-                  <h3>Alunos inscritos ({selected.alunos.length}/{selected.vagas})</h3>
+                  <h3>Alunos inscritos ({selected.alunos.length})</h3>
                 </div>
                 <table className="alunos-table">
                   <thead>
@@ -574,8 +575,8 @@ export default function CursosPage() {
                     <label>Curso</label>
                     <select value={iCursoId} onChange={(e) => setICursoId(e.target.value)} required>
                       <option value="">Selecione um curso</option>
-                      {cursos.filter(c => c.alunos.length < c.vagas).map((c) => (
-                        <option key={c.id} value={c.id}>{c.nome} - {c.horario} ({c.vagas - c.alunos.length} vagas)</option>
+                      {cursos.filter(c => ocupadasDe(c) < c.vagas).map((c) => (
+                        <option key={c.id} value={c.id}>{c.nome} - {c.horario} ({c.vagas - ocupadasDe(c)} vagas)</option>
                       ))}
                     </select>
                   </div>

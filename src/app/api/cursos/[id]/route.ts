@@ -1,63 +1,33 @@
 import { NextResponse } from "next/server";
-
-// Mock data store - referência ao array global
-let cursos: Array<{
-  id: string;
-  nome: string;
-  slug: string | null;
-  descricao: string;
-  horario: string;
-  vagas: number;
-  valor: number;
-  data: string;
-  criado_em: string;
-  alunos: Array<{
-    id: string;
-    curso_id: string;
-    nome: string;
-    telefone: string;
-    whatsapp: string;
-    cpf: string | null;
-    email: string | null;
-    data_nascimento: string | null;
-    cidade: string | null;
-    valor_curso: number | null;
-    forma_pagamento: string | null;
-    parcelas: number;
-    valor_parcela: number | null;
-    status_pagamento: string;
-    pago: number;
-    pendente: number;
-    data_pagamento: string | null;
-    data_inscricao: string;
-  }>;
-}> = [];
+import { supabase } from "@/lib/supabase";
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const valor = body.preco ? parseFloat(body.preco.replace(/[^\d,]/g, "").replace(",", ".")) : 0;
 
-  const index = cursos.findIndex(c => c.id === id);
-  if (index === -1) {
-    return NextResponse.json({ error: "Curso não encontrado" }, { status: 404 });
-  }
+  const { data, error } = await supabase
+    .from("cursos")
+    .update({
+      nome: body.nome,
+      slug: body.slug || null,
+      descricao: body.descricao || "",
+      horario: body.horario || "",
+      vagas: body.vagas || 20,
+      valor: body.preco ? parseFloat(body.preco.replace(/[^\d,]/g, "").replace(",", ".")) : 0,
+    })
+    .eq("id", id)
+    .select()
+    .single();
 
-  cursos[index] = {
-    ...cursos[index],
-    nome: body.nome,
-    slug: body.slug || null,
-    descricao: body.descricao || "",
-    horario: body.horario || "",
-    vagas: body.vagas || 20,
-    valor,
-  };
-
-  return NextResponse.json(cursos[index]);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json(data);
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  cursos = cursos.filter(c => c.id !== id);
+  await supabase.from("pagamentos").delete().in("aluno_id", (await supabase.from("alunos").select("id").eq("curso_id", id)).data?.map(a => a.id) || []);
+  await supabase.from("alunos").delete().eq("curso_id", id);
+  const { error } = await supabase.from("cursos").delete().eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

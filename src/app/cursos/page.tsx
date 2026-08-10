@@ -277,6 +277,25 @@ export default function CursosPage() {
     win.document.close();
   };
 
+  const gerarChamada = (c: Curso) => {
+    const alunosPago = c.alunos.filter((a) => a.status_pagamento === "Pago");
+    let rows = "";
+    if (alunosPago.length === 0) {
+      rows = '<tr><td colspan="4" style="padding:20px;text-align:center;color:#94a3b8;font-size:12px;">Nenhum aluno com pagamento confirmado (Pago)</td></tr>';
+    }
+    alunosPago.forEach((a, i) => {
+      rows += '<tr><td style="padding:9px 12px;border-bottom:1px solid #e2e8f0;text-align:center;color:#64748b;font-size:11px;">' + (i + 1) + '</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f0;font-weight:600;color:#1a202c;font-size:12px;">' + a.nome + '</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f0;color:#64748b;font-size:11px;">' + (a.telefone || "-") + '</td><td style="padding:9px 12px;border-bottom:1px solid #e2e8f0;text-align:center;"><div style="width:20px;height:20px;border:2px solid #64748b;border-radius:4px;margin:0 auto;"></div></td></tr>';
+    });
+    const html = '<div id="pdf-content"><div style="text-align:center;margin-bottom:20px;"><div style="font-size:11px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">TULIPA VENDEDORAS</div><div style="font-size:20px;font-weight:900;color:#0d5e35;margin-bottom:2px;">CHAMADA - ' + c.nome + '</div><div style="font-size:12px;color:#64748b;">' + c.descricao + '</div></div><div style="display:flex;justify-content:space-between;margin-bottom:20px;font-size:11px;color:#64748b;"><span>Data: ' + today() + '</span><span>Carga: ' + c.horario + '</span><span>Alunos: ' + alunosPago.length + '/' + c.vagas + '</span></div><table style="width:100%;border-collapse:collapse;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;"><thead><tr style="background:#0d5e35;color:#fff;"><th style="padding:10px 12px;text-align:center;font-size:11px;font-weight:700;width:40px;">N&#186;</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;">NOME DO ALUNO</th><th style="padding:10px 12px;text-align:left;font-size:11px;font-weight:700;width:140px;">TELEFONE</th><th style="padding:10px 12px;text-align:center;font-size:11px;font-weight:700;width:60px;">PRESEN&#199;A</th></tr></thead><tbody>' + rows + '</tbody></table><div style="margin-top:26px;font-size:11px;color:#94a3b8;"><p style="margin-bottom:16px;">Legenda: marque com um "X" no quadrado os alunos presentes no dia.</p></div><div style="margin-top:40px;display:flex;justify-content:space-between;font-size:11px;color:#64748b;"><span>__________________________________</span><span>__________________________________</span></div><div style="display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;"><span>Instrutora</span><span>Responsavel</span></div></div>';
+    const fileName = "chamada-" + c.nome.toLowerCase().replace(/\s+/g, "-") + ".pdf";
+    const win = window.open("", "_blank");
+    if (!win) return;
+    const s1 = '<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>';
+    const s2 = '<script>document.body.innerHTML=\'' + html.replace(/'/g, "\\'") + '\';document.body.style.opacity="1";window.onload=function(){html2pdf().set({margin:[15,15,15,15],filename:"' + fileName + '",image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from(document.getElementById("pdf-content")).save().then(function(){window.close();});};<\/script>';
+    win.document.write("<html><head><title>Chamada - " + c.nome + "</title></head><body>" + s1 + s2 + "</body></html>");
+    win.document.close();
+  };
+
   const whatsAluno = (a: Aluno) => {
     const tel = (a.telefone || a.whatsapp || "").replace(/\D/g, "");
     if (!tel) return;
@@ -421,6 +440,7 @@ export default function CursosPage() {
 
             <div className="top-actions">
               <button className="btn btn-primary" onClick={openNewAluno} disabled={ocupadasDe(selected) >= selected.vagas}>+ Novo Aluno</button>
+              <button className="btn btn-primary" onClick={() => gerarChamada(selected)}>&#128203; Imprimir Chamada de Alunos</button>
               {selected.alunos.length > 0 && (
                 <>
                   <button className="btn btn-primary" onClick={() => gerarPDF(selected)}>&#128196; Gerar PDF</button>

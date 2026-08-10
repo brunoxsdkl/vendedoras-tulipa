@@ -658,7 +658,7 @@ a {
 .romaneio-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -707,10 +707,48 @@ a {
   white-space: nowrap;
 }
 
+.romaneio-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
 .romaneio-btn {
   flex-shrink: 0;
   padding: 10px 18px;
   font-size: 0.9rem;
+}
+
+.romaneio-preview {
+  flex-basis: 100%;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.romaneio-iframe {
+  width: 100%;
+  height: 70vh;
+  min-height: 420px;
+  border: none;
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .romaneio-iframe {
+    height: 55vh;
+    min-height: 320px;
+  }
+  .romaneio-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .romaneio-actions {
+    width: 100%;
+  }
 }
 
 .cnpj-card {

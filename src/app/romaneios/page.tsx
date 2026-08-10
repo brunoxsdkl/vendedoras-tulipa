@@ -1,5 +1,7 @@
 "use client";
 
+import { useRef, useState } from "react";
+
 const grupos = [
   {
     titulo: "ROMANEIOS DE CONTROLE",
@@ -21,6 +23,58 @@ const grupos = [
   },
 ];
 
+function PreviewCard({ a }: { a: { nome: string; arquivo: string; tipo: string } }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [aberto, setAberto] = useState(false);
+
+  const imprimir = () => {
+    const f = iframeRef.current;
+    if (f && f.contentWindow) {
+      f.contentWindow.focus();
+      f.contentWindow.print();
+    } else {
+      window.open(a.arquivo, "_blank");
+    }
+  };
+
+  return (
+    <div className="romaneio-item">
+      <div className="romaneio-info">
+        <span className={`romaneio-tipo ${a.tipo.toLowerCase()}`}>{a.tipo}</span>
+        <span className="romaneio-nome">{a.nome}</span>
+      </div>
+      <div className="romaneio-actions">
+        <a href={a.arquivo} download className="btn btn-secondary romaneio-btn">
+          ⬇️ Baixar
+        </a>
+        {a.tipo === "PDF" && (
+          <button className="btn btn-secondary romaneio-btn" onClick={imprimir}>
+            🖨️ Imprimir
+          </button>
+        )}
+        {a.tipo === "PDF" && (
+          <button
+            className="btn btn-secondary romaneio-btn"
+            onClick={() => setAberto((v) => !v)}
+          >
+            {aberto ? "🙈 Ocultar" : "👁️ Pré-visualizar"}
+          </button>
+        )}
+      </div>
+      {aberto && a.tipo === "PDF" && (
+        <div className="romaneio-preview">
+          <iframe
+            ref={iframeRef}
+            src={a.arquivo}
+            title={`Pré-visualização de ${a.nome}`}
+            className="romaneio-iframe"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Romaneios() {
   return (
     <>
@@ -32,7 +86,7 @@ export default function Romaneios() {
             <div>
               <h1 className="page-title">Romaneios</h1>
               <p className="page-subtitle">
-                Baixe os modelos de romaneio de controle e de pedido.
+                Pré-visualize, imprima ou baixe os modelos de romaneio.
               </p>
             </div>
           </div>
@@ -43,19 +97,7 @@ export default function Romaneios() {
               <p className="info-obs">{g.descricao}</p>
               <div className="romaneio-list">
                 {g.arquivos.map((a) => (
-                  <div key={a.arquivo} className="romaneio-item">
-                    <div className="romaneio-info">
-                      <span className={`romaneio-tipo ${a.tipo.toLowerCase()}`}>{a.tipo}</span>
-                      <span className="romaneio-nome">{a.nome}</span>
-                    </div>
-                    <a
-                      href={a.arquivo}
-                      download
-                      className="btn btn-secondary romaneio-btn"
-                    >
-                      ⬇️ Baixar
-                    </a>
-                  </div>
+                  <PreviewCard key={a.arquivo} a={a} />
                 ))}
               </div>
             </section>

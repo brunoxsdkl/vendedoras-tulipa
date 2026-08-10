@@ -32,6 +32,17 @@ type Curso = {
   alunos: Aluno[];
 };
 
+type Interessado = {
+  id: string;
+  nome: string;
+  email?: string;
+  telefone?: string;
+  cursos: string[];
+  status?: string;
+  observacao?: string;
+  criado_em: string;
+};
+
 const uid = () => Math.random().toString(36).slice(2, 10);
 const today = () => new Date().toLocaleDateString("pt-BR");
 
@@ -52,6 +63,9 @@ const api = {
   createAluno(data: Record<string, unknown>) { return apiFetch("/api/alunos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
   updateAluno(id: string, data: Record<string, unknown>) { return apiFetch(`/api/alunos/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
   deleteAluno(id: string) { return apiFetch(`/api/alunos/${id}`, { method: "DELETE" }); },
+  getInteressados(): Promise<Interessado[]> { return apiFetch("/api/interessados"); },
+  updateInteressado(id: string, data: Record<string, unknown>) { return apiFetch(`/api/interessados/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }); },
+  deleteInteressado(id: string) { return apiFetch(`/api/interessados/${id}`, { method: "DELETE" }); },
 };
 
 export default function CursosPage() {
@@ -75,8 +89,14 @@ export default function CursosPage() {
   const [iTel, setITel] = useState("");
   const [iEmail, setIEmail] = useState("");
   const [iCidade, setICidade] = useState("");
+  const [iStatus, setIStatus] = useState("Pendente");
   const [iEnviando, setIEnviando] = useState(false);
   const [iSucesso, setISucesso] = useState(false);
+
+  const [showInteressadosModal, setShowInteressadosModal] = useState(false);
+  const [interessados, setInteressados] = useState<Interessado[]>([]);
+  const [interessadosLoading, setInteressadosLoading] = useState(false);
+  const [matriculandoId, setMatriculandoId] = useState<string | null>(null);
 
   const [showAlunoModal, setShowAlunoModal] = useState(false);
   const [editingAluno, setEditingAluno] = useState<Aluno | null>(null);
@@ -188,13 +208,58 @@ export default function CursosPage() {
 
   const saveInscricao = async () => {
     if (!iCursoId || !iNome.trim() || !iTel.trim()) { alert("Selecione um curso e preencha nome e telefone"); return; }
+    const origemMatricula = matriculandoId;
     setIEnviando(true);
     try {
-      await api.createAluno({ curso_id: iCursoId, nome: iNome.trim(), telefone: iTel.trim(), email: iEmail.trim() || null, cidade: iCidade.trim() || null, status_pagamento: "Pendente" });
+      await api.createAluno({ curso_id: iCursoId, nome: iNome.trim(), telefone: iTel.trim(), email: iEmail.trim() || null, cidade: iCidade.trim() || null, status_pagamento: iStatus });
+      if (origemMatricula) {
+        await api.updateInteressado(origemMatricula, { status: "Matriculado" });
+      }
       setISucesso(true);
       await carregar();
+      if (interessados.length > 0) await carregarInteressados();
     } catch (e: unknown) { alert(e instanceof Error ? e.message : "Erro"); }
     finally { setIEnviando(false); }
+  };
+
+  const carregarInteressados = useCallback(async () => {
+    setInteressadosLoading(true);
+    try {
+      const data = await api.getInteressados();
+      setInteressados(data || []);
+    } catch { /* ignore */ } finally {
+      setInteressadosLoading(false);
+    }
+  }, []);
+
+  const openInteressados = () => {
+    setShowInteressadosModal(true);
+    carregarInteressados();
+  };
+
+  const whatsInteressado = (i: Interessado) => {
+    const tel = (i.telefone || "").replace(/\D/g, "");
+    if (!tel) return;
+    window.open("https://wa.me/55" + tel + "?text=" + encodeURIComponent("Olá " + i.nome + "! Aqui é da Tulipa. Vimos seu interesse em nossos cursos. Entraremos em contato quando abrir a turma!"), "_blank");
+  };
+
+  const excluirInteressado = async (id: string) => {
+    if (!confirm("Excluir este interessado?")) return;
+    await api.deleteInteressado(id);
+    await carregarInteressados();
+  };
+
+  const matricularInteressado = (i: Interessado) => {
+    setMatriculandoId(i.id);
+    setICursoId("");
+    setINome(i.nome);
+    setITel(i.telefone || "");
+    setIEmail(i.email || "");
+    setICidade("");
+    setIStatus("Pago");
+    setISucesso(false);
+    setShowInteressadosModal(false);
+    setShowInscricaoModal(true);
   };
 
   const gerarPDF = (c: Curso) => {
@@ -250,7 +315,8 @@ export default function CursosPage() {
             <div className="top-actions">
               <button className="btn btn-primary" onClick={openNewCurso}>+ Novo Curso</button>
               <button className="btn btn-secondary" onClick={() => { const url = window.location.origin + "/cursos/inscricao"; navigator.clipboard.writeText(url); alert("Link copiado: " + url); }}>&#128279; Link inscrição</button>
-              <button className="btn btn-secondary" onClick={() => { setICursoId(""); setINome(""); setITel(""); setIEmail(""); setICidade(""); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
+              <button className="btn btn-secondary" onClick={() => { setICursoId(""); setINome(""); setITel(""); setIEmail(""); setICidade(""); setIStatus("Pendente"); setMatriculandoId(null); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
+              <button className="btn btn-secondary" onClick={openInteressados}>&#128101; Interessados</button>
               <span style={{ color: "#64748b", fontSize: "0.9rem", alignSelf: "center" }}>
                 {cursos.length} curso(s) cadastrado(s)
               </span>
@@ -364,7 +430,7 @@ export default function CursosPage() {
               )}
               <button className="btn btn-secondary" onClick={() => openEditCurso(selected)}>&#9998;&#65039; Editar Curso</button>
               <button className="btn btn-secondary" onClick={() => { const url = window.location.origin + "/cursos/inscricao"; navigator.clipboard.writeText(url); alert("Link copiado: " + url); }}>&#128279; Link inscrição</button>
-              <button className="btn btn-secondary" onClick={() => { setICursoId(selected.id); setINome(""); setITel(""); setIEmail(""); setICidade(""); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
+              <button className="btn btn-secondary" onClick={() => { setICursoId(selected.id); setINome(""); setITel(""); setIEmail(""); setICidade(""); setIStatus("Pendente"); setMatriculandoId(null); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
             </div>
 
             <div className="aluno-form-card">
@@ -557,17 +623,17 @@ export default function CursosPage() {
       )}
 
       {showInscricaoModal && (
-        <div className="modal-overlay" onClick={() => setShowInscricaoModal(false)}>
+        <div className="modal-overlay" onClick={() => { setShowInscricaoModal(false); setMatriculandoId(null); }}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>{iSucesso ? "✅ Inscrição realizada" : "📋 Nova inscrição"}</h2>
-              <button className="modal-close" onClick={() => setShowInscricaoModal(false)}>&#10005;</button>
+              <button className="modal-close" onClick={() => { setShowInscricaoModal(false); setMatriculandoId(null); }}>&#10005;</button>
             </div>
             <div className="modal-body">
               {iSucesso ? (
                 <div style={{ textAlign: "center", padding: "20px 0" }}>
-                  <p style={{ color: "#64748b", marginBottom: 20 }}>Aluno cadastrado com sucesso!</p>
-                  <button className="btn btn-primary" onClick={() => { setISucesso(false); setINome(""); setITel(""); setIEmail(""); setICidade(""); }}>Nova inscrição</button>
+                  <p style={{ color: "#64748b", marginBottom: 20 }}>{matriculandoId ? "Aluno matriculado (vaga preenchida) com sucesso!" : "Aluno cadastrado com sucesso!"}</p>
+                  <button className="btn btn-primary" onClick={() => { setISucesso(false); setINome(""); setITel(""); setIEmail(""); setICidade(""); setIStatus("Pendente"); setMatriculandoId(null); }}>Nova inscrição</button>
                 </div>
               ) : (
                 <>
@@ -595,14 +661,77 @@ export default function CursosPage() {
                     </div>
                   </div>
                   <div className="form-group">
+                    <label>Status pagamento</label>
+                    <select value={iStatus} onChange={(e) => setIStatus(e.target.value)}>
+                      <option value="Pendente">Pendente</option>
+                      <option value="Pago">Pago</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
                     <label>Cidade</label>
                     <input value={iCidade} onChange={(e) => setICidade(e.target.value)} placeholder="opcional" />
                   </div>
                   <div className="modal-actions">
-                    <button className="btn btn-secondary" onClick={() => setShowInscricaoModal(false)}>Fechar</button>
+                    <button className="btn btn-secondary" onClick={() => { setShowInscricaoModal(false); setMatriculandoId(null); }}>Fechar</button>
                     <button className="btn btn-primary" onClick={saveInscricao} disabled={iEnviando}>{iEnviando ? "Salvando..." : "Inscrever"}</button>
                   </div>
                 </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showInteressadosModal && (
+        <div className="modal-overlay" onClick={() => setShowInteressadosModal(false)}>
+          <div className="modal modal-interessados" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>&#128101; Interessados ({interessados.length})</h2>
+              <button className="modal-close" onClick={() => setShowInteressadosModal(false)}>&#10005;</button>
+            </div>
+            <div className="modal-body">
+              {interessadosLoading ? (
+                <p style={{ textAlign: "center", color: "#64748b", padding: "20px 0" }}>Carregando...</p>
+              ) : interessados.length === 0 ? (
+                <p style={{ textAlign: "center", color: "#94a3b8", padding: "20px 0" }}>
+                  Nenhum interessado ainda. Os cadastros do formulário do blog aparecem aqui.
+                </p>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {interessados.map((i) => {
+                    const statusColor = i.status === "Matriculado" ? "#16a34a" : i.status === "Contatado" ? "#eab308" : "#0d5e35";
+                    return (
+                      <div key={i.id} style={{ border: "1px solid #e2e8f0", borderRadius: 14, padding: 14, background: "#f8fafc" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
+                          <div style={{ fontWeight: 700, color: "#0d5e35", fontSize: "0.95rem" }}>{i.nome}</div>
+                          <span className="pag-badge" style={{ background: statusColor + "22", color: statusColor, flexShrink: 0 }}>{i.status || "Interessado"}</span>
+                        </div>
+                        <div style={{ fontSize: "0.82rem", color: "#64748b", marginBottom: 6 }}>
+                          <div>{i.telefone || "-"} {i.email ? " | " + i.email : ""}</div>
+                          <div style={{ color: "#94a3b8", fontSize: "0.75rem" }}>
+                            {i.criado_em ? new Date(i.criado_em).toLocaleDateString("pt-BR") + " " + new Date(i.criado_em).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}
+                          </div>
+                        </div>
+                        {Array.isArray(i.cursos) && i.cursos.length > 0 && (
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
+                            {i.cursos.map((c) => (
+                              <span key={c} className="pag-badge" style={{ background: "#e0f2fe", color: "#0369a1" }}>{c}</span>
+                            ))}
+                          </div>
+                        )}
+                        <div style={{ display: "flex", gap: 8 }}>
+                          {(i.telefone || "").replace(/\D/g, "").length >= 10 && (
+                            <button className="btn btn-secondary" style={{ fontSize: "0.8rem", padding: "8px 12px" }} onClick={() => whatsInteressado(i)}>&#128172; WhatsApp</button>
+                          )}
+                          {i.status !== "Matriculado" && (
+                            <button className="btn btn-primary" style={{ fontSize: "0.8rem", padding: "8px 12px" }} onClick={() => matricularInteressado(i)}>&#127891; Matricular</button>
+                          )}
+                          <button className="btn btn-secondary" style={{ fontSize: "0.8rem", padding: "8px 12px" }} onClick={() => excluirInteressado(i.id)}>&#128465; Excluir</button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>
@@ -686,6 +815,7 @@ const pageCss = `
 .action-btn.whats:hover{background:#bbf7d0;}
 .pag-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:700;letter-spacing:0.03em;}
 .modal-aluno{max-width:580px!important;}
+.modal-interessados{max-width:640px!important;}
 .modal-body select{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:0.95rem;font-family:Barlow,sans-serif;background:#fff;transition:all 0.2s;cursor:pointer;appearance:auto;}
 .modal-body select:focus{outline:none;border-color:#15814a;box-shadow:0 0 0 3px rgba(21,129,74,0.1);}
 .empty-state{text-align:center;padding:60px 20px;color:#94a3b8;}

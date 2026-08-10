@@ -64,6 +64,13 @@ const menuItems = [
     desc: "Ramais, documentos para faturamento e CNPJ da empresa.",
     badge: "Consultas",
   },
+  {
+    href: "/romaneios",
+    icon: "📑",
+    title: "Romaneios",
+    desc: "Baixe modelos de romaneio de controle e de pedido em PDF e planilha.",
+    badge: "Operação",
+  },
 ];
 
 const highlights = ["8 ferramentas", "Acesso rápido", "Layout responsivo"];

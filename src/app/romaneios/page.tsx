@@ -9,6 +9,7 @@ const grupos = [
     icone: "📊",
     arquivos: [
       { nome: "Fábrica", arquivo: "/romaneios/FABRICA.pdf", tipo: "PDF" },
+      { nome: "Essências", arquivo: "/romaneios/ESSENCIAS.pdf", tipo: "PDF" },
       { nome: "Pedidos Loja", arquivo: "/romaneios/PEDIDOS LOJA.pdf", tipo: "PDF" },
     ],
   },

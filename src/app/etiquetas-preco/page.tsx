@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { jsPDF } from "jspdf"
 
 const LABEL_W_MM = 50
 const LABEL_H_MM = 20
@@ -18,7 +19,7 @@ function wrapText(
   text: string,
   size: number,
   maxWidth: number,
-  doc: any
+  doc: jsPDF
 ): [string, string] {
   const words = text.split(" ")
   if (words.length === 1) {
@@ -42,7 +43,7 @@ function wrapText(
   return [line1, rest.join(" ")]
 }
 
-function drawLabels(products: Product[], doc: any) {
+function drawLabels(products: Product[], doc: jsPDF) {
   const lw = LABEL_W_MM
   const lh = LABEL_H_MM
 
@@ -190,27 +191,8 @@ export default function EtiquetasPrecoPage() {
   }
 
   const generatePDF = async () => {
-    const loadPdf = (): Promise<any> =>
-      new Promise((resolve, reject) => {
-        const w = window as any
-        const existing = w.jspdf?.jsPDF || w.jsPDF
-        if (existing) return resolve(existing)
-
-        const script = document.createElement("script")
-        script.src =
-          "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"
-        script.onload = () => {
-          const lib = w.jspdf?.jsPDF || w.jsPDF
-          if (lib) resolve(lib)
-          else reject(new Error("jsPDF não carregou"))
-        }
-        script.onerror = () => reject(new Error("Falha ao carregar jsPDF"))
-        document.head.appendChild(script)
-      })
-
     try {
-      const jsPDFCtor = await loadPdf()
-      const doc = new jsPDFCtor({ orientation: "portrait", unit: "mm", format: "a4" })
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
       drawLabels(nonEmpty, doc)
       doc.save(fileName + ".pdf")
     } catch (err) {

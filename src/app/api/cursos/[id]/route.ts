@@ -14,6 +14,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       horario: body.horario || "",
       vagas: body.vagas || 20,
       valor: body.preco ? parseFloat(body.preco.replace(/[^\d,]/g, "").replace(",", ".")) : 0,
+      data: body.data || null,
     })
     .eq("id", id)
     .select()

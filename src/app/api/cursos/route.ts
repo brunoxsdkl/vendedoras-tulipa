@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       horario: body.horario || "",
       vagas: body.vagas || 20,
       valor: body.preco ? parseFloat(body.preco.replace(/[^\d,]/g, "").replace(",", ".")) : 0,
-      data: new Date().toISOString().split("T")[0],
+      data: body.data || new Date().toISOString().split("T")[0],
     })
     .select()
     .single();

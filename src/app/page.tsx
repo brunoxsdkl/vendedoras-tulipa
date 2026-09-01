@@ -16,6 +16,13 @@ const menuItems = [
     badge: "Operação",
   },
   {
+    href: "/etiqueta-facil",
+    icon: "🚚",
+    title: "Total Express · Etiqueta Fácil",
+    desc: "Acesse o painel da Total Express com pré-login, envie a XML e imprima as etiquetas de coleta.",
+    badge: "Entregas",
+  },
+  {
     href: "/medidas",
     icon: "📦",
     title: "Medidas das Caixas",

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useRef } from "react"
-import Script from "next/script"
 
 const LABEL_W_MM = 50
 const LABEL_H_MM = 20
@@ -191,20 +190,36 @@ export default function EtiquetasPrecoPage() {
   }
 
   const generatePDF = async () => {
-    const w = window as any
-    if (!w.jsPDF) {
-      alert("Carregando biblioteca PDF... tente novamente em instantes.")
-      return
+    const loadPdf = (): Promise<any> =>
+      new Promise((resolve, reject) => {
+        const w = window as any
+        const existing = w.jspdf?.jsPDF || w.jsPDF
+        if (existing) return resolve(existing)
+
+        const script = document.createElement("script")
+        script.src =
+          "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"
+        script.onload = () => {
+          const lib = w.jspdf?.jsPDF || w.jsPDF
+          if (lib) resolve(lib)
+          else reject(new Error("jsPDF não carregou"))
+        }
+        script.onerror = () => reject(new Error("Falha ao carregar jsPDF"))
+        document.head.appendChild(script)
+      })
+
+    try {
+      const jsPDFCtor = await loadPdf()
+      const doc = new jsPDFCtor({ orientation: "portrait", unit: "mm", format: "a4" })
+      drawLabels(nonEmpty, doc)
+      doc.save(fileName + ".pdf")
+    } catch (err) {
+      alert("Não foi possível gerar o PDF: " + (err as Error).message)
     }
-    const doc = new w.jsPDF({ orientation: "portrait", unit: "mm", format: "a4" })
-    drawLabels(nonEmpty, doc)
-    doc.save(fileName + ".pdf")
   }
 
   return (
     <>
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js" strategy="afterInteractive" />
-
       <div>
         <div className="header no-print">
           <div className="container header-inner">

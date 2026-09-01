@@ -47,6 +47,13 @@ type Interessado = {
 const uid = () => Math.random().toString(36).slice(2, 10);
 const today = () => new Date().toLocaleDateString("pt-BR");
 
+const NOMES_CURSOS_BLOG = [
+  "Saboaria Artesanal – Módulo 1",
+  "Velas Artesanais – Apostila Completa",
+  "Cosméticos & Perfumaria Artesanal",
+  "Produtos de Limpeza Artesanais",
+];
+
 async function apiFetch(url: string, options?: RequestInit) {
   const res = await fetch(url, options);
   if (!res.ok) {
@@ -531,8 +538,16 @@ export default function CursosPage() {
             </div>
             <div className="modal-body">
               <div className="form-group">
-                <label>Nome do curso</label>
-                <input value={formNome} onChange={(e) => setFormNome(e.target.value)} placeholder="Ex: Limpeza Basica" />
+                <label>Nome do curso (sincronizado com o blog)</label>
+                <select value={formNome} onChange={(e) => setFormNome(e.target.value)}>
+                  <option value="">Selecione o curso do blog...</option>
+                  {NOMES_CURSOS_BLOG.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+                <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: 6 }}>
+                  Use um destes nomes para o curso aparecer na aba "Consulte as Vagas" do blog.
+                </p>
               </div>
               <div className="form-group">
                 <label>Descricao</label>

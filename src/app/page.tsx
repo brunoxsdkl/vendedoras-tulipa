@@ -9,6 +9,13 @@ const menuItems = [
     badge: "Operação",
   },
   {
+    href: "/etiquetas-preco",
+    icon: "💰",
+    title: "Etiquetas de Preço",
+    desc: "Gere etiquetas 5×2cm com fundo verde para gôndolas. Adicione produtos ou importe JSON.",
+    badge: "Operação",
+  },
+  {
     href: "/medidas",
     icon: "📦",
     title: "Medidas das Caixas",

@@ -221,9 +221,14 @@ export default function EtiquetasPrecoPage() {
         </div>
 
         <main className="container">
-          <div className="layout">
-            <div className="sidebar no-print">
+          <div className="builder">
+            <div className="builder-form no-print">
               <div className="card">
+                <div className="card-title">
+                  <h2>Produtos</h2>
+                  <span className="card-title-note">Digite e veja a folha A4 atualizar na hora</span>
+                </div>
+
                 {products.map((p, i) => (
                   <div key={i} className="product-row">
                     <span className="product-index">{i + 1}</span>
@@ -278,19 +283,18 @@ export default function EtiquetasPrecoPage() {
                   </button>
                 </div>
 
-                <div className="form-group" style={{ marginTop: 16 }}>
-                  <label>Nome do arquivo</label>
-                  <input
-                    type="text"
-                    value={fileName}
-                    onChange={(e) => setFileName(e.target.value)}
-                    className="text-input"
-                  />
-                </div>
-
-                <div className="form-actions" style={{ marginTop: 12 }}>
-                  <label className="btn btn-secondary" style={{ flex: 1, cursor: "pointer", textAlign: "center" }}>
-                    📁 Abrir JSON
+                <div className="fileline">
+                  <div className="form-group fileline-name">
+                    <label>Nome do arquivo</label>
+                    <input
+                      type="text"
+                      value={fileName}
+                      onChange={(e) => setFileName(e.target.value)}
+                      className="text-input"
+                    />
+                  </div>
+                  <label className="btn btn-secondary fileline-btn" style={{ cursor: "pointer", textAlign: "center" }}>
+                    📁 JSON
                     <input
                       type="file"
                       accept=".json"
@@ -298,36 +302,36 @@ export default function EtiquetasPrecoPage() {
                       style={{ display: "none" }}
                     />
                   </label>
-                  <button
-                    className="btn btn-primary"
-                    onClick={generatePDF}
-                    disabled={nonEmpty.length === 0}
-                    style={{ flex: 1.5 }}
-                  >
-                    📄 Gerar PDF
-                  </button>
                 </div>
 
-                <p className="hint">
-                  {nonEmpty.length} etiqueta{nonEmpty.length !== 1 ? "s" : ""}{" "}
-                  · {pages.length} página{pages.length !== 1 ? "s" : ""} A4
-                </p>
+                <div className="form-actions">
+                  <button
+                    className="btn btn-primary btn-big"
+                    onClick={generatePDF}
+                    disabled={nonEmpty.length === 0}
+                    style={{ flex: 1 }}
+                  >
+                    📄 Gerar PDF ({nonEmpty.length})
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div className="preview-area">
+            <div className="builder-preview">
+              <div className="sheet-label no-print">
+                Pré-visualização em tempo real —{" "}
+                {nonEmpty.length} etiqueta{nonEmpty.length !== 1 ? "s" : ""} ·{" "}
+                {pages.length} página{pages.length !== 1 ? "s" : ""} A4
+              </div>
+
               {nonEmpty.length === 0 ? (
-                <div className="empty-state">
+                <div className="empty-state no-print">
                   <span style={{ fontSize: 56, opacity: 0.2 }}>🏷️</span>
-                  <p>Adicione produtos com preço para gerar etiquetas</p>
+                  <p>Adicione o primeiro produto — a folha A4 aparece aqui</p>
                 </div>
               ) : (
                 pages.map((page, pIdx) => (
-                  <div key={pIdx} className="sheet-wrapper">
-                    <div className="sheet-label">
-                      Página {pIdx + 1} de {pages.length} · {page.length}{" "}
-                      etiqueta{page.length !== 1 ? "s" : ""}
-                    </div>
+                  <div key={pIdx} className="a4-sheet">
                     <div className="label-grid">
                       {page.map((p, lIdx) => (
                         <div key={lIdx} className="label-preview">
@@ -396,10 +400,12 @@ export default function EtiquetasPrecoPage() {
         )}
 
         <style>{`
-          .layout { display: flex; gap: 32px; align-items: flex-start; padding: 16px 0; }
-          .sidebar { flex: 0 0 400px; position: sticky; top: 16px; }
-          .card { background: var(--surface); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
-          .preview-area { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+          .builder { display: flex; flex-direction: column; gap: 24px; padding: 16px 0; }
+
+          .builder-form .card { background: var(--surface); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+          .card-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+          .card-title h2 { font-family: Barlow, sans-serif; font-size: 1.15rem; font-weight: 800; color: var(--text); }
+          .card-title-note { font-size: 0.8rem; color: var(--muted); }
 
           .product-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
           .product-index { font-size: 0.8rem; font-weight: 700; color: var(--muted); min-width: 22px; text-align: right; }
@@ -409,16 +415,24 @@ export default function EtiquetasPrecoPage() {
           .price-input:focus { border-color: var(--green-600); }
 
           .form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+          .btn-big { padding: 12px 14px !important; font-size: 1rem !important; }
+
+          .fileline { display: flex; gap: 10px; align-items: flex-end; margin-top: 16px; }
+          .fileline-name { flex: 1; }
+          .fileline-btn { padding: 10px 14px; white-space: nowrap; line-height: 1; }
 
           .hint { margin-top: 16px; font-size: 0.85rem; color: var(--muted); text-align: center; }
 
           .empty-state { background: var(--surface); border-radius: var(--radius-lg); padding: 80px 32px; text-align: center; color: var(--muted); box-shadow: var(--shadow-sm); }
           .empty-state p { margin-top: 12px; font-size: 1rem; }
 
-          .sheet-wrapper { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; border: 1px solid var(--border); }
-          .sheet-label { background: var(--background); padding: 10px 16px; font-size: 0.85rem; color: var(--muted); text-align: center; border-bottom: 1px solid var(--border); font-weight: 600; }
+          .builder-preview { background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; border: 1px solid var(--border); }
+          .sheet-label { background: var(--background); padding: 12px 16px; font-size: 0.85rem; color: var(--muted); text-align: center; border-bottom: 1px solid var(--border); font-weight: 600; }
 
-          .label-grid { display: grid; grid-template-columns: repeat(${COLS}, ${LABEL_W_MM}mm); grid-template-rows: repeat(${ROWS}, ${LABEL_H_MM}mm); gap: ${GAP_MM}mm; justify-content: center; padding: 16px; }
+          .a4-sheet { display: flex; justify-content: center; padding: 20px 16px; border-bottom: 1px solid var(--border-light); background: var(--background); }
+          .a4-sheet:last-child { border-bottom: none; }
+
+          .label-grid { background: #fff; box-shadow: var(--shadow-md); border-radius: 6px; padding: ${MARGIN_MM}mm; display: grid; grid-template-columns: repeat(${COLS}, ${LABEL_W_MM}mm); grid-template-rows: repeat(${ROWS}, ${LABEL_H_MM}mm); gap: ${GAP_MM}mm; }
 
           .label-preview { background: #006b3f; border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2px 4px; overflow: hidden; }
           .label-preview.empty { background: transparent; }
@@ -444,18 +458,18 @@ export default function EtiquetasPrecoPage() {
           @media print {
             .no-print { display: none !important; }
             body { background: #fff !important; margin: 0 !important; }
-            .layout { display: block !important; padding: 0 !important; }
-            .preview-area { max-width: 100% !important; }
-            .sheet-wrapper { box-shadow: none !important; border: none !important; border-radius: 0 !important; margin: 0 !important; }
+            .builder { padding: 0 !important; gap: 0 !important; }
+            .builder-form { display: none !important; }
+            .builder-preview { box-shadow: none !important; border: none !important; border-radius: 0 !important; overflow: visible !important; }
             .sheet-label { display: none !important; }
-            .label-grid { padding: 10mm !important; }
-            @page { size: A4 portrait; margin: 10mm; }
+            .a4-sheet { padding: 0 !important; border: none !important; background: #fff !important; box-shadow: none !important; border-radius: 0 !important; }
+            .label-grid { box-shadow: none !important; border-radius: 0 !important; padding: ${MARGIN_MM}mm !important; }
+            @page { size: A4 portrait; margin: 0; }
           }
 
           @media (max-width: 800px) {
-            .layout { flex-direction: column; }
-            .sidebar { flex: none; width: 100%; position: static; }
-            .label-grid { grid-template-columns: repeat(2, ${LABEL_W_MM}mm); }
+            .builder-preview { overflow-x: auto; }
+            .a4-sheet { justify-content: flex-start; }
           }
         `}</style>
       </div>

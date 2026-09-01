@@ -27,6 +27,8 @@ type Curso = {
   nome: string;
   descricao: string;
   horario: string;
+  horario_inicio?: string | null;
+  horario_termino?: string | null;
   vagas: number;
   valor: number;
   data?: string | null;
@@ -88,6 +90,8 @@ export default function CursosPage() {
   const [formNome, setFormNome] = useState("");
   const [formDesc, setFormDesc] = useState("");
   const [formCarga, setFormCarga] = useState("");
+  const [formHorarioInicio, setFormHorarioInicio] = useState("");
+  const [formHorarioTermino, setFormHorarioTermino] = useState("");
   const [formVagas, setFormVagas] = useState("20");
   const [formPreco, setFormPreco] = useState("150");
   const [formData, setFormData] = useState("");
@@ -141,18 +145,19 @@ export default function CursosPage() {
 
   const openNewCurso = () => {
     setEditingCurso(null);
-    setFormNome(""); setFormDesc(""); setFormCarga(""); setFormVagas("20"); setFormPreco("150"); setFormData("");
+    setFormNome(""); setFormDesc(""); setFormCarga(""); setFormVagas("20"); setFormPreco("150"); setFormData(""); setFormHorarioInicio(""); setFormHorarioTermino("");
     setShowCursoModal(true);
   };
   const openEditCurso = (c: Curso) => {
     setEditingCurso(c);
     setFormNome(c.nome); setFormDesc(c.descricao); setFormCarga(c.horario);
     setFormVagas(String(c.vagas)); setFormPreco(String(c.valor || 0)); setFormData(c.data || "");
+    setFormHorarioInicio(c.horario_inicio || ""); setFormHorarioTermino(c.horario_termino || "");
     setShowCursoModal(true);
   };
   const saveCurso = async () => {
     if (!formNome.trim()) { alert("Preencha o nome do curso"); return; }
-    const payload = { nome: formNome.trim(), descricao: formDesc.trim(), horario: formCarga.trim(), vagas: Number(formVagas) || 20, preco: `R$ ${formPreco.replace("R$", "").trim()}`, data: formData.trim() || null };
+    const payload = { nome: formNome.trim(), descricao: formDesc.trim(), horario: formCarga.trim(), horario_inicio: formHorarioInicio.trim() || null, horario_termino: formHorarioTermino.trim() || null, vagas: Number(formVagas) || 20, preco: `R$ ${formPreco.replace("R$", "").trim()}`, data: formData.trim() || null };
     try {
       if (editingCurso) {
         await api.updateCurso(editingCurso.id, payload);
@@ -555,8 +560,22 @@ export default function CursosPage() {
               </div>
               <div style={{ display: "flex", gap: 12 }}>
                 <div className="form-group" style={{ flex: 1 }}>
-                  <label>Horario / Carga</label>
-                  <input value={formCarga} onChange={(e) => setFormCarga(e.target.value)} placeholder="Ex: 08:30 as 12:00" />
+                  <label>Data do curso</label>
+                  <input type="date" value={formData} onChange={(e) => setFormData(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Horário início</label>
+                  <input type="time" value={formHorarioInicio} onChange={(e) => setFormHorarioInicio(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Horário término</label>
+                  <input type="time" value={formHorarioTermino} onChange={(e) => setFormHorarioTermino(e.target.value)} />
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 12 }}>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Carga horária (opcional)</label>
+                  <input value={formCarga} onChange={(e) => setFormCarga(e.target.value)} placeholder="Ex: 4 horas" />
                 </div>
                 <div className="form-group" style={{ flex: 1 }}>
                   <label>Vagas</label>
@@ -566,10 +585,6 @@ export default function CursosPage() {
                   <label>Valor (R$)</label>
                   <input value={formPreco} onChange={(e) => setFormPreco(e.target.value)} placeholder="Ex: 150,00" />
                 </div>
-              </div>
-              <div className="form-group">
-                <label>Data do curso</label>
-                <input type="date" value={formData} onChange={(e) => setFormData(e.target.value)} />
               </div>
               <div className="modal-actions">
                 <button className="btn btn-secondary" onClick={() => setShowCursoModal(false)}>Cancelar</button>

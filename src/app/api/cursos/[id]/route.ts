@@ -12,6 +12,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       slug: body.slug || null,
       descricao: body.descricao || "",
       horario: body.horario || "",
+      horario_inicio: body.horario_inicio || null,
+      horario_termino: body.horario_termino || null,
       vagas: body.vagas || 20,
       valor: body.preco ? parseFloat(body.preco.replace(/[^\d,]/g, "").replace(",", ".")) : 0,
       data: body.data || null,

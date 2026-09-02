@@ -22,6 +22,8 @@ export async function POST(req: Request) {
       slug: body.slug || null,
       descricao: body.descricao || "",
       horario: body.horario || "",
+      horario_inicio: body.horario_inicio || null,
+      horario_termino: body.horario_termino || null,
       vagas: body.vagas || 20,
       valor: body.preco ? parseFloat(body.preco.replace(/[^\d,]/g, "").replace(",", ".")) : 0,
       data: body.data || new Date().toISOString().split("T")[0],

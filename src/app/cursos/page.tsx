@@ -543,15 +543,15 @@ export default function CursosPage() {
             </div>
             <div className="modal-body">
               <div className="form-group">
-                <label>Nome do curso (sincronizado com o blog)</label>
-                <select value={formNome} onChange={(e) => setFormNome(e.target.value)}>
-                  <option value="">Selecione o curso do blog...</option>
+                <label>Nome do curso (digite ou escolha do blog)</label>
+                <input list="nomes-cursos-blog" value={formNome} onChange={(e) => setFormNome(e.target.value)} placeholder="Digite um nome ou escolha um curso do blog" />
+                <datalist id="nomes-cursos-blog">
                   {NOMES_CURSOS_BLOG.map((n) => (
-                    <option key={n} value={n}>{n}</option>
+                    <option key={n} value={n} />
                   ))}
-                </select>
+                </datalist>
                 <p style={{ fontSize: "0.72rem", color: "#94a3b8", marginTop: 6 }}>
-                  Use um destes nomes para o curso aparecer na aba "Consulte as Vagas" do blog.
+                  Dica: use um dos nomes sugeridos para o curso aparecer na aba "Consulte as Vagas" do blog. Nomes diferentes não serão exibidos lá.
                 </p>
               </div>
               <div className="form-group">

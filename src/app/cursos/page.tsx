@@ -508,7 +508,7 @@ export default function CursosPage() {
                   <tbody>
                     {selected.alunos.map((a, i) => {
                       const statusColor = a.status_pagamento === "Pago" ? "#16a34a" : a.status_pagamento === "Cancelado" ? "#dc2626" : "#eab308";
-                      const formaIcon = a.forma_pagamento === "PIX" ? "\uD83D\uDCB5" : a.forma_pagamento === "CARTÃO" ? "\uD83D\uDCB3" : a.forma_pagamento === "DINHEIRO" ? "\uD83D\uDCB0" : "";
+                      const formaIcon = a.forma_pagamento === "PIX" ? "\uD83D\uDCB5" : a.forma_pagamento === "CARTÃO" ? "\uD83D\uDCB3" : a.forma_pagamento === "DINHEIRO" ? "\uD83D\uDCB0" : a.forma_pagamento === "VOUCHER" ? "\uD83C\uDF9F\uFE0F" : "";
                       return (
                       <tr key={a.id}>
                         <td style={{ textAlign: "center", color: "#94a3b8" }}>{i + 1}</td>
@@ -644,6 +644,7 @@ export default function CursosPage() {
                     <option value="PIX">PIX</option>
                     <option value="CARTÃO">Cartão</option>
                     <option value="DINHEIRO">Dinheiro</option>
+                    <option value="VOUCHER">Voucher</option>
                   </select>
                 </div>
                 <div className="form-group" style={{ flex: 1 }}>

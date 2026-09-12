@@ -56,6 +56,9 @@ const NOMES_CURSOS_BLOG = [
   "Produtos de Limpeza Artesanais",
 ];
 
+const MENSAGEM_AGRADECIMENTO_PADRAO =
+  "Olá {nome}! 🎉\nAgradecemos pela sua inscrição no curso {curso}! ✨\nEm breve enviaremos mais informações sobre a turma. Qualquer dúvida, estamos à disposição.\n\nUm abraço,\nEquipe Tulipa";
+
 async function apiFetch(url: string, options?: RequestInit) {
   const res = await fetch(url, options);
   if (!res.ok) {
@@ -126,6 +129,11 @@ export default function CursosPage() {
   const [aStatusPagamento, setAStatusPagamento] = useState("Pendente");
   const [aDataPagamento, setADataPagamento] = useState("");
 
+  const [alunosSel, setAlunosSel] = useState<Set<string>>(new Set());
+  const [showMsgConfigModal, setShowMsgConfigModal] = useState(false);
+  const [msgAgradecimento, setMsgAgradecimento] = useState(MENSAGEM_AGRADECIMENTO_PADRAO);
+  const [msgConfigDraft, setMsgConfigDraft] = useState(MENSAGEM_AGRADECIMENTO_PADRAO);
+
   const carregar = useCallback(async () => {
     try {
       const data = await api.getCursos();
@@ -139,6 +147,18 @@ export default function CursosPage() {
     carregar();
     setMounted(true);
   }, [carregar]);
+
+  useEffect(() => {
+    const salva = window.localStorage.getItem("msgAgradecimento");
+    if (salva) {
+      setMsgAgradecimento(salva);
+      setMsgConfigDraft(salva);
+    }
+  }, []);
+
+  useEffect(() => {
+    setAlunosSel(new Set());
+  }, [selectedId]);
 
   const selected = cursos.find((c) => c.id === selectedId) || null;
   const ocupadasDe = (c: Curso) => c.alunos.filter((a) => a.status_pagamento === "Pago").length;
@@ -315,6 +335,34 @@ export default function CursosPage() {
     if (!tel) return;
     window.open("https://wa.me/55" + tel + "?text=" + encodeURIComponent("Olá " + a.nome + "! Aqui é da Tulipa Vendedoras."), "_blank");
   };
+  const toggleSelAluno = (aid: string) => {
+    setAlunosSel((prev) => {
+      const s = new Set(prev);
+      if (s.has(aid)) s.delete(aid);
+      else s.add(aid);
+      return s;
+    });
+  };
+  const selecionarTodos = () => {
+    if (!selected) return;
+    setAlunosSel((prev) => prev.size === selected.alunos.length ? new Set() : new Set(selected.alunos.map((a) => a.id)));
+  };
+  const enviarAgradecimento = () => {
+    if (!selected) return;
+    const alvos = selected.alunos.filter((a) => alunosSel.has(a.id) && (a.telefone || a.whatsapp || "").replace(/\D/g, "").length >= 10);
+    if (alvos.length === 0) { alert("Selecione ao menos um aluno com telefone cadastrado."); return; }
+    alvos.forEach((a) => {
+      const tel = (a.telefone || a.whatsapp || "").replace(/\D/g, "");
+      const msg = msgAgradecimento.replace(/\{nome\}/g, a.nome).replace(/\{curso\}/g, selected.nome);
+      window.open("https://wa.me/55" + tel + "?text=" + encodeURIComponent(msg), "_blank");
+    });
+  };
+  const salvarMsgConfig = () => {
+    setMsgAgradecimento(msgConfigDraft);
+    window.localStorage.setItem("msgAgradecimento", msgConfigDraft);
+    setShowMsgConfigModal(false);
+    alert("Mensagem de agradecimento salva!");
+  };
   const whatsCurso = (c: Curso) => {
     let texto = "*Lista de Alunos - " + c.nome + "*\n";
     texto += "Descricao: " + c.descricao + "\n";
@@ -465,6 +513,8 @@ export default function CursosPage() {
               <button className="btn btn-secondary" onClick={() => openEditCurso(selected)}>&#9998;&#65039; Editar Curso</button>
               <button className="btn btn-secondary" onClick={() => { const url = window.location.origin + "/cursos/inscricao"; navigator.clipboard.writeText(url); alert("Link copiado: " + url); }}>&#128279; Link inscrição</button>
               <button className="btn btn-secondary" onClick={() => { setICursoId(selected.id); setINome(""); setITel(""); setIEmail(""); setICidade(""); setIStatus("Pendente"); setMatriculandoId(null); setISucesso(false); setShowInscricaoModal(true); }}>&#128221; Cadastrar aluno</button>
+              <button className="btn" style={{ background: "#25D366", color: "#fff" }} onClick={enviarAgradecimento} disabled={alunosSel.size === 0}>&#128172; Agradecer selecionados {alunosSel.size > 0 ? `(${alunosSel.size})` : ""}</button>
+              <button className="btn btn-secondary" onClick={() => { setMsgConfigDraft(msgAgradecimento); setShowMsgConfigModal(true); }}>&#9881;&#65039; Configurar mensagem</button>
             </div>
 
             <div className="aluno-form-card">
@@ -492,10 +542,23 @@ export default function CursosPage() {
               <div className="alunos-table-card">
                 <div className="alunos-table-header">
                   <h3>Alunos inscritos ({selected.alunos.length})</h3>
+                  {alunosSel.size > 0 && (
+                    <span style={{ background: "rgba(255,255,255,0.15)", padding: "6px 12px", borderRadius: 99, fontSize: "0.8rem", fontWeight: 700 }}>
+                      {alunosSel.size} selecionado(s)
+                    </span>
+                  )}
                 </div>
                 <table className="alunos-table">
                   <thead>
                     <tr>
+                      <th style={{ width: 36 }}>
+                        <input
+                          type="checkbox"
+                          style={{ width: 16, height: 16, cursor: "pointer" }}
+                          checked={selected.alunos.length > 0 && alunosSel.size === selected.alunos.length}
+                          onChange={selecionarTodos}
+                        />
+                      </th>
                       <th style={{ width: 32 }}>N&#186;</th>
                       <th>Nome</th>
                       <th style={{ width: 130 }}>Telefone</th>
@@ -511,6 +574,14 @@ export default function CursosPage() {
                       const formaIcon = a.forma_pagamento === "PIX" ? "\uD83D\uDCB5" : a.forma_pagamento === "CARTÃO" ? "\uD83D\uDCB3" : a.forma_pagamento === "DINHEIRO" ? "\uD83D\uDCB0" : a.forma_pagamento === "VOUCHER" ? "\uD83C\uDF9F\uFE0F" : "";
                       return (
                       <tr key={a.id}>
+                        <td style={{ textAlign: "center" }}>
+                          <input
+                            type="checkbox"
+                            style={{ width: 16, height: 16, cursor: "pointer" }}
+                            checked={alunosSel.has(a.id)}
+                            onChange={() => toggleSelAluno(a.id)}
+                          />
+                        </td>
                         <td style={{ textAlign: "center", color: "#94a3b8" }}>{i + 1}</td>
                         <td style={{ fontWeight: 600 }}>{a.nome}</td>
                         <td style={{ color: "#64748b", fontSize: "0.82rem" }}>{a.telefone || a.whatsapp || "-"}</td>
@@ -790,6 +861,30 @@ export default function CursosPage() {
                   })}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showMsgConfigModal && (
+        <div className="modal-overlay" onClick={() => setShowMsgConfigModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>&#9881;&#65039; Configurar mensagem de agradecimento</h2>
+              <button className="modal-close" onClick={() => setShowMsgConfigModal(false)}>&#10005;</button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Mensagem (enviada via WhatsApp aos alunos selecionados)</label>
+                <textarea rows={8} value={msgConfigDraft} onChange={(e) => setMsgConfigDraft(e.target.value)} />
+              </div>
+              <p style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: 12 }}>
+                Dica: use as vari&#225;veis <b>{'{nome}'}</b> (nome do aluno) e <b>{'{curso}'}</b> (nome do curso). A mensagem fica salva neste navegador e pode ser usada no pr&#243;ximo acesso.
+              </p>
+              <div className="modal-actions">
+                <button className="btn btn-secondary" onClick={() => setShowMsgConfigModal(false)}>Cancelar</button>
+                <button className="btn btn-primary" onClick={salvarMsgConfig}>Salvar mensagem</button>
+              </div>
             </div>
           </div>
         </div>

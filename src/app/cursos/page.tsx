@@ -351,11 +351,21 @@ export default function CursosPage() {
     if (!selected) return;
     const alvos = selected.alunos.filter((a) => alunosSel.has(a.id) && (a.telefone || a.whatsapp || "").replace(/\D/g, "").length >= 10);
     if (alvos.length === 0) { alert("Selecione ao menos um aluno com telefone cadastrado."); return; }
-    alvos.forEach((a) => {
+    const abrir = (a: Aluno) => {
       const tel = (a.telefone || a.whatsapp || "").replace(/\D/g, "");
-      const msg = msgAgradecimento.replace(/\{nome\}/g, a.nome).replace(/\{curso\}/g, selected.nome);
+      const msg = msgAgradecimento.replace(/\{nome\}/g, a.nome).replace(/\{curso\}/g, selected!.nome);
       window.open("https://wa.me/55" + tel + "?text=" + encodeURIComponent(msg), "_blank");
-    });
+    };
+    abrir(alvos[0]);
+    let i = 1;
+    const intervalo = setInterval(() => {
+      if (i >= alvos.length) { clearInterval(intervalo); return; }
+      abrir(alvos[i]);
+      i++;
+    }, 700);
+    if (alvos.length > 1) {
+      setTimeout(() => { alert("Abrindo " + alvos.length + " conversas (" + alvos.length + " alunos). Se o navegador bloquear algumas, permita pop-ups para este site e clique novamente."); }, 600);
+    }
   };
   const salvarMsgConfig = () => {
     setMsgAgradecimento(msgConfigDraft);

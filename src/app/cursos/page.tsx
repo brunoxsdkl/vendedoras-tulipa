@@ -48,6 +48,12 @@ type Interessado = {
 
 const uid = () => Math.random().toString(36).slice(2, 10);
 const today = () => new Date().toLocaleDateString("pt-BR");
+const formatarData = (data?: string | null) => {
+  if (!data) return "-";
+  const d = new Date(data + "T00:00:00");
+  if (isNaN(d.getTime())) return data;
+  return d.toLocaleDateString("pt-BR");
+};
 
 const NOMES_CURSOS_BLOG = [
   "Saboaria Artesanal – Módulo 1",
@@ -456,6 +462,9 @@ export default function CursosPage() {
                       </div>
                       <h3>{c.nome}</h3>
                       <p className="desc">{c.descricao}</p>
+                      {c.data && (
+                        <div className="curso-card-data">&#128197; {formatarData(c.data)}</div>
+                      )}
                       <div className="curso-card-info">
                         <span>&#9202; {c.horario}</span>
                         <span>&#128101; {ocupadas}/{c.vagas} vagas</span>
@@ -780,7 +789,7 @@ export default function CursosPage() {
                     <select value={iCursoId} onChange={(e) => setICursoId(e.target.value)} required>
                       <option value="">Selecione um curso</option>
                       {cursos.filter(c => ocupadasDe(c) < c.vagas).map((c) => (
-                        <option key={c.id} value={c.id}>{c.nome} - {c.horario} ({c.vagas - ocupadasDe(c)} vagas)</option>
+                        <option key={c.id} value={c.id}>{c.nome} - {c.data ? formatarData(c.data) : "data a definir"} - {c.horario || "horário a definir"} ({c.vagas - ocupadasDe(c)} vagas)</option>
                       ))}
                     </select>
                   </div>
@@ -917,6 +926,7 @@ const pageCss = `
 .curso-card h3{font-size:1.2rem;color:#0d5e35;font-weight:800;margin-bottom:6px;}
 .curso-card .desc{font-size:0.88rem;color:#64748b;margin-bottom:16px;line-height:1.4;}
 .curso-card-info{display:flex;gap:16px;margin-bottom:16px;font-size:0.82rem;color:#64748b;}
+.curso-card-data{display:inline-flex;align-items:center;gap:6px;background:#e8f5ee;color:#0d5e35;font-weight:800;font-size:0.98rem;padding:8px 14px;border-radius:12px;margin-bottom:12px;border:1px solid #c7e8d8;}
 .curso-card-info span{display:flex;align-items:center;gap:4px;}
 .vaga-bar{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:8px;}
 .vaga-bar-fill{height:100%;border-radius:99px;transition:width 0.4s ease;}

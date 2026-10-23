@@ -611,6 +611,14 @@ export default function CursosPage() {
                           <div style={{ display: "flex", gap: 4 }}>
                             <button className="action-btn edit" onClick={() => openEditAluno(a)} title="Editar">&#9998;&#65039;</button>
                             <button className="action-btn del" onClick={() => deleteAluno(a.id)} title="Excluir">&#128465;&#65039;</button>
+                            <a
+                              className="action-btn certificate"
+                              href={`/cursos/certificado?curso=${encodeURIComponent(selected.id)}&aluno=${encodeURIComponent(a.id)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`Emitir certificado de ${a.nome}`}
+                              aria-label={`Emitir certificado de ${a.nome}`}
+                            >&#127891;</a>
                             {(a.telefone || a.whatsapp) && <button className="action-btn whats" onClick={() => whatsAluno(a)} title="WhatsApp">&#128172;</button>}
                           </div>
                         </td>
@@ -985,6 +993,8 @@ const pageCss = `
 .action-btn.del:hover{background:#fecaca;}
 .action-btn.whats{background:#dcfce7;color:#16a34a;}
 .action-btn.whats:hover{background:#bbf7d0;}
+.action-btn.certificate{background:#fce7f3;color:#9d174d;}
+.action-btn.certificate:hover{background:#fbcfe8;}
 .pag-badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.72rem;font-weight:700;letter-spacing:0.03em;}
 .modal-aluno{max-width:580px!important;}
 .modal-interessados{max-width:640px!important;}

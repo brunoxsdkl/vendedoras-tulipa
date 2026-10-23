@@ -8,6 +8,8 @@ type Curso = {
   id: string;
   nome: string;
   horario?: string | null;
+  horario_inicio?: string | null;
+  horario_termino?: string | null;
   data?: string | null;
   alunos: Aluno[];
 };
@@ -19,6 +21,22 @@ function dataBrasil(data: string) {
 
 function tamanhoTexto(texto: string, padrao: number, minimo: number, limite: number) {
   return `${Math.max(minimo, Math.min(padrao, (padrao * limite) / Math.max(texto.length, 1)))}pt`;
+}
+
+function cargaHorariaDoCurso(curso: Curso) {
+  if (curso.horario?.trim()) return curso.horario.trim();
+
+  const inicio = /^(\d{1,2}):(\d{2})$/.exec(curso.horario_inicio || "");
+  const termino = /^(\d{1,2}):(\d{2})$/.exec(curso.horario_termino || "");
+  if (!inicio || !termino) return "";
+
+  const minutos = Number(termino[1]) * 60 + Number(termino[2])
+    - Number(inicio[1]) * 60 - Number(inicio[2]);
+  if (minutos <= 0 || minutos > 24 * 60) return "";
+
+  const horas = Math.floor(minutos / 60);
+  const restantes = minutos % 60;
+  return restantes ? `${horas}h${String(restantes).padStart(2, "0")}` : `${horas} hora${horas === 1 ? "" : "s"}`;
 }
 
 export default function Certificado({ cursoId, alunoId }: { cursoId: string; alunoId: string }) {
@@ -46,7 +64,7 @@ export default function Certificado({ cursoId, alunoId }: { cursoId: string; alu
         if (!encontrado || !participante) throw new Error("Curso ou aluno não encontrado.");
         setCurso(encontrado);
         setAluno(participante);
-        setCargaHoraria(encontrado.horario?.trim() || "");
+        setCargaHoraria(cargaHorariaDoCurso(encontrado));
         setData(encontrado.data?.slice(0, 10) || "");
       })
       .catch((error: unknown) => {
@@ -73,6 +91,7 @@ export default function Certificado({ cursoId, alunoId }: { cursoId: string; alu
   if (!curso || !aluno) return <main className={styles.message}>Preparando certificado...</main>;
 
   const pronto = Boolean(cargaHoraria.trim() && data);
+  const cursoDescricao = `No curso prático “${curso.nome}”`;
 
   return (
     <main className={styles.page}>
@@ -99,7 +118,7 @@ export default function Certificado({ cursoId, alunoId }: { cursoId: string; alu
         <button type="button" onClick={imprimir} disabled={!pronto}>
           Imprimir / salvar PDF
         </button>
-        {!pronto && <span>Preencha a carga horária e a data para imprimir.</span>}
+        {!pronto && <span>Preencha {(!cargaHoraria.trim() && !data) ? "a carga horária e a data" : !cargaHoraria.trim() ? "a carga horária" : "a data"} para imprimir.</span>}
       </div>
 
       <div className={styles.preview}>
@@ -115,16 +134,18 @@ export default function Certificado({ cursoId, alunoId }: { cursoId: string; alu
           >
             {aluno.nome}
           </div>
-          <div className={`${styles.text} ${styles.courseLabel}`}>No curso prático:</div>
           <div
-            className={`${styles.text} ${styles.courseName}`}
-            style={{ fontSize: tamanhoTexto(curso.nome, 17, 11, 46) }}
+            className={`${styles.text} ${styles.courseDescription}`}
+            style={{ fontSize: tamanhoTexto(cursoDescricao, 17, 12, 56) }}
           >
-            {curso.nome}
+            {cursoDescricao}
           </div>
-          <div className={`${styles.text} ${styles.workload}`}>Carga horária: {cargaHoraria || "_______________"}</div>
+          <div
+            className={`${styles.text} ${styles.workload}`}
+            style={{ fontSize: tamanhoTexto(`Carga horária: ${cargaHoraria}`, 16, 11, 25) }}
+          >Carga horária: {cargaHoraria}</div>
           <div className={`${styles.text} ${styles.dateLabel}`}>Realizado na data de:</div>
-          <div className={`${styles.text} ${styles.date}`}>{data ? dataBrasil(data) : "___/___/______"}</div>
+          <div className={`${styles.text} ${styles.date}`}>{data ? dataBrasil(data) : ""}</div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={styles.signature} src="/certificado/assinatura.webp" alt="Assinatura de Andréia Freitas" />
           <div className={`${styles.text} ${styles.instructor}`}>INSTRUTORA: ANDRÉIA FREITAS</div>

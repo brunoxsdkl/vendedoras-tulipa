@@ -126,18 +126,22 @@
   border-bottom: 1.2pt solid #cf7c9f;
   text-align: center;
 }
-.courseLabel { left: 153.55pt; top: 322.6pt; font-size: 17pt; }
-.courseName {
-  left: 197.125pt;
-  top: 352pt;
-  width: 448pt;
-  min-height: 26.5pt;
-  border-bottom: 1.2pt solid #cf7c9f;
+.courseDescription {
+  left: 145pt;
+  top: 323pt;
+  width: 552pt;
+  height: 61pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
 }
-.workload { left: 152pt; top: 397pt; font-size: 17pt; }
-.dateLabel { left: 390pt; top: 397pt; font-size: 17pt; }
-.date { left: 589pt; top: 397pt; width: 120pt; font-size: 17pt; }
+.workload { left: 152pt; top: 397pt; width: 238pt; }
+.dateLabel { left: 397pt; top: 397pt; font-size: 16pt; }
+.date { left: 590pt; top: 397pt; width: 120pt; font-size: 16pt; }
 .signature {
   position: absolute;
   left: 325.25pt;

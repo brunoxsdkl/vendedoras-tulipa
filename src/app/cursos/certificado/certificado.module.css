@@ -1,0 +1,160 @@
+@font-face {
+  font-family: CertificadoMontserrat;
+  src: url("/certificado/montserrat.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: CertificadoTitulo;
+  src: url("/certificado/catchy-mager.ttf") format("truetype");
+  font-display: swap;
+}
+
+.page {
+  min-height: 100vh;
+  background: #f1ebee;
+  color: #800151;
+  font-family: CertificadoMontserrat, Arial, sans-serif;
+}
+
+.message {
+  padding: 48px;
+  text-align: center;
+}
+
+.toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 2px 12px #0002;
+  font: 14px Arial, sans-serif;
+}
+
+.toolbar a,
+.toolbar button {
+  padding: 10px 14px;
+  border-radius: 6px;
+}
+
+.toolbar a {
+  color: #800151;
+}
+
+.toolbar label {
+  display: grid;
+  gap: 4px;
+  color: #574651;
+}
+
+.toolbar input {
+  padding: 8px 10px;
+  border: 1px solid #d9a6bc;
+  border-radius: 6px;
+  color: #800151;
+  background: #fff;
+}
+
+.toolbar button {
+  border: 0;
+  background: #800151;
+  color: #fff;
+  cursor: pointer;
+}
+
+.toolbar button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.toolbar span {
+  flex-basis: 100%;
+  text-align: center;
+  color: #8b365e;
+}
+
+.preview {
+  overflow-x: auto;
+  padding: 24px;
+}
+
+.sheet {
+  position: relative;
+  width: 842.25pt;
+  height: 595.5pt;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 28px #0002;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.text {
+  position: absolute;
+  margin: 0;
+  white-space: nowrap;
+  color: #800151;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.title {
+  left: 267.86pt;
+  top: 82pt;
+  width: 480pt;
+  font-family: CertificadoTitulo, Georgia, serif;
+  font-size: 78.37pt;
+  line-height: 1;
+}
+
+.intro { left: 294.9pt; top: 253.3pt; font-size: 18pt; }
+.participant {
+  left: 228.125pt;
+  top: 281.5pt;
+  width: 386pt;
+  min-height: 29pt;
+  border-bottom: 1.2pt solid #cf7c9f;
+  text-align: center;
+}
+.courseLabel { left: 153.55pt; top: 322.6pt; font-size: 17pt; }
+.courseName {
+  left: 197.125pt;
+  top: 352pt;
+  width: 448pt;
+  min-height: 26.5pt;
+  border-bottom: 1.2pt solid #cf7c9f;
+  text-align: center;
+}
+.workload { left: 152pt; top: 397pt; font-size: 17pt; }
+.dateLabel { left: 390pt; top: 397pt; font-size: 17pt; }
+.date { left: 589pt; top: 397pt; width: 120pt; font-size: 17pt; }
+.signature {
+  position: absolute;
+  left: 325.25pt;
+  top: 439.3pt;
+  width: 191.75pt;
+  height: 41.6pt;
+  object-fit: contain;
+}
+.instructor { left: 335.5pt; top: 480.9pt; font-size: 10pt; }
+.registration { left: 299.6pt; top: 494.4pt; font-size: 10pt; }
+.profession { left: 338.2pt; top: 507.9pt; font-size: 10pt; }
+
+@page { size: A4 landscape; margin: 0; }
+
+@media print {
+  .page { min-height: 0; background: #fff; }
+  .toolbar { display: none; }
+  .preview { overflow: visible; padding: 0; }
+  .sheet { width: 296.8mm; height: 209.8mm; margin: 0; box-shadow: none; }
+}

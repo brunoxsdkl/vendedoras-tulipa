@@ -36,7 +36,11 @@ function cargaHorariaDoCurso(curso: Curso) {
 
   const horas = Math.floor(minutos / 60);
   const restantes = minutos % 60;
-  return restantes ? `${horas}h${String(restantes).padStart(2, "0")}` : `${horas} hora${horas === 1 ? "" : "s"}`;
+  if (!horas) return `${restantes} minuto${restantes === 1 ? "" : "s"}`;
+  const textoHoras = `${horas} hora${horas === 1 ? "" : "s"}`;
+  if (!restantes) return textoHoras;
+  if (restantes === 30) return `${textoHoras} e meia`;
+  return `${textoHoras} e ${restantes} minuto${restantes === 1 ? "" : "s"}`;
 }
 
 export default function Certificado({ cursoId, alunoId }: { cursoId: string; alunoId: string }) {

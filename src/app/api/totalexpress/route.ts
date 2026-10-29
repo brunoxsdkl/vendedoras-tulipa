@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
 const TOTAL_EXPRESS_URL =
   process.env.TOTAL_EXPRESS_URL ||
   "https://apis.totalexpress.com.br/ics-tracking-encomenda-lv/v1/tracking";

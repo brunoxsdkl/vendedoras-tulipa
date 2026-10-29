@@ -114,7 +114,7 @@ export default function Home() {
 
           <div className="hero-card" aria-label="Resumo do painel">
             <div className="hero-card-top">
-              <img src="/logo.jpg" alt="Tulipa" />
+              <img src="/total-express.png" alt="Tulipa" />
               <div>
                 <strong>VENDEDORAS</strong>
                 <span>Tulipa</span>
@@ -163,7 +163,7 @@ function Header() {
   return (
     <header className="header">
       <div className="header-inner">
-        <img src="/logo.jpg" alt="Tulipa" className="header-logo" />
+        <img src="/total-express.png" alt="Tulipa" className="header-logo" />
         <div className="header-text">
           <span>Sistema interno</span>
           <h1>VENDEDORAS - TULIPA</h1>
